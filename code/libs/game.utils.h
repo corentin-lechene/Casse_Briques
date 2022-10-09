@@ -38,20 +38,20 @@ typedef struct {
     unsigned short score;
     unsigned short heart;
     unsigned short nb_bomb;
-    Bomb bomb;
-    Item *item;
+    Bomb *bomb;
+    Item **item;
 
     unsigned int placed_bomb;
     unsigned short is_bot;
-} Player;
+} Player;;
 
 typedef struct {
-    Map *map;
+    Map **map;
     Player **players;
-    Config config;
+    Config *config;
 
-    Player winner;
-    Player players_turn;
+    Player *winner;
+    Player *players_turn;
 
     unsigned short bo;
     unsigned short cursor;
