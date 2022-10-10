@@ -1,5 +1,5 @@
-static char *LANGUAGE_DEFAULT = "../LANGUAGES/FR";
-static char *LANGUAGE_NAMES[] = {"EXIT", "START", "OPTIONS"};
+static char *LANGUAGE_DIR = "../LANGUAGES/FR";
+static char *LANGUAGE_DEFAULT[] = {"EXIT", "START", "OPTIONS"};
 static unsigned short LANGUAGE_LENGTH = 3;
 
 
@@ -12,7 +12,6 @@ typedef struct {
 typedef struct {
     unsigned short port;
     unsigned short language;
-    Language lang;
 } Config;
 
 typedef struct {
@@ -61,6 +60,7 @@ typedef struct {
     Map **map;
     Player **players;
     Config *config;
+    Language *lang;
 
     Player *winner;
     Player *players_turn;

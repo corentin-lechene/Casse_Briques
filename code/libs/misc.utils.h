@@ -1,27 +1,30 @@
 
 char *str_trim(char *str) {
-    if(str == NULL) {
+    unsigned int len = strlen(str);
+    if(len <= 0 || str[0] == '\0' || str[0] == '\n') {
+        return NULL;
+    }
+    char temp[len + 1];
+
+    int offset = 0;
+    while(str[offset] == ' ') {
+        offset++;
+    }
+
+    if(offset == len) {
         return NULL;
     }
 
-    unsigned short index = 0;
-
-    printf("[%s]\n", str);
-
-    int i = 0;
-    while (str[i] == ' ') {
-        i++;
+    int index = 0;
+    for(int i = offset ; str[i] != '\0' && str[i] != '\n' ; i++ ) {
+        temp[index++] = str[i];
     }
 
-    //fixme crash here
-    for (int j = i; str[j] != ' ' ; ++j) {
-        str[index++] = str[j];
+    while(temp[index - 1] == ' ') {
+        index--;
     }
-    str[index] = '\0';
-
-    char *res = malloc(sizeof(char) * (index + 1));
-    strcpy(res, str);
-
-    printf("[[%s]]", res);
+    temp[index] = '\0';
+    char *res = malloc(sizeof(char) * index + 1);
+    strcpy(res, temp);
     return res;
 }
