@@ -8,35 +8,6 @@
 #include "libs/config.utils.h"
 
 
-void set_lang_attribute(Language *lang, char *attribute, char *value) {
-    if(attribute == NULL) {
-        printf("*Warning: attribute [%s] is empty\n");
-        return;
-    }
-
-    for (int i = 0; i < LANGUAGE_LENGTH; ++i) {
-        if(strcmp(attribute, "EXIT") == 0) {
-            lang->exit = malloc(sizeof(char) * strlen(value) + 1);
-            strcpy(lang->exit, value);
-            return;
-        } else if(strcmp(attribute, "START") == 0) {
-            lang->start = malloc(sizeof(char) * strlen(value) + 1);
-            strcpy(lang->start, value);
-            return;
-        } else if(strcmp(attribute, "OPTIONS") == 0) {
-            lang->options = malloc(sizeof(char) * strlen(value) + 1);
-            strcpy(lang->options, value);
-            return;
-        }
-    }
-
-    printf("*Warning: attribute [%s] does not exist\n", attribute);
-
-    if(value == NULL) {
-        printf("*Warning: value is NULL at %s\n", attribute);
-    }
-}
-
 int main() {
     Board *board = calloc(1, sizeof(Board));
     board->lang = calloc(1, sizeof(Language));
@@ -52,29 +23,15 @@ int main() {
             printf("[%s] = [%s]\n", attribute, value);
 
             if(strcmp(attribute, "LANGUAGE") == 0) {
-                unsigned int len_lang = (strlen(LANGUAGE_DIR) + strlen(value));
-                char file_lang_name[len_lang + 1];
-
-                strcat(strcpy(file_lang_name, LANGUAGE_DIR), value);
-
-                FILE *file_lang = fopen(file_lang_name, "r");
-                if(file_lang != NULL) {
-                    while (fgets(line, 255, file_lang) != NULL) {
-                        attribute = _get_attribute(line);
-                        value = _get_value(line);
-
-                        set_lang_attribute(board->lang, attribute, value);
-                    }
-                    fclose(file_lang);
-                }
+                get_lang(board->lang, value);
             }
         }
+        fclose(file);
         free(attribute);
         free(value);
-        fclose(file);
     }
-    printf("%s %s %s", board->lang->exit, board->lang->start, board->lang->options);
 
+    //fin du programme
     free(line);
     free(board->lang);
     free(board);
