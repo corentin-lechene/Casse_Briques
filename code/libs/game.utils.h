@@ -6,6 +6,15 @@ static char *LANGUAGE_ATTRIBUTES[] = {
         NULL
 };
 
+/* MAPS */
+char MAP[5][5] = {
+        219, 219, 219, 219, 219,
+        219, 219, 219, 219, 219,
+        219, 219, 219, 219, 219,
+        219, 219, 219, 219, 219,
+        219, 219, 219, 219, 219
+};
+
 
 typedef struct {
     char *exit;
@@ -15,7 +24,7 @@ typedef struct {
 
 typedef struct {
     unsigned short port;
-    unsigned short language;
+    char *language;
 } Config;
 
 typedef struct {
@@ -23,7 +32,7 @@ typedef struct {
     unsigned short rows;
     unsigned short columns;
 
-    unsigned char **body;
+    char **body;
 
     unsigned short player_max;
     unsigned short bomb_max;
