@@ -9,20 +9,31 @@
 
 
 void set_lang_attribute(Language *lang, char *attribute, char *value) {
+    if(attribute == NULL) {
+        printf("*Warning: attribute [%s] is empty\n");
+        return;
+    }
+
     for (int i = 0; i < LANGUAGE_LENGTH; ++i) {
         if(strcmp(attribute, "EXIT") == 0) {
             lang->exit = malloc(sizeof(char) * strlen(value) + 1);
             strcpy(lang->exit, value);
-            break;
+            return;
         } else if(strcmp(attribute, "START") == 0) {
             lang->start = malloc(sizeof(char) * strlen(value) + 1);
             strcpy(lang->start, value);
-            break;
+            return;
         } else if(strcmp(attribute, "OPTIONS") == 0) {
             lang->options = malloc(sizeof(char) * strlen(value) + 1);
             strcpy(lang->options, value);
-            break;
+            return;
         }
+    }
+
+    printf("*Warning: attribute [%s] does not exist\n", attribute);
+
+    if(value == NULL) {
+        printf("*Warning: value is NULL at %s\n", attribute);
     }
 }
 

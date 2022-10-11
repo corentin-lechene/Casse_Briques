@@ -1,5 +1,9 @@
 static char *LANGUAGE_DIR = "../configs/LANGUAGES/";
-static char *LANGUAGE_DEFAULT[] = {"EXIT", "START", "OPTIONS"};
+static char *LANGUAGE_DEFAULT[] = {
+        "EXIT",
+        "START",
+        "OPTIONS"
+};
 static unsigned short LANGUAGE_LENGTH = 3;
 
 
