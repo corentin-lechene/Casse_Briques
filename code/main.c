@@ -31,6 +31,7 @@ int main() {
         free(value);
     }
 
+    printf("[%s] [%s] [%s]", board->lang->start, board->lang->bonjour, board->lang->options);
     //fin du programme
     free(line);
     free(board->lang);

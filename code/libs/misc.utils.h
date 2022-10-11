@@ -32,7 +32,6 @@ char *str_trim(char *str) {
 int tab_length(char *tab[]) {
     for (int i = 0; i < 5; ++i) {
         if(tab[i] == NULL) {
-            printf("%d", i);
             return i;
         }
     }

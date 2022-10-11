@@ -32,31 +32,45 @@ void get_lang(Language *lang, char *language) {
 
 void _set_lang_attribute(Language *lang, char *attribute, char *value) {
     if(attribute == NULL) {
-        printf("*Warning: attribute is empty\n");
-        return;
-    }
-
-    if(value == NULL) {
-        printf("*Warning: value is NULL at %s\n", attribute);
         return;
     }
 
     for (int i = 0; i < tab_length(LANGUAGE_ATTRIBUTES); ++i) {
+        //func("EXIT", attribute);
         if(strcmp(attribute, "EXIT") == 0) {
+            if(value == NULL) {
+                printf("*Warning: value is NULL at %s\n", attribute);
+                return;
+            }
             lang->exit = malloc(sizeof(char) * strlen(value) + 1);
             strcpy(lang->exit, value);
             return;
         } else if(strcmp(attribute, "START") == 0) {
+            if(value == NULL) {
+                printf("*Warning: value is NULL at %s\n", attribute);
+                return;
+            }
             lang->start = malloc(sizeof(char) * strlen(value) + 1);
             strcpy(lang->start, value);
             return;
         } else if(strcmp(attribute, "OPTIONS") == 0) {
+            if(value == NULL) {
+                printf("*Warning: value is NULL at %s\n", attribute);
+                return;
+            }
             lang->options = malloc(sizeof(char) * strlen(value) + 1);
             strcpy(lang->options, value);
             return;
+        } else if(strcmp(attribute, "BONJOUR") == 0) {
+            if(value == NULL) {
+                printf("*Warning: value is NULL at %s\n", attribute);
+                return;
+            }
+            lang->bonjour = malloc(sizeof(char) * strlen(value) + 1);
+            strcpy(lang->bonjour, value);
+            return;
         }
     }
-
     printf("*Warning: attribute [%s] does not exist\n", attribute);
 }
 
@@ -69,6 +83,9 @@ char *_get_attribute(char *line) {
     char *temp = malloc(sizeof(char) * 255);
     int i = 0;
     while (line[i] != '=') {
+        if(line[i] == '\0' || line[i] == '\n') {
+            break;
+        }
         temp[i] = line[i];
         i++;
     }
