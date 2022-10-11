@@ -5,7 +5,6 @@ char *_get_attribute(char *line) {
     }
 
     char *temp = malloc(sizeof(char) * 255);
-    unsigned short len_att = 0;
     int i = 0;
     while (line[i] != '=') {
         temp[i] = line[i];

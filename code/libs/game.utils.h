@@ -1,4 +1,4 @@
-static char *LANGUAGE_DIR = "../LANGUAGES/FR";
+static char *LANGUAGE_DIR = "../LANGUAGES/";
 static char *LANGUAGE_DEFAULT[] = {"EXIT", "START", "OPTIONS"};
 static unsigned short LANGUAGE_LENGTH = 3;
 

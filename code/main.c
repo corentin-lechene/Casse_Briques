@@ -27,7 +27,8 @@ void set_lang_attribute(Language *lang, char *attribute, char *value) {
 }
 
 int main() {
-    Board *board = malloc(sizeof(Board));
+    Board *board = calloc(1, sizeof(Board));
+    board->lang = calloc(1, sizeof(Language));
 
     FILE *file = fopen("../app.config", "r");
     char *line = malloc(sizeof(char) * 255);
@@ -45,7 +46,6 @@ int main() {
 
                 strcat(strcpy(file_lang_name, LANGUAGE_DIR), value);
 
-                board->lang = malloc(sizeof(Language));
                 FILE *file_lang = fopen(file_lang_name, "r");
                 if(file_lang != NULL) {
                     while (fgets(line, 255, file_lang) != NULL) {
@@ -58,11 +58,15 @@ int main() {
                 }
             }
         }
-
+        free(attribute);
+        free(value);
         fclose(file);
     }
-
     printf("%s %s %s", board->lang->exit, board->lang->start, board->lang->options);
+
+    free(line);
+    free(board->lang);
+    free(board);
 
     return 0;
 }
