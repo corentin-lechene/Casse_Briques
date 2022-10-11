@@ -9,7 +9,19 @@
 
 
 int main() {
-    Board *board = calloc(1, sizeof(Board));
+
+    //Board configuration
+
+    //debut program
+
+    display_start_menu();
+
+    //fin program
+
+
+
+
+    /*Board *board = calloc(1, sizeof(Board));
     board->lang = calloc(1, sizeof(Language));
 
     FILE *file = fopen("../app.config", "r");
@@ -35,7 +47,7 @@ int main() {
     //fin du programme
     free(line);
     free(board->lang);
-    free(board);
+    free(board);*/
 
     return 0;
 }

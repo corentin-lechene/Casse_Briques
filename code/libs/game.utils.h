@@ -58,7 +58,7 @@ typedef struct {
 
     unsigned int placed_bomb;
     unsigned short is_bot;
-    unsigned short selected_map;
+
 } Player;;
 
 typedef struct {
@@ -72,4 +72,5 @@ typedef struct {
 
     unsigned short bo;
     unsigned short cursor;
+    unsigned short selected_map;
 } Board;
