@@ -1,10 +1,10 @@
 static char *LANGUAGE_DIR = "../configs/LANGUAGES/";
-static char *LANGUAGE_DEFAULT[] = {
+static char *LANGUAGE_ATTRIBUTES[] = {
         "EXIT",
         "START",
-        "OPTIONS"
+        "OPTIONS",
+        NULL
 };
-static unsigned short LANGUAGE_LENGTH = 3;
 
 
 typedef struct {

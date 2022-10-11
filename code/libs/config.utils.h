@@ -41,7 +41,7 @@ void _set_lang_attribute(Language *lang, char *attribute, char *value) {
         return;
     }
 
-    for (int i = 0; i < LANGUAGE_LENGTH; ++i) {
+    for (int i = 0; i < tab_length(LANGUAGE_ATTRIBUTES); ++i) {
         if(strcmp(attribute, "EXIT") == 0) {
             lang->exit = malloc(sizeof(char) * strlen(value) + 1);
             strcpy(lang->exit, value);
