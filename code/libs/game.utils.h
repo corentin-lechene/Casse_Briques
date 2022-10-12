@@ -8,11 +8,11 @@ static char *LANGUAGE_ATTRIBUTES[] = {
 
 /* MAPS */
 char MAP[5][5] = {
-        219, 219, 219, 219, 219,
-        219, 219, 219, 219, 219,
-        219, 219, 219, 219, 219,
-        219, 219, 219, 219, 219,
-        219, 219, 219, 219, 219
+        219, 219,219,219,219,
+        219, 219,219,219,219,
+        219, 219,219,219,219,
+        219, 219,219,219,219,
+        219, 219,219,219,219
 };
 
 
@@ -36,8 +36,6 @@ typedef struct {
 
     unsigned short player_max;
     unsigned short bomb_max;
-
-    unsigned short nb_map;
 } Map;
 
 typedef struct {
@@ -78,7 +76,11 @@ typedef struct {
     Player *winner;
     Player *players_turn;
 
+    unsigned short nb_map;
+    unsigned short nb_player;
+
     unsigned short bo;
-    unsigned short cursor;
+    unsigned short selected_menu;
+    unsigned short selected_choice;
     unsigned short selected_map;
 } Board;
