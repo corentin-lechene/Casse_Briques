@@ -6,6 +6,7 @@
 #include "libs/display.utils.h"
 #include "libs/misc.utils.h"
 #include "libs/config.utils.h"
+#include <stdarg.h>
 
 
 Board *generate_board(Config *config) {
@@ -17,10 +18,14 @@ Board *generate_board(Config *config) {
     board->players_turn = malloc(sizeof(Player));
 
     board->bo = 3;
-    board->cursor = 0;
+    board->selected_choice = 0;
     board->selected_map = 0;
 
     return board;
+}
+
+void copy_map(Board *board, char **map) {
+
 }
 
 int main() {
@@ -33,25 +38,46 @@ int main() {
     board = generate_board(board->config);
 
     //program
-    board->map = malloc(sizeof(Board) * 1);
+    board->nb_map = 2;
+    board->map = malloc(sizeof(Map *) * board->nb_map);
 
-    /*
-    board->map[0]->body = malloc(sizeof(char [5][10]));
+    for (int i = 0; i < board->nb_map; ++i) {
+        board->map[i] = malloc(sizeof(Map));
+    }
+
     board->map[0]->rows = 5;
-    board->map[0]->columns = 10;
-     */
+    board->map[0]->columns = 5;
 
-    for (int i = 0; i < 5; ++i) {
-        for (int j = 0; j < 5; ++j) {
-            printf("[%c]", MAP[i][j]);
-        }
-        printf("\n");
+    board->map[0]->body = malloc(sizeof(char *) * board->map[0]->rows);
+
+    for (int i = 0; i < board->map[0]->columns; ++i) {
+        board->map[0]->body[i] = malloc(sizeof(char) * board->map[0]->columns);
     }
 
 
-    printf("%s", board->map[0]->body[0]);
+    for (int i = 0; i < board->map[0]->rows; ++i) {
+        for (int j = 0; j < board->map[0]->columns; ++j) {
+            board->map[0]->body[i][j] = MAP[i][j];
+        }
+    }
+
+    display_board(board);
+
+
+    printf("[%d]", board->map[0]->rows);
+
+
+    printf("\n");
+
 
     //fin
+
+//    for (int i = 0; i < board->map[0]->columns; ++i) {
+//        free(board->map[0]->body[i]);
+//    }
+//    free(board->map[0]->body);
+    free(board->map[0]);
+    free(board->map[1]);
     free(board->config);
     free(board->lang);
     free(board->winner);
