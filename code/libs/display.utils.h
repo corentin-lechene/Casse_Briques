@@ -13,7 +13,11 @@ void display_choice_server();
 
 void display_header();
 
-int display(int *cursor, int *selected_menu);
+int display(int *selected_choice, int *selected_menu);
+
+void display_menu(int *cursor, ...);
+
+
 
 void display_header() {
     clear_console();
@@ -21,39 +25,31 @@ void display_header() {
     system("pause");
 }
 
-int display(int *cursor, int *selected_menu) {
 
-    if(*selected_menu == 1){
-        *cursor = (*cursor == 4) ? 3 : *cursor;
-        display_start_menu(*cursor);
-    }else if(*selected_menu == 2){
-        *cursor = (*cursor == 5) ? 4 : *cursor;
-        display_choice_mode_game(*cursor);
-    } else if(*selected_menu==3){
-        *cursor = (*cursor == 5) ? 4 : *cursor;
-        display_choice_map(*cursor);
-    } else if(*selected_menu == 4){
-        *cursor = (*cursor == 4) ? 3 : *cursor;
-        display_choice_server(*cursor);
-    }
+
+int display(int *selected_choice, int *selected_menu) {
+    int has_move = 0;
     int event = getch();
     switch (event) {
         case 72:
-            *cursor-=1;
-            *cursor = (*cursor == 0) ? 1 : *cursor;
+            if(*selected_choice - 1 >= 0 ){
+                has_move = 1;
+                *selected_choice-=1;
+            }
             break;
         case 80:
-            *cursor+=1;
+            //has_move
+            *selected_choice+=1;
             break;
         case 13:
-            if(*selected_menu == 1 && *cursor == 3){
+            if(*selected_menu == 1 && *selected_choice == 3){
                 return 0;
-            } else if((*selected_menu == 2 && *cursor == 4) || (*selected_menu==3 && *cursor == 4)){
+            } else if((*selected_menu == 2 && *selected_choice == 4) || (*selected_menu == 3 && *selected_choice == 4)){
                 *selected_menu -= 1;
-            }else if(*selected_menu == 4 && *cursor == 3 ){
+            }else if(*selected_menu == 4 && *selected_choice == 3 ){
                 *selected_menu = 2;
             }
-            else if(*selected_menu == 2 && *cursor == 3){
+            else if(*selected_menu == 2 && *selected_choice == 3){
                 *selected_menu = 4;
             }
             else {
@@ -63,7 +59,59 @@ int display(int *cursor, int *selected_menu) {
         default:
             break;
     }
+
+    //Mettre dans une fonction avec attribut has_move pour changer
+    if(has_move){
+        switch (*selected_menu) {
+            case 0 :
+                return 0;
+            case 1 :
+                display_menu(selected_choice,"MENU PRINCIPAL","Jouer","Configuration","Quitter", NULL);
+                //display_start_menu(*selected_choice);
+                break;
+            case 2 :
+                display_menu(selected_choice,"MODE DE JEU","Jouer contre l'ordinateur","Jouer en Local","Jouer en Ligne","Retour", NULL);
+                break;
+            case 3 :
+                display_menu(selected_choice, "CARTES"," "," "," ","Retour", NULL);
+                break;
+            case 4 :
+                display_menu(selected_choice, "EN LIGNE","Demarrer un serveur","Rejoindre un serveur","Retour", NULL);
+                break;
+        }
+    }
+
     return 1;
+}
+
+void display_menu(int *cursor, ...) {
+    clear_console();
+    va_list ap, temp;
+    va_start(ap, cursor);
+
+    temp = ap;
+    int i = 0;
+    while (va_arg(ap, char* ) != NULL) {
+        i++;
+    }
+    va_end(ap);
+
+    if(*cursor >= i) {
+        *cursor = i-1;
+    }
+
+    va_start(temp, cursor);
+    char *arg = va_arg(temp, char* );
+    printf("----------------------------------\n\n");
+    printf("\t%s\n", arg);
+    printf("----------------------------------\n\n");
+    arg = va_arg(temp, char*);
+    for (int j = 0; j < i-1; ++j) {
+        printf("[%c] %s\n", j == *cursor ? 'X' : ' ', arg);
+        arg = va_arg(temp, char*);
+    }
+    va_end(temp);
+
 }
 
 /**
@@ -133,21 +181,6 @@ void display_choice_map(int cursor) {
     printf("\n_____________________\n\n\n");
     printf("[%c] %s \n\n[%c] %s \n\n[%c] %s \n\n[%c] %s", cursor == 1 ? 'X' : ' ', "", cursor == 2 ? 'X' : ' ',
      "", cursor == 3 ? 'X' : ' ', "", cursor == 4 ? 'X' : ' ', "Retour");
-
-}
-
-/**
- * @function : Affiche le mode en ligne
- * @features : 1. Démarrer un serveur
- *             2. Rejoindre un serveur
- */
-void display_choice_server(int cursor) {
-        system("cls");
-        printf("________________________\n\n");
-        printf("\tEN LIGNE");
-        printf("\n________________________\n\n\n");
-        printf("[%c] %s \n\n[%c] %s \n\n[%c] %s ", cursor == 1 ? 'X' : ' ', "Creer un serveur",
-               cursor == 2 ? 'X' : ' ', "Demarrer un serveur", cursor == 3 ? 'X' : ' ', "Retour");
 
 }
 
