@@ -13,7 +13,7 @@ void display_choice_server();
 
 void display_header();
 
-int display(int *selected_choice, int *selected_menu);
+int display(int *selected_choice, int *selected_menu, int *has_move);
 
 void display_menu(int *cursor, ...);
 
@@ -27,47 +27,14 @@ void display_header() {
 
 
 
-int display(int *selected_choice, int *selected_menu) {
-    int has_move = 0;
-    int event = getch();
-    switch (event) {
-        case 72:
-            if(*selected_choice - 1 >= 0 ){
-                has_move = 1;
-                *selected_choice-=1;
-            }
-            break;
-        case 80:
-            //has_move
-            *selected_choice+=1;
-            break;
-        case 13:
-            if(*selected_menu == 1 && *selected_choice == 3){
-                return 0;
-            } else if((*selected_menu == 2 && *selected_choice == 4) || (*selected_menu == 3 && *selected_choice == 4)){
-                *selected_menu -= 1;
-            }else if(*selected_menu == 4 && *selected_choice == 3 ){
-                *selected_menu = 2;
-            }
-            else if(*selected_menu == 2 && *selected_choice == 3){
-                *selected_menu = 4;
-            }
-            else {
-                *selected_menu += 1;
-            }
-            break;
-        default:
-            break;
-    }
-
-    //Mettre dans une fonction avec attribut has_move pour changer
+int display(int *selected_choice, int *selected_menu, int *has_move) {
+    //Controler les rafraichissements
     if(has_move){
         switch (*selected_menu) {
             case 0 :
                 return 0;
             case 1 :
                 display_menu(selected_choice,"MENU PRINCIPAL","Jouer","Configuration","Quitter", NULL);
-                //display_start_menu(*selected_choice);
                 break;
             case 2 :
                 display_menu(selected_choice,"MODE DE JEU","Jouer contre l'ordinateur","Jouer en Local","Jouer en Ligne","Retour", NULL);
@@ -78,9 +45,42 @@ int display(int *selected_choice, int *selected_menu) {
             case 4 :
                 display_menu(selected_choice, "EN LIGNE","Demarrer un serveur","Rejoindre un serveur","Retour", NULL);
                 break;
+
+            default:
+                break;
         }
     }
-
+    int event = getch();
+    switch (event) {
+        case 72:
+            if(*selected_choice - 1 >= 0 ){
+                //has_move = 1;
+                *selected_choice-=1;
+            }
+            break;
+        case 80:
+            *selected_choice+=1;
+            break;
+        case 13:
+            if(*selected_menu == 1 && *selected_choice == 2){
+                return 0;
+            }else if((*selected_menu == 2 && *selected_choice == 3) || (*selected_menu == 3 && *selected_choice == 3)){
+                *selected_menu -= 1;
+            }else if(*selected_menu == 4 && *selected_choice == 2 ){
+                *selected_menu = 2;
+            }
+            else if(*selected_menu == 2 && *selected_choice == 2){
+                *selected_menu = 4;
+            }
+            else {
+                if(*selected_menu + 1 < 5 ){
+                    *selected_menu += 1;
+                }
+            }
+            break;
+        default:
+            break;
+    }
     return 1;
 }
 
@@ -88,26 +88,24 @@ void display_menu(int *cursor, ...) {
     clear_console();
     va_list ap, temp;
     va_start(ap, cursor);
-
     temp = ap;
     int i = 0;
     while (va_arg(ap, char* ) != NULL) {
         i++;
     }
     va_end(ap);
-
-    if(*cursor >= i) {
-        *cursor = i-1;
+    if(*cursor >= i-1) {
+        *cursor = i-2;
     }
 
     va_start(temp, cursor);
     char *arg = va_arg(temp, char* );
     printf("----------------------------------\n\n");
     printf("\t%s\n", arg);
-    printf("----------------------------------\n\n");
+    printf("\n----------------------------------\n\n");
     arg = va_arg(temp, char*);
     for (int j = 0; j < i-1; ++j) {
-        printf("[%c] %s\n", j == *cursor ? 'X' : ' ', arg);
+        printf("[%c] %s\n\n", j == *cursor ? 'X' : ' ', arg);
         arg = va_arg(temp, char*);
     }
     va_end(temp);
