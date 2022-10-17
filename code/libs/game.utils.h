@@ -11,6 +11,7 @@ typedef struct {
     char *exit;
     char *start;
     char *options;
+    char *bonjour;
 } Language;
 
 typedef struct {
@@ -59,7 +60,7 @@ typedef struct {
     unsigned int placed_bomb;
     unsigned short is_bot;
 
-} Player;;
+} Player;
 
 typedef struct {
     Map **map;
@@ -74,3 +75,24 @@ typedef struct {
     unsigned short cursor;
     unsigned short selected_map;
 } Board;
+
+
+
+
+Player *create_player(){
+    //Board *board = malloc(sizeof(Board));
+    //Création du joueur
+    Player *player = malloc(sizeof(Player));
+    printf("Entrez votre pseudo : ");
+    scanf("%s", player->name);
+
+
+    //board->players[0] = player;
+
+    return player;
+
+}
+
+void push(Board *dest, Player *source){
+
+}
