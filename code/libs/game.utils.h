@@ -68,7 +68,7 @@ typedef struct {
 } Player;;
 
 typedef struct {
-    Map **map;
+    Map **maps;
     Player **players;
     Config *config;
     Language *lang;

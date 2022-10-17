@@ -24,8 +24,34 @@ Board *generate_board(Config *config) {
     return board;
 }
 
-void copy_map(Board *board, char **map) {
+Map *new_map(char *body[], int rows, int columns, int player_max, int bomb_max) {
+    Map *map = malloc(sizeof(Map));
 
+    map->rows = rows;
+    map->columns = columns;
+    map->player_max = player_max;
+    map->bomb_max = bomb_max;
+
+    map->body = malloc(sizeof(char *) * map->rows);
+    for (int i = 0; i < map->rows; ++i) {
+        map->body[i] = malloc(sizeof(char) * map->columns);
+    }
+
+    for (int i = 0; i < map->rows; ++i) {
+        for (int y = 0; y < map->columns; ++y) {
+            map->body[i][y] = body[i][y];
+        }
+    }
+
+    return map;
+}
+
+Map **get_maps(Board *board) {
+    board->nb_map = 1;
+    Map **maps = malloc(sizeof(Map) * board->nb_map);
+
+    maps[0] = new_map(MAP, 5, 5, 2, 10);
+    return maps;
 }
 
 int main() {
@@ -37,47 +63,21 @@ int main() {
 
     board = generate_board(board->config);
 
-    //program
-    board->nb_map = 2;
-    board->map = malloc(sizeof(Map *) * board->nb_map);
-
-    for (int i = 0; i < board->nb_map; ++i) {
-        board->map[i] = malloc(sizeof(Map));
-    }
-
-    board->map[0]->rows = 5;
-    board->map[0]->columns = 5;
-
-    board->map[0]->body = malloc(sizeof(char *) * board->map[0]->rows);
-
-    for (int i = 0; i < board->map[0]->columns; ++i) {
-        board->map[0]->body[i] = malloc(sizeof(char) * board->map[0]->columns);
-    }
+    board->maps = get_maps(board);
 
 
-    for (int i = 0; i < board->map[0]->rows; ++i) {
-        for (int j = 0; j < board->map[0]->columns; ++j) {
-            board->map[0]->body[i][j] = MAP[i][j];
-        }
-    }
 
     display_board(board);
 
 
-    printf("[%d]", board->map[0]->rows);
+    printf("[%d]\n", board->maps[0]->rows);
 
-
-    printf("\n");
-
-
-    //fin
-
-//    for (int i = 0; i < board->map[0]->columns; ++i) {
-//        free(board->map[0]->body[i]);
-//    }
-//    free(board->map[0]->body);
-    free(board->map[0]);
-    free(board->map[1]);
+    //Fin Free
+    for (int i = 0; i < board->maps[0]->columns; ++i) {
+        free(board->maps[0]->body[i]);
+    }
+    free(board->maps[0]->body);
+    free(board->maps);
     free(board->config);
     free(board->lang);
     free(board->winner);
