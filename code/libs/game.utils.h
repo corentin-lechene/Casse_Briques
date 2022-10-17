@@ -1,86 +1,85 @@
-static char *LANGUAGE_DIR = "../configs/LANGUAGES/";
-static char *LANGUAGE_ATTRIBUTES[] = {
-        "EXIT",
-        "START",
-        "OPTIONS",
-        NULL
-};
+Board *generate_board();
 
-/* MAPS */
-char MAP[5][5] = {
-        219, 219,219,219,219,
-        219, 219,219,219,219,
-        219, 219,219,219,219,
-        219, 219,219,219,219,
-        219, 219,219,219,219
-};
+void run_game(Board *board);
+void run_menu(Board *board);
+
+void menu_events(Board *board, int event);
 
 
-typedef struct {
-    char *exit;
-    char *start;
-    char *options;
-} Language;
 
-typedef struct {
-    unsigned short port;
-    char *language;
-} Config;
+void run_game(Board *board) {
+    printf("RUN GAME");
+}
 
-typedef struct {
-    unsigned short id;
-    unsigned short rows;
-    unsigned short columns;
+void run_menu(Board *board) {
+    int event = getch();
+    menu_events(board, event);
 
-    char **body;
+    display_menus(board);
 
-    unsigned short player_max;
-    unsigned short bomb_max;
-} Map;
+    if(board->selected_menu == IN_PLAYERS) {
+//        board->players = get_players();
+    } else if(board->selected_menu == IN_MAPS) {
+//        board->selected_maps = get_selected_maps();
+    }
+}
 
-typedef struct {
-    char id;
-    int range;
-    short bomb_kick;
-} Bomb;
+void menu_events(Board *board, int event) {
+    switch (event) {
+        case CROSS_TOP:
+        case KEY_z:
+            if (board->selected_choice - 1 >= 0) {
+                board->selected_choice -= 1;
+            }
+            break;
+        case CROSS_BOTTOM:
+        case KEY_s:
+            board->selected_choice += 1;
+            break;
+        case KEY_ENTER:
+            if(board->selected_menu == 1 && board->selected_choice == 2){
+                board->selected_menu = 0;
+            } else if ((board->selected_menu == 2 && board->selected_choice == 3) ||
+                       (board->selected_menu == 3 && board->selected_choice == 3)) {
+                board->selected_menu -= 1;
+            } else if (board->selected_menu == 4 && board->selected_choice == 2) {
+                board->selected_menu = 2;
+            } else if (board->selected_menu == 2 && board->selected_choice == 2) {
+                board->selected_menu = 4;
+            } else {
+                if (board->selected_menu + 1 < 5) {
+                    board->selected_menu += 1;
+                }
+            }
+            break;
+        default:
+            break;
+    }
+}
 
-typedef struct {
-    char id;
-    int duration;
-    short rare;
-    short is_used;
-} Item;
+Board *generate_board() {
 
-typedef struct {
-    char *name;
-    char id;
-    char *color;
-    unsigned short direction;
+    Board *board = malloc(sizeof(Board));
+    Config *config = malloc(sizeof(Config));
 
-    unsigned short score;
-    unsigned short heart;
-    unsigned short nb_bomb;
-    Bomb *bomb;
-    Item **item;
+    config->language = malloc(sizeof(char) * 3);
+    config->language = "FR";
 
-    unsigned int placed_bomb;
-    unsigned short is_bot;
-} Player;;
+    board->config = config;
+    board->lang = get_lang(config->language);
+    board->winner = malloc(sizeof(Player));
+    board->players_turn = malloc(sizeof(Player));
 
-typedef struct {
-    Map **maps;
-    Player **players;
-    Config *config;
-    Language *lang;
+    //    board->maps = get_maps();
+    //    board->nb_map = get_nb_map(board->maps);
 
-    Player *winner;
-    Player *players_turn;
+    //    unsigned short nb_map;          //le nombre de carte
+    //    unsigned short nb_player;       //le nombre de joueur
 
-    unsigned short nb_map;
-    unsigned short nb_player;
+    board->bo = 3;
+    board->selected_menu = 1;
+    board->selected_choice = 0;
+    board->selected_map = 0;
 
-    unsigned short bo;
-    unsigned short selected_menu;
-    unsigned short selected_choice;
-    unsigned short selected_map;
-} Board;
+    return board;
+}

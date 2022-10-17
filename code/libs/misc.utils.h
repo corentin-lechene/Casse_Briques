@@ -1,39 +1,105 @@
+#define IN_EXIT 0
+#define IN_GAME 8
+#define IN_PLAYERS 6
+#define IN_MAPS 6
 
-char *str_trim(char *str) {
-    unsigned int len = strlen(str);
-    if(len <= 0 || str[0] == '\0' || str[0] == '\n') {
-        return NULL;
-    }
-    char temp[len + 1];
+#define CROSS_TOP 72
+#define CROSS_BOTTOM 80
+#define CROSS_LEFT 75
+#define CROSS_RIGHT 77
 
-    int offset = 0;
-    while(str[offset] == ' ') {
-        offset++;
-    }
+#define KEY_z 122
+#define KEY_s 115
+#define KEY_d 100
+#define KEY_q 113
+#define KEY_ESCAPE 27
+#define KEY_ENTER 13
+#define KEY_SPACE 32
 
-    if(offset == len) {
-        return NULL;
-    }
+static char *LANGUAGE_DIR = "../configs/LANGUAGES/";
+static char *LANGUAGE_ATTRIBUTES[] = {
+        "EXIT",
+        "START",
+        "OPTIONS",
+        NULL
+};
 
-    int index = 0;
-    for(int i = offset ; str[i] != '\0' && str[i] != '\n' ; i++ ) {
-        temp[index++] = str[i];
-    }
+/* MAPS */
+char MAP[5][5] = {
+        219, 219,219,219,219,
+        219, 219,219,219,219,
+        219, 219,219,219,219,
+        219, 219,219,219,219,
+        219, 219,219,219,219
+};
 
-    while(temp[index - 1] == ' ') {
-        index--;
-    }
-    temp[index] = '\0';
-    char *res = malloc(sizeof(char) * index + 1);
-    strcpy(res, temp);
-    return res;
-}
 
-int tab_length(char *tab[]) {
-    for (int i = 0; i < 5; ++i) {
-        if(tab[i] == NULL) {
-            return i;
-        }
-    }
-    return 0;
-}
+typedef struct {
+    char *exit;
+    char *start;
+    char *options;
+} Language;
+
+typedef struct {
+    unsigned short port;
+    char *language;
+} Config;
+
+typedef struct {
+    unsigned short id;
+    unsigned short rows;
+    unsigned short columns;
+
+    char **body;
+
+    unsigned short player_max;
+    unsigned short bomb_max;
+} Map;
+
+typedef struct {
+    char id;
+    int range;
+    short bomb_kick;
+} Bomb;
+
+typedef struct {
+    char id;
+    int duration;
+    short rare;
+    short is_used;
+} Item;
+
+typedef struct {
+    char *name;
+    char id;
+    char *color;
+    unsigned short direction;
+
+    unsigned short score;
+    unsigned short heart;
+    unsigned short nb_bomb;
+    Bomb *bomb;
+    Item **item;
+
+    unsigned int placed_bomb;
+    unsigned short is_bot;
+} Player;;
+
+typedef struct {
+    Map **maps;
+    Player **players;
+    Config *config;
+    Language *lang;
+
+    Player *winner;
+    Player *players_turn;
+
+    unsigned short nb_map;
+    unsigned short nb_player;
+
+    unsigned short bo;
+    unsigned short selected_menu;
+    unsigned short selected_choice;
+    unsigned short selected_map;
+    unsigned short *selected_maps;
+} Board;
