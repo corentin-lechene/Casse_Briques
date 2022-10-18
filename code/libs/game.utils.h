@@ -78,21 +78,31 @@ typedef struct {
 
 
 
-
-Player *create_player(){
-    //Board *board = malloc(sizeof(Board));
-    //Création du joueur
+/**
+ * @features : create player
+ * */
+Player *create_player(int *nb_added_player, int *nb_real_player,int *index){
     Player *player = malloc(sizeof(Player));
-    printf("Entrez votre pseudo : ");
-    scanf("%s", player->name);
-
-
-    //board->players[0] = player;
-
-    return player;
+    if(*nb_added_player != *nb_real_player){
+        printf("Entrez votre pseudo : ");
+        scanf("%s", player->name);
+        player->is_bot = 0;
+        player->id = *index;
+        *nb_added_player += 1;
+        return player;
+    }else {
+        player->name = "Toto";
+        player->is_bot = 1;
+        player->id = *index;
+        return player;
+    }
 
 }
 
-void push(Board *dest, Player *source){
-
+/**
+ * @features : add player into player's tab
+ * */
+void push(Board *dest, Player *source, int index){
+    dest->players[index] = source;
+    //printf("%s", dest->players[0]->name);
 }
