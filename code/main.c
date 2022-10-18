@@ -24,10 +24,10 @@ void run_program(Board *board) {
 int main() {
     Board *board = generate_board();
 
-    display_intro();
+    display_opening_credits();
     while (board->selected_menu >= 1) {
         run_program(board);
     }
-    printf("end");
+    display_ending_credits();
     return 0;
 }

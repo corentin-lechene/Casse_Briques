@@ -1,6 +1,7 @@
 
 void clear_console();
-void display_intro();
+void display_opening_credits();
+void display_ending_credits();
 
 void display_menus(Board *board);
 void display_menu_header(char *title);
@@ -9,10 +10,6 @@ void display_menu(unsigned short *cursor, ...);
 void display_board(Board *board);
 
 
-void display_opening_credits() {
-    clear_console();
-    printf("Casse briques...");
-}
 
 void display_menus(Board *board) {
     switch (board->selected_menu) {
@@ -78,8 +75,14 @@ void display_board(Board *board){
     //footer
 }
 
-void display_intro() {
-    printf("Bienvenu\n");
+void display_opening_credits() {
+    clear_console();
+    printf("Casse briques...");
+}
+
+void display_ending_credits() {
+    clear_console();
+    printf("Merci d'avoir jouer");
 }
 
 void clear_console() {
