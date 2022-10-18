@@ -1,7 +1,8 @@
 #define IN_EXIT 0
-#define IN_GAME 8
+#define IN_GAME 10
 #define IN_PLAYERS 6
-#define IN_MAPS 6
+#define IN_MAPS 7
+#define IN_PAUSE 11
 
 #define CROSS_TOP 72
 #define CROSS_BOTTOM 80

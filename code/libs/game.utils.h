@@ -21,6 +21,8 @@ void run_menu(Board *board) {
 //        board->players = get_players();
     } else if(board->selected_menu == IN_MAPS) {
 //        board->selected_maps = get_selected_maps();
+    } else if(board->selected_menu == IN_PAUSE) {
+//        board->players = get_players();
     }
 }
 

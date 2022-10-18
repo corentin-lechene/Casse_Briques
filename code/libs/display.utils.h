@@ -25,6 +25,9 @@ void display_menus(Board *board) {
         case 4 :
             display_menu(&board->selected_choice, "EN LIGNE","Demarrer un serveur","Rejoindre un serveur","Retour", NULL);
             break;
+        case 11 :
+            display_menu(&board->selected_choice, "Reprendre", "Quitter", NULL);
+            break;
         default:
             break;
     }
