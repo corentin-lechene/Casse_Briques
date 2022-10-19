@@ -1,5 +1,5 @@
 
-/*char *_get_attribute(char *line);
+char *_get_attribute(char *line);
 char *_get_value(char *line);
 
 void _set_lang_attribute(Language *lang, char *attribute, char *value);
@@ -113,4 +113,4 @@ char *_get_value(char *line) {
     }
     return str_trim(temp);
 }
-*/
+

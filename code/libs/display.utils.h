@@ -5,11 +5,12 @@
 #include <stdarg.h>
 
 void clear_console();
+
 void display_board(Board *board);
-void display_start_menu();
-void display_choice_mode_game();
-void display_choice_map();
-void display_choice_server();
+
+void display_choice_map(int cursor);
+
+void display_choice_server(int cursor);
 
 void display_header();
 
@@ -26,10 +27,9 @@ void display_header() {
 }
 
 
-
 int display(int *selected_choice, int *selected_menu, int *has_move) {
     //Controler les rafraichissements
-    if(has_move){
+    if(*has_move == 1){
         switch (*selected_menu) {
             case 0 :
                 return 0;
@@ -54,12 +54,15 @@ int display(int *selected_choice, int *selected_menu, int *has_move) {
     switch (event) {
         case 72:
             if(*selected_choice - 1 >= 0 ){
-                //has_move = 1;
+                *has_move = 1;
                 *selected_choice-=1;
+            }else {
+                *has_move = 0;
             }
             break;
         case 80:
             *selected_choice+=1;
+            *has_move = 1;
             break;
         case 13:
             if(*selected_menu == 1 && *selected_choice == 2){
@@ -81,6 +84,7 @@ int display(int *selected_choice, int *selected_menu, int *has_move) {
         default:
             break;
     }
+
     return 1;
 }
 
@@ -112,62 +116,6 @@ void display_menu(int *cursor, ...) {
 
 }
 
-/**
- * @function : Affiche le menu principal
- * @features : 1.Jouer
- *             2. Changer fichier de configuration
- *             3. Quitter
- */
-void display_start_menu(int cursor) {
-    clear_console();
-    printf("______________________________\n\n");
-    printf("\tMENU PRINCIPAL");
-    printf("\n______________________________\n\n\n");
-    printf("[%c] %s \n\n[%c] %s \n\n[%c] %s", cursor == 1 ? 'X' : ' ', "Jouer", cursor == 2 ? 'X' : ' ',
-           "Configuration", cursor == 3 ? 'X' : ' ', "Quitter");
-}
-
-/**
- * @function : Affiche les different mode de jeu
- * @features : 1.Jouer contre l'ordinateur
- *             2. Jouer en Local
- *             3. Jouer en Ligne
- *             4.Retour
- */
-void display_choice_mode_game(){
-    system("cls");
-    int cursorY = 1;
-    while(1){
-        system("cls");
-        printf("___________________________\n\n");
-        printf("\tMODE DE JEU");
-        printf("\n___________________________\n\n\n");
-        printf("[%c] %s \n\n[%c] %s \n\n[%c] %s \n\n[%c] %s", cursorY == 1 ? 'X' : ' ',"Jouer contre l'ordinateur",cursorY == 2 ? 'X' : ' ', "Jouer en local", cursorY == 3 ? 'X' : ' ', "Jouer en Ligne", cursorY == 4 ? 'X' : ' ', "Retour");
-
-        switch (_getch()) {
-            case 122:
-                cursorY--;
-                if(cursorY == 0 ) cursorY =1;
-                break;
-            case 115:
-                cursorY ++;
-                if(cursorY == 5 ) cursorY =4;
-                break;
-
-            case 13 :
-                if(cursorY == 4){
-                    return;
-                } else if(cursorY == 1 || cursorY == 2) {
-                    display_choice_map();
-                } else if(cursorY == 3){
-                    display_choice_server();
-                }
-                break;
-        }
-
-    }
-
-}
 
 /**
  * @function : Affiche les cartes
@@ -183,7 +131,7 @@ void display_choice_map(int cursor) {
 }
 
 
-void display_board(Board *board){
+void display_board(Board *board) {
     clear_console();
     //header
     unsigned short selected_map = board->selected_map;
