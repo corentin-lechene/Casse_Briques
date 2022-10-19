@@ -3,10 +3,13 @@ char *_get_attribute(char *line);
 char *_get_value(char *line);
 
 void _set_lang_attribute(Language *lang, char *attribute, char *value);
-void get_lang(Language *lang, char *language);
+Language *get_lang(char *language);
+
+Map **get_maps();
 
 
-void get_lang(Language *lang, char *language) {
+Language *get_lang(char *language) {
+    Language *lang = malloc(sizeof(Language));
     unsigned int len_lang = (strlen(LANGUAGE_DIR) + strlen(language));
     char file_lang_name[len_lang + 1];
 
@@ -27,9 +30,8 @@ void get_lang(Language *lang, char *language) {
         free(attribute);
         free(value);
     }
+    return lang;
 }
-
-
 void _set_lang_attribute(Language *lang, char *attribute, char *value) {
     if(attribute == NULL) {
         return;
@@ -61,17 +63,14 @@ void _set_lang_attribute(Language *lang, char *attribute, char *value) {
             lang->options = malloc(sizeof(char) * strlen(value) + 1);
             strcpy(lang->options, value);
             return;
-        } else if(strcmp(attribute, "BONJOUR") == 0) {
-            if(value == NULL) {
-                printf("*Warning: value is NULL at %s\n", attribute);
-                return;
-            }
-            lang->bonjour = malloc(sizeof(char) * strlen(value) + 1);
-            strcpy(lang->bonjour, value);
-            return;
         }
     }
     printf("*Warning: attribute [%s] does not exist\n", attribute);
+}
+
+Map **get_maps() {
+    Map **maps = malloc(sizeof(Map));
+    return maps;
 }
 
 

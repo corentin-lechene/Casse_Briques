@@ -11,7 +11,6 @@ typedef struct {
     char *exit;
     char *start;
     char *options;
-    char *bonjour;
 } Language;
 
 typedef struct {
@@ -47,7 +46,7 @@ typedef struct {
 
 typedef struct {
     char *name;
-    int id;
+    char id;
     char *color;
     unsigned short direction;
 
@@ -59,8 +58,8 @@ typedef struct {
 
     unsigned int placed_bomb;
     unsigned short is_bot;
-
-} Player;
+    unsigned short selected_map;
+} Player;;
 
 typedef struct {
     Map **map;
@@ -73,37 +72,4 @@ typedef struct {
 
     unsigned short bo;
     unsigned short cursor;
-    unsigned short selected_map;
 } Board;
-
-
-
-/**
- * @features : create player
- * */
-Player *create_player(int *nb_added_player, int *nb_real_player,int *index){
-    Player *player = malloc(sizeof(Player));
-    player->name = malloc(sizeof (char));
-    if(*nb_added_player != *nb_real_player){
-        printf("Entrez votre pseudo : ");
-        scanf("%s", player->name);
-        player->is_bot = 0;
-        player->id = *index;
-        *nb_added_player += 1;
-        return player;
-    }else {
-        player->name = "Toto";
-        player->is_bot = 1;
-        player->id = *index;
-        return player;
-    }
-
-}
-
-/**
- * @features : add player into player's tab
- * */
-void push(Board *dest, Player *source, int index){
-    dest->players[index] = source;
-    //printf("%s", dest->players[0]->name);
-}
