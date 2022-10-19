@@ -47,7 +47,7 @@ typedef struct {
 
 typedef struct {
     char *name;
-    char id;
+    int id;
     char *color;
     unsigned short direction;
 
@@ -83,6 +83,7 @@ typedef struct {
  * */
 Player *create_player(int *nb_added_player, int *nb_real_player,int *index){
     Player *player = malloc(sizeof(Player));
+    player->name = malloc(sizeof (char));
     if(*nb_added_player != *nb_real_player){
         printf("Entrez votre pseudo : ");
         scanf("%s", player->name);
