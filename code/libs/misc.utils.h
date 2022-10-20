@@ -34,6 +34,36 @@
 #define ITEM_VI 3
 
 
+#define MARGIN_X 4
+#define MARGIN_Y 1
+
+static char *ITEMS_NAME[] = {
+        "Bombe",
+        "Bombe Up",
+        "Bombe down",
+        "Bombe Kick",
+        "Passe-Bombes",
+        "Flamme Jaune",
+        "Flamme Bleue",
+        "Flamme Rouge",
+        "Invincibilité",
+        "Coeur",
+        "Vie",
+};
+
+static char *ITEMS_STRING[] = {
+        "Ó",
+        "+",
+        "-",
+        "☼",
+        "Ø",
+        "↑",
+        "↓",
+        "♣",
+        "*",
+        "■",
+        "♥",
+};
 
 static char *LANGUAGE_DIR = "../configs/LANGUAGES/";
 static char *LANGUAGE_ATTRIBUTES[] = {
@@ -110,6 +140,7 @@ typedef struct {
     Config *config;
     Language *lang;
 
+    Map **selected_maps;
     Player *winner;
     Player *players_turn;
 
@@ -120,5 +151,4 @@ typedef struct {
     unsigned short selected_menu;
     unsigned short selected_choice;
     unsigned short selected_map;
-    unsigned short *selected_maps;
 } Board;

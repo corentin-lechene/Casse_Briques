@@ -9,7 +9,13 @@ void display_menu(unsigned short *cursor, ...);
 
 void display_board(Board *board);
 
+void _display_border(Board *board);
+void _display_margin_y(Board *board);
+void _display_margin_x();
+void _display_content(Board *board);
+void _display_items(int item_index);
 int _get_char_ascii(char c);
+
 
 
 void display_menus(Board *board) {
@@ -92,14 +98,22 @@ void display_board(Board *board){
 //        }
 //        printf("\n");
 //    }
-    unsigned short selected_map = board->selected_map;
+
+
+//    _display_border(board);
+//    _display_margin_y(board);
+//
+//    _display_content(board);
+//
+//    _display_margin_y(board);
+//    _display_border(board);
+
 
     //border top
     for (int i = 0; i < 8 + 10 + strlen("  Bombe █  |") - 2; ++i) {
         printf("%c", i % 2 ? '-' : '=');
     }
     printf("\n");
-
 
     //margin top
     printf("|");
@@ -157,8 +171,8 @@ void display_ending_credits() {
 }
 
 void clear_console() {
-//    system("cls");
-    printf("\033[2J\033[1;1H");
+    system("cls");
+//    printf("\033[2J\033[1;1H");
 }
 
 int _get_char_ascii(char c) {
@@ -182,4 +196,57 @@ int _get_char_ascii(char c) {
             break;
     }
     return res;
+}
+
+void _display_content(Board *board) {
+    int item_index = 0;
+    for (int i = 0; i < board->selected_maps[board->selected_map]->rows; ++i) {
+        printf("|");
+        _display_margin_x();
+        for (int j = 0; j < board->selected_maps[board->selected_map]->columns; ++j) {
+            printf("%c", _get_char_ascii(test[i][j]));
+        }
+        _display_margin_x();
+        printf("|");
+        _display_margin_x();
+        _display_items(item_index++);
+        _display_margin_x();
+        printf("|\n");
+    }
+}
+
+void _display_items(int item_index) {
+    if(item_index <= 10) {
+        printf("%s : %s", ITEMS_NAME[item_index], ITEMS_STRING[item_index]);
+    }
+}
+
+void _display_margin_y(Board *board) {
+    unsigned short len_board = board->selected_maps[board->selected_map]->columns + (MARGIN_X * 2);
+    unsigned short len_items = (MARGIN_X * 2) + strlen(ITEMS_NAME[8]);
+    printf("|");
+    for (int i = 0; i < len_board - 1; ++i) {
+        printf(" ");
+    }
+    printf("|");
+
+    for (int i = 0; i < len_items - 1; ++i) {
+        printf(" ");
+    }
+    printf("|\n");
+}
+
+void _display_margin_x() {
+    for (int i = 0; i < MARGIN_X; ++i) {
+        printf(" ");
+    }
+}
+
+void _display_border(Board *board) {
+    unsigned short len = board->selected_maps[board->selected_map]->columns + (MARGIN_X * 4) + strlen(ITEMS_NAME[8]) + 2;
+    printf("\n");
+    for (int i = 0; i < len; ++i) {
+        printf("%c", i % 2 ? '-' : '=');
+    }
+    printf("\n");
 }
