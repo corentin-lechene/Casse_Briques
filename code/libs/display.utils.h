@@ -224,16 +224,18 @@ void _display_items(int item_index) {
 void _display_margin_y(Board *board) {
     unsigned short len_board = board->selected_maps[board->selected_map]->columns + (MARGIN_X * 2);
     unsigned short len_items = (MARGIN_X * 2) + strlen(ITEMS_NAME[8]);
-    printf("|");
-    for (int i = 0; i < len_board - 1; ++i) {
-        printf(" ");
-    }
-    printf("|");
+    for (int j = 0; j < MARGIN_Y; ++j) {
+        printf("|");
+        for (int i = 0; i < len_board - 1; ++i) {
+            printf(" ");
+        }
+        printf("|");
 
-    for (int i = 0; i < len_items - 1; ++i) {
-        printf(" ");
+        for (int i = 0; i < len_items - 1; ++i) {
+            printf(" ");
+        }
+        printf("|\n");
     }
-    printf("|\n");
 }
 
 void _display_margin_x() {
