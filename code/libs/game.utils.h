@@ -8,7 +8,8 @@ void menu_events(Board *board, int event);
 
 
 void run_game(Board *board) {
-    printf("RUN GAME");
+    printf("RUN GAME\n");
+    display_board(board);
 }
 
 void run_menu(Board *board) {
@@ -18,7 +19,7 @@ void run_menu(Board *board) {
     display_menus(board);
 
     if(board->selected_menu == IN_PLAYERS) {
-//        board->players = get_players();
+//        board->players = get_players(board->maps);
     } else if(board->selected_menu == IN_MAPS) {
 //        board->selected_maps = get_selected_maps();
     } else if(board->selected_menu == IN_PAUSE) {
@@ -79,7 +80,7 @@ Board *generate_board() {
     //    unsigned short nb_player;       //le nombre de joueur
 
     board->bo = 3;
-    board->selected_menu = 1;
+    board->selected_menu = 10;
     board->selected_choice = 0;
     board->selected_map = 0;
 

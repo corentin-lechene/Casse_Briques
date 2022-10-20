@@ -17,6 +17,24 @@
 #define KEY_ENTER 13
 #define KEY_SPACE 32
 
+#define ITEM_MI 219
+#define ITEM_MD 176
+#define ITEM_SP 32
+#define ITEM_TP 126
+#define ITEM_BB 162
+#define ITEM_BU 43
+#define ITEM_BD 45
+#define ITEM_BP 157
+#define ITEM_BK 15
+#define ITEM_FJ 24
+#define ITEM_FB 25
+#define ITEM_FR 5
+#define ITEM_IN 42
+#define ITEM_CO 254
+#define ITEM_VI 3
+
+
+
 static char *LANGUAGE_DIR = "../configs/LANGUAGES/";
 static char *LANGUAGE_ATTRIBUTES[] = {
         "EXIT",

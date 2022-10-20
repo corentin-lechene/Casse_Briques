@@ -9,6 +9,7 @@ void display_menu(unsigned short *cursor, ...);
 
 void display_board(Board *board);
 
+int _get_char_ascii(char c);
 
 
 void display_menus(Board *board) {
@@ -65,13 +66,36 @@ void display_menu(unsigned short *cursor, ...) {
 
 }
 
+char test[5][8] = {
+        "xxxxxxxx",
+        "xp xmmmx",
+        "x xmmx x",
+        "xmmmx px",
+        "xxxxxxxx",
+};
+
+char test2[5][15] = {
+        "xxxxxxxxxxxxxxx",
+        "xp xmmmx  p  p ",
+        "x xmmx x   p  p",
+        "xmmmx px    p  ",
+        "xxxxxxxx   p   ",
+};
+
 void display_board(Board *board){
     clear_console();
     //header
+//    unsigned short selected_map = board->selected_map;
+//    for (int i = 0; i < board->maps[selected_map]->rows; ++i) {
+//        for (int j = 0; j < board->maps[selected_map]->columns; ++j) {
+//            printf("%c", _get_char_ascii(board->maps[selected_map]->body[i][j]));
+//        }
+//        printf("\n");
+//    }
     unsigned short selected_map = board->selected_map;
-    for (int i = 0; i < board->maps[selected_map]->rows; ++i) {
-        for (int j = 0; j < board->maps[selected_map]->columns; ++j) {
-            printf("%c", board->maps[selected_map]->body[i][j]);
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            printf("%c", _get_char_ascii(test[i][j]));
         }
         printf("\n");
     }
@@ -90,4 +114,27 @@ void display_ending_credits() {
 
 void clear_console() {
     system("cls");
+}
+
+int _get_char_ascii(char c) {
+    int res = 0;
+//    printf("[%c]", c);
+//    sleep(1);
+    switch (c) {
+        case 'x':
+            res = ITEM_MI;
+            break;
+        case 'm':
+            res = ITEM_MD;
+            break;
+        case ' ':
+            res = ITEM_SP;
+            break;
+        case 'p':
+            res = 49;
+            break;
+        default:
+            break;
+    }
+    return res;
 }
