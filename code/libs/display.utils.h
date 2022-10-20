@@ -76,10 +76,10 @@ char test[5][8] = {
 
 char test2[5][15] = {
         "xxxxxxxxxxxxxxx",
-        "xp xmmmx  p  p ",
-        "x xmmx x   p  p",
-        "xmmmx px    p  ",
-        "xxxxxxxx   p   ",
+        "xp xmmmx m xxxx",
+        "x xmmx mm xxxxx",
+        "xmmmx pxmmmxxxx",
+        "xxxxxxxxxxxxxxx",
 };
 
 void display_board(Board *board){
@@ -93,13 +93,46 @@ void display_board(Board *board){
 //        printf("\n");
 //    }
     unsigned short selected_map = board->selected_map;
+
+    //border top
+    for (int i = 0; i < 8 + 10; ++i) {
+        printf("%c", i % 2 ? '-' : '=');
+    }
+    printf("\n");
+
+
+    //margin top
+    printf("|");
+    for (int i = 0; i < 8 + 10 - 2; ++i) {
+        printf(" ");
+    }
+    printf("|\n");
+
+
+    //content
     for (int i = 0; i < 5; ++i) {
+        printf("|    ");
         for (int j = 0; j < 8; ++j) {
-            printf("%c", _get_char_ascii(test[i][j]));
+            printf("%c", test[i][j]);
         }
+        printf("   * |");
         printf("\n");
     }
-    //footer
+
+
+    //margin bottom
+    printf("|");
+    for (int i = 0; i < 8 + 10 - 2; ++i) {
+        printf(" ");
+    }
+    printf("|\n");
+
+
+    //border bottom
+    for (int i = 0; i < 8 + 10; ++i) {
+        printf("%c", i % 2 ? '-' : '=');
+    }
+    printf("\n\n");
 }
 
 void display_opening_credits() {
@@ -113,7 +146,8 @@ void display_ending_credits() {
 }
 
 void clear_console() {
-    system("cls");
+//    system("cls");
+    printf("\033[2J\033[1;1H");
 }
 
 int _get_char_ascii(char c) {

@@ -8,7 +8,6 @@ void menu_events(Board *board, int event);
 
 
 void run_game(Board *board) {
-    printf("RUN GAME\n");
     display_board(board);
 }
 
