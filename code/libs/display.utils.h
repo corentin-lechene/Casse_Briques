@@ -95,7 +95,7 @@ void display_board(Board *board){
     unsigned short selected_map = board->selected_map;
 
     //border top
-    for (int i = 0; i < 8 + 10; ++i) {
+    for (int i = 0; i < 8 + 10 + strlen("  Bombe █  |") - 2; ++i) {
         printf("%c", i % 2 ? '-' : '=');
     }
     printf("\n");
@@ -106,7 +106,12 @@ void display_board(Board *board){
     for (int i = 0; i < 8 + 10 - 2; ++i) {
         printf(" ");
     }
-    printf("|\n");
+    printf("|");
+    for (int i = 0; i < strlen("  Bombe █  |") - 3; ++i) {
+        printf(" ");
+    }
+    printf("|");
+    printf("\n");
 
 
     //content
@@ -115,24 +120,30 @@ void display_board(Board *board){
         for (int j = 0; j < 8; ++j) {
             printf("%c", test[i][j]);
         }
-        printf("   * |");
+        printf("    |");
+        printf("  Bombe █  |");
         printf("\n");
     }
 
 
-    //margin bottom
+    //margin top
     printf("|");
     for (int i = 0; i < 8 + 10 - 2; ++i) {
         printf(" ");
     }
-    printf("|\n");
+    printf("|");
+    for (int i = 0; i < strlen("  Bombe █  |") - 3; ++i) {
+        printf(" ");
+    }
+    printf("|");
+    printf("\n");
 
 
-    //border bottom
-    for (int i = 0; i < 8 + 10; ++i) {
+    //border top
+    for (int i = 0; i < 8 + 10 + strlen("  Bombe █  |") - 2; ++i) {
         printf("%c", i % 2 ? '-' : '=');
     }
-    printf("\n\n");
+    printf("\n");
 }
 
 void display_opening_credits() {
