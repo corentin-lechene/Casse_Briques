@@ -82,11 +82,28 @@ Board *generate_board() {
     return board;
 }
 
+//melange un tab
+void tab_mix(char *tab[], int size){
+    char *tmp = malloc(sizeof(char *));
+    int nbRandom=0;
+
+    for(int i =0; i< size; i++){
+        nbRandom = rand()%10;
+        tmp = tab[i];
+        tab[i] = tab[nbRandom];
+        tab[nbRandom] = tmp;
+    }
+}
+
+
+
+/**
+ * @features : créer un bot
+ * */
 Player *create_bot(Player *bot, int *index){
-    int j = rand()%10;
-    j = rand()%10 + 1;
-    char *bot_name[10] = {"Bob","Fox","Mewtwo","Ritcher","Rob","Joker","Bot","Bob","Toto","Test"};
-    //Melanger le tab
+    char *bot_name[10] = {"Bob","Fox","Mewtwo","Ritcher","Rob","Joker","Bot","Ricky","Toto","Test"};
+    int size = 10;
+    tab_mix(bot_name, size);
     bot->name = bot_name[*index];
     bot->is_bot = 1;
     return bot;
@@ -101,6 +118,7 @@ Player *create_player(int *nb_added_player, int *nb_real_player,int *index){
     player->id = *index+48;
     player->score = 0;
     player->heart = 1;
+    //couleur
     if(*nb_added_player != *nb_real_player){
         printf("Entrez votre pseudo : ");
         scanf("%s", player->name);
