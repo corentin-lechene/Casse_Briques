@@ -12,7 +12,8 @@ void run_game(Board *board) {
 }
 
 void run_menu(Board *board) {
-    int event = getch();
+//    int event = getch();
+    int event = 0;
     menu_events(board, event);
 
     display_menus(board);
@@ -77,6 +78,8 @@ Board *generate_board() {
 
     //    unsigned short nb_map;          //le nombre de carte
     //    unsigned short nb_player;       //le nombre de joueur
+
+    board->nb_items = 11;
 
     board->bo = 3;
     board->selected_menu = 10;

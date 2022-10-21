@@ -46,8 +46,8 @@ static char *ITEMS_NAME[] = {
         "Flamme Jaune",
         "Flamme Bleue",
         "Flamme Rouge",
-        "Invincibilité",
         "Coeur",
+        "Invincibilite",
         "Vie",
 };
 
@@ -60,8 +60,8 @@ static char *ITEMS_STRING[] = {
         "↑",
         "↓",
         "♣",
-        "*",
         "■",
+        "*",
         "♥",
 };
 
@@ -146,6 +146,7 @@ typedef struct {
 
     unsigned short nb_map;
     unsigned short nb_player;
+    unsigned short nb_items;
 
     unsigned short bo;
     unsigned short selected_menu;
