@@ -89,7 +89,7 @@ void tab_mix(char *tab[], int size){
     char *tmp;
     int nbRandom=0;
     for(int i =0; i< size; i++){
-        nbRandom = rand()%10;
+        nbRandom = rand()%size;
         tmp = tab[i];
         tab[i] = tab[nbRandom];
         tab[nbRandom] = tmp;
@@ -112,8 +112,11 @@ Player *create_bot(Player *bot, int *index){
  * @features : create player
  * */
 Player *create_player(int *nb_added_player, int *nb_real_player,int *index){
+    char *colors[6] = {RED, GREEN,YELLOW,BLUE,PURPLE,CYAN};
     Player *player = malloc(sizeof(Player));
+    player->color = malloc(sizeof (char));
     player->name = malloc(sizeof (char));
+    player->color = colors[*index];
     player->id = *index+48;
     player->score = 0;
     player->heart = 1;
