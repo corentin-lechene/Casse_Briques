@@ -82,11 +82,12 @@ Board *generate_board() {
     return board;
 }
 
-//melange un tab
+/**
+ * @features : mélanger un tableau
+ * */
 void tab_mix(char *tab[], int size){
-    char *tmp = malloc(sizeof(char *));
+    char *tmp;
     int nbRandom=0;
-
     for(int i =0; i< size; i++){
         nbRandom = rand()%10;
         tmp = tab[i];
@@ -94,8 +95,6 @@ void tab_mix(char *tab[], int size){
         tab[nbRandom] = tmp;
     }
 }
-
-
 
 /**
  * @features : créer un bot
