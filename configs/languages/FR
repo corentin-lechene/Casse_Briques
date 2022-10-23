@@ -1,3 +1,4 @@
 EXIT = Quitter
-START = Lancer
-OPTIONS = Configurations
+START = Jouer
+CONFIGURATION = Configurations
+TITLE_MENU_START = Menu Principal

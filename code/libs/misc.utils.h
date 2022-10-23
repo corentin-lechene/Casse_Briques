@@ -1,7 +1,13 @@
 #define IN_EXIT 0
+#define MENU_START 1
+#define MENU_MODE_GAME 2
+#define MENU_NUMBER_PLAYER 3
+#define MENU_SELECT_MAPS 5
+#define MENU_ONLINE 4
 #define IN_GAME 8
 #define IN_PLAYERS 6
 #define IN_MAPS 6
+#define IN_CONFIG 7
 
 #define CROSS_TOP 72
 #define CROSS_BOTTOM 80
@@ -26,11 +32,14 @@
 #define WHITE "\033[;37m"
 
 
+
+
 static char *LANGUAGE_DIR = "../configs/LANGUAGES/";
 static char *LANGUAGE_ATTRIBUTES[] = {
         "EXIT",
         "START",
-        "OPTIONS",
+        "CONFIGURATION",
+        "TITLE_MENU_START",
         NULL
 };
 
@@ -47,7 +56,8 @@ char MAP[5][5] = {
 typedef struct {
     char *exit;
     char *start;
-    char *options;
+    char *configuration;
+    char *title_menu_start;
 } Language;
 
 typedef struct {

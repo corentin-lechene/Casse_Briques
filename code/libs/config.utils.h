@@ -55,13 +55,21 @@ void _set_lang_attribute(Language *lang, char *attribute, char *value) {
             lang->start = malloc(sizeof(char) * strlen(value) + 1);
             strcpy(lang->start, value);
             return;
-        } else if(strcmp(attribute, "OPTIONS") == 0) {
+        } else if(strcmp(attribute, "CONFIGURATION") == 0) {
             if(value == NULL) {
                 printf("*Warning: value is NULL at %s\n", attribute);
                 return;
             }
-            lang->options = malloc(sizeof(char) * strlen(value) + 1);
-            strcpy(lang->options, value);
+            lang->configuration = malloc(sizeof(char) * strlen(value) + 1);
+            strcpy(lang->configuration, value);
+            return;
+        } else if(strcmp(attribute, "TITLE_MENU_START") == 0) {
+            if (value == NULL) {
+                printf("*Warning: value is NULL at %s\n", attribute);
+                return;
+            }
+            lang->title_menu_start = malloc(sizeof(char) * strlen(value) + 1);
+            strcpy(lang->title_menu_start, value);
             return;
         }
     }

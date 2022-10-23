@@ -1,3 +1,4 @@
 EXIT = Exit
 START = Start
-BONJOUR = hello
+CONFIGURATION = Configurations
+TITLE_MENU_START = Main Menu
