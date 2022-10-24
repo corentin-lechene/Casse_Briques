@@ -113,6 +113,7 @@ typedef struct {
 
     Player *winner;
     Player *players_turn;
+    Map **selected_maps;
 
     unsigned short nb_map;
     unsigned short nb_player;
@@ -121,5 +122,5 @@ typedef struct {
     unsigned short selected_menu;
     unsigned short selected_choice;
     unsigned short selected_map;
-    unsigned short *selected_maps;
+    //unsigned short *selected_maps;
 } Board;

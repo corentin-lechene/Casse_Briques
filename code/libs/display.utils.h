@@ -6,6 +6,10 @@ void display_menu_header(char *title);
 void display_menu(unsigned short *cursor, ...);
 void display_board(Board *board);
 
+void display_menu_carte(unsigned short *cursor,Board *board);
+
+
+
 
 void display_opening_credits() {
     clear_console();
@@ -27,7 +31,7 @@ void display_menus(Board *board) {
             display_menu(&board->selected_choice, "EN LIGNE","Demarrer un serveur","Rejoindre un serveur","Retour", NULL);
             break;
         case 5 :
-            display_menu(&board->selected_choice, "CARTES"," "," "," ","Retour", NULL);
+            display_menu_carte(&board->selected_choice,board);
             break;
         case 7 :
             display_menu(&board->selected_choice, "Choix de langues","FR","EN","Retour",NULL);
@@ -35,6 +39,26 @@ void display_menus(Board *board) {
         default:
             break;
     }
+}
+
+/**
+ * @features : display maps
+ * */
+void display_menu_carte(unsigned short *cursor,Board *board){
+    clear_console();
+    display_menu_header("CARTES");
+    for(int i = 0; i<board->selected_map; i++){
+        printf("\n");
+        printf("[%d]", i+1);
+        for(int a = 0; a<board->selected_maps[i]->rows; a ++){
+            printf("\t");
+            for(int b = 0; b<board->selected_maps[i]->columns; b++){
+                printf("%c", board->selected_maps[i]->body[a][b]);
+            }
+            printf("\n");
+        }
+    }
+
 }
 
 void display_menu_header(char *title) {

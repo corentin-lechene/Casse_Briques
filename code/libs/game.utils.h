@@ -10,6 +10,8 @@ Player *create_bot(Player *bot, int *index);
 void push(Board *dest, Player *source, int index);
 void tab_mix(char *tab[], int size);
 
+void get_maps_by_number_player(Board *board);
+
 void run_game(Board *board) {
     printf("RUN GAME");
 }
@@ -20,7 +22,7 @@ void run_menu(Board *board) {
     display_menus(board);
     if(board->selected_menu == IN_PLAYERS) {
         get_players(board);
-        //recup les maps selon le nb de joueur
+        get_maps_by_number_player(board);
         board->selected_menu = MENU_SELECT_MAPS;
         display_menus(board);
     } else if(board->selected_menu == IN_MAPS) {
@@ -54,7 +56,7 @@ void menu_events(Board *board, int event) {
                 board->selected_menu = MENU_NUMBER_PLAYER;
             }
             else if(board->selected_menu == MENU_NUMBER_PLAYER){
-                board->nb_player = board->selected_choice + 1;
+                board->nb_player = board->selected_choice + 1; //recup le nombre de joueur réel choisit
                 board->selected_menu = IN_PLAYERS;
             }else if(board->selected_menu == MENU_START && board->selected_choice == 1){
                 board->selected_menu = IN_CONFIG;
@@ -95,6 +97,7 @@ Board *generate_board() {
     board->lang = get_lang(config->language);
     board->winner = malloc(sizeof(Player));
     board->players_turn = malloc(sizeof(Player));
+    board->selected_maps = malloc(sizeof (Map *));
 
     //    board->maps = get_maps();
     //    board->nb_map = get_nb_map(board->maps);
@@ -109,6 +112,18 @@ Board *generate_board() {
 
     return board;
 }
+
+void get_maps_by_number_player(Board *board){
+    int j =0;
+    for(int i =0; i<board->nb_map; i++){
+        if(board->maps[i]->player_max >= board->nb_player){
+            board->selected_maps[j] = board->maps[i];
+            board->selected_map++;
+            j++;
+        }
+    }
+}
+
 
 
 /**
