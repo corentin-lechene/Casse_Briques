@@ -4,10 +4,10 @@
 #define MENU_NUMBER_PLAYER 3
 #define MENU_SELECT_MAPS 5
 #define MENU_ONLINE 4
-#define IN_GAME 8
+#define IN_GAME 7
 #define IN_PLAYERS 6
-#define IN_MAPS 6
-#define IN_CONFIG 7
+//#define IN_MAPS 6
+#define IN_CONFIG 9
 
 #define CROSS_TOP 72
 #define CROSS_BOTTOM 80
@@ -122,5 +122,4 @@ typedef struct {
     unsigned short selected_menu;
     unsigned short selected_choice;
     unsigned short selected_map;
-    //unsigned short *selected_maps;
 } Board;

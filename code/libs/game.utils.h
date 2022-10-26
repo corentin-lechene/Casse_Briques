@@ -13,7 +13,10 @@ void tab_mix(char *tab[], int size);
 void get_maps_by_number_player(Board *board);
 
 void run_game(Board *board) {
-    printf("RUN GAME");
+    if(kbhit()){
+        int c = getch();
+        display_board(board);
+    }
 }
 
 void run_menu(Board *board) {
@@ -25,8 +28,6 @@ void run_menu(Board *board) {
         get_maps_by_number_player(board);
         board->selected_menu = MENU_SELECT_MAPS;
         display_menus(board);
-    } else if(board->selected_menu == IN_MAPS) {
-//        board->selected_maps = get_selected_maps();
     }
 }
 
@@ -54,12 +55,13 @@ void menu_events(Board *board, int event) {
                 board->selected_menu = MENU_ONLINE;
             }else if(board->selected_menu == MENU_SELECT_MAPS && board->selected_choice == 3){
                 board->selected_menu = MENU_NUMBER_PLAYER;
-            }
-            else if(board->selected_menu == MENU_NUMBER_PLAYER){
+            }else if(board->selected_menu == MENU_NUMBER_PLAYER){
                 board->nb_player = board->selected_choice + 1; //recup le nombre de joueur réel choisit
                 board->selected_menu = IN_PLAYERS;
             }else if(board->selected_menu == MENU_START && board->selected_choice == 1){
                 board->selected_menu = IN_CONFIG;
+            } else if(board->selected_menu == MENU_SELECT_MAPS){
+                board->selected_menu = IN_GAME;
             }
             else if(board->selected_menu == IN_CONFIG){
                 if(board->selected_choice == 2){
@@ -73,7 +75,7 @@ void menu_events(Board *board, int event) {
                 board->selected_menu = MENU_START;
             }
             else {
-                    if (board->selected_menu + 1 < 7) {
+                    if (board->selected_menu + 1 < 12) {
                         board->selected_menu += 1;
                     }
                 }
