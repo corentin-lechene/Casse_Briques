@@ -33,53 +33,51 @@
 #define ITEM_CO 254
 #define ITEM_VI 3
 
-
 #define MARGIN_X 4
 #define MARGIN_Y 1
 
+
+enum items_index {
+    bomb = 0,
+    destructible_wall,
+    indestructible_wall,
+    bomb_Up,
+    bomb_Down,
+    yellow_Flame,
+    blue_Flame,
+    red_Flame,
+    bomb_Passes,
+    bomb_Kick,
+    invincibility,
+    heart,
+    life,
+    items_len
+};
+
 static char *ITEMS_NAME[] = {
-        "Bombe",
-        "Bombe Up",
-        "Bombe down",
-        "Bombe Kick",
-        "Passe-Bombes",
-        "Flamme Jaune",
-        "Flamme Bleue",
-        "Flamme Rouge",
-        "Coeur",
-        "Invincibilite",
-        "Vie",
+        "bomb",
+        "destructible_wall",
+        "indestructible_wall",
+        "bomb_Up",
+        "bomb_Down",
+        "yellow_Flame",
+        "blue_Flame",
+        "red_Flame",
+        "bomb_Passes",
+        "bomb_Kick",
+        "invincibility",
+        "heart",
+        "life",
 };
 
-static char *ITEMS_STRING[] = {
-        "Ó",
-        "+",
-        "-",
-        "☼",
-        "Ø",
-        "↑",
-        "↓",
-        "♣",
-        "■",
-        "*",
-        "♥",
-};
 
-static char *LANGUAGE_DIR = "../configs/LANGUAGES/";
+static char *LANGUAGE_DIR = "../configs/languages/";
+static char *ITEM_DIR = "../configs/items";
 static char *LANGUAGE_ATTRIBUTES[] = {
         "EXIT",
         "START",
         "OPTIONS",
         NULL
-};
-
-/* MAPS */
-char MAP[5][5] = {
-        219, 219,219,219,219,
-        219, 219,219,219,219,
-        219, 219,219,219,219,
-        219, 219,219,219,219,
-        219, 219,219,219,219
 };
 
 
@@ -112,10 +110,13 @@ typedef struct {
 } Bomb;
 
 typedef struct {
-    char id;
+    char *name;
     int duration;
-    short rare;
+    short rarity;
     short is_used;
+
+    int _int;
+    char _char;
 } Item;
 
 typedef struct {
@@ -128,7 +129,7 @@ typedef struct {
     unsigned short heart;
     unsigned short nb_bomb;
     Bomb *bomb;
-    Item **item;
+    Item **items;
 
     unsigned int placed_bomb;
     unsigned short is_bot;
@@ -139,6 +140,7 @@ typedef struct {
     Player **players;
     Config *config;
     Language *lang;
+    Item **items;
 
     Map **selected_maps;
     Player *winner;

@@ -157,7 +157,7 @@ void _display_items(int *item_index, Board *board) {
     //todo récuperer l'objet le plus long
     for (int j = 0; j < board->nb_items / 5; ++j) {
         if(*item_index < board->nb_items) {
-            printf("%s : %s", ITEMS_NAME[*item_index], ITEMS_STRING[*item_index]);
+//            printf("%s : %s", ITEMS_NAME[*item_index], ITEMS_STRING[*item_index]);
             unsigned short offset = strlen(ITEMS_NAME[9]) - strlen(ITEMS_NAME[*item_index]);
             if(*item_index + 1 >= board->nb_items) {
                 offset += strlen(ITEMS_NAME[9]) + 4;

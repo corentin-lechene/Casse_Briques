@@ -68,6 +68,40 @@ void _set_lang_attribute(Language *lang, char *attribute, char *value) {
     printf("*Warning: attribute [%s] does not exist\n", attribute);
 }
 
+Item *_get_item(char *item_att) {
+    Item *item = malloc(sizeof(Item));
+    FILE *f = fopen(ITEM_DIR, "r");
+
+    if(f != NULL) {
+        char *line = malloc(sizeof(char) * 255);
+        char *attribute, *value;
+
+        while (fgets(line, 255, f) != NULL) {
+            attribute = _get_attribute(line);
+            value = _get_value(line);
+
+            if(strcmp(item_att, attribute) == 0) {
+                sscanf(value, "%d %c", &item->_int, &item->_char);
+                break;
+            }
+        }
+        fclose(f);
+        free(attribute);
+        free(value);
+        return item;
+    }
+    return NULL;
+}
+
+Item **get_items() {
+    Item **items = malloc(sizeof(Item) * items_len);
+
+    for (int i = 0; i < items_len; ++i) {
+        items[i] = _get_item(ITEMS_NAME[i]);
+    }
+    return items;
+}
+
 Map **get_maps() {
     Map **maps = malloc(sizeof(Map));
     return maps;

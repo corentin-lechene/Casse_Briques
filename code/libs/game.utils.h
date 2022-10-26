@@ -73,6 +73,10 @@ Board *generate_board() {
     board->winner = malloc(sizeof(Player));
     board->players_turn = malloc(sizeof(Player));
 
+    board->items = get_items();
+    printf("end\n%d - %c", board->items[destructible_wall]->_int,  board->items[destructible_wall]->_char);
+
+
     //    board->maps = get_maps();
     //    board->nb_map = get_nb_map(board->maps);
 
