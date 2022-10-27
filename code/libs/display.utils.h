@@ -9,6 +9,7 @@ void display_menu(unsigned short *cursor, ...);
 
 void display_board(Board *board);
 
+void display_menu_carte(unsigned short *cursor,Board *board);
 void _display_border(Board *board);
 void _display_margin_y(Board *board);
 void _display_margin_x();
@@ -21,22 +22,47 @@ int _get_char_ascii(char c);
 void display_menus(Board *board) {
     switch (board->selected_menu) {
         case 1 :
-            display_menu(&board->selected_choice,"MENU PRINCIPAL","Jouer","Configuration","Quitter", NULL);
+            display_menu(&board->selected_choice, "MENU PRINCIPAL","Jouer","Configuration","Quitter", NULL);
             break;
         case 2 :
             display_menu(&board->selected_choice,"MODE DE JEU","Jouer contre l'ordinateur","Jouer en Local","Jouer en Ligne","Retour", NULL);
             break;
         case 3 :
-            display_menu(&board->selected_choice, "CARTES"," "," "," ","Retour", NULL);
+            display_menu(&board->selected_choice, "Nombre de Joueur","1 Joueur", "2 Joueurs","3 Joueurs","4 Joueurs", "Plus...","Retour",NULL);
             break;
         case 4 :
             display_menu(&board->selected_choice, "EN LIGNE","Demarrer un serveur","Rejoindre un serveur","Retour", NULL);
             break;
-        case 11 :
-            display_menu(&board->selected_choice, "Reprendre", "Quitter", NULL);
+        case 5 :
+            display_menu_carte(&board->selected_choice,board);
+            break;
+        case 9 :
+            display_menu(&board->selected_choice, "Choix de langues","FR","EN","Retour",NULL);
             break;
         default:
             break;
+    }
+}
+
+/**
+ * @features : display maps
+ * */
+void display_menu_carte(unsigned short *cursor,Board *board){
+    clear_console();
+    display_menu_header("CARTES");
+    //printf("%d", board->selected_menu);
+    for(int i = 0; i<1; i++){
+        printf("\n");
+       //printf("[%c]\n\n", i == *cursor ? 'X' : ' ');
+        printf("[X]\n\n");
+        //TODO : duplication fonction
+        for(int a = 0; a<board->selected_maps[i]->rows; a ++){
+            printf("\t");
+            for(int b = 0; b<board->selected_maps[i]->columns; b++){
+                printf("%c", board->selected_maps[i]->body[a][b]);
+            }
+            printf("\n");
+        }
     }
 }
 
@@ -50,7 +76,7 @@ void display_menu(unsigned short *cursor, ...) {
     clear_console();
     va_list ap, temp;
     va_start(ap, cursor);
-//    temp = ap;
+    temp = ap;
     int i = 0;
     while (va_arg(ap, char* ) != NULL) {
         i++;

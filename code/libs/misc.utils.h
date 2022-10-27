@@ -1,8 +1,13 @@
 #define IN_EXIT 0
-#define IN_GAME 10
+#define MENU_START 1
+#define MENU_MODE_GAME 2
+#define MENU_NUMBER_PLAYER 3
+#define MENU_SELECT_MAPS 5
+#define MENU_ONLINE 4
+#define IN_GAME 7
 #define IN_PLAYERS 6
-#define IN_MAPS 7
-#define IN_PAUSE 11
+//#define IN_MAPS 6
+#define IN_CONFIG 9
 
 #define CROSS_TOP 72
 #define CROSS_BOTTOM 80
@@ -16,6 +21,15 @@
 #define KEY_ESCAPE 27
 #define KEY_ENTER 13
 #define KEY_SPACE 32
+
+#define BLACK "\033[;30m"
+#define RED "\033[;31m"
+#define GREEN "\033[;32m"
+#define YELLOW "\033[;33m"
+#define BLUE "\033[;34m"
+#define PURPLE "\033[;35m"
+#define CYAN "\033[;36m"
+#define WHITE "\033[;37m"
 
 #define ITEM_MI 219
 #define ITEM_MD 176
@@ -168,7 +182,6 @@ typedef struct {
 
     unsigned short nb_map;
     unsigned short nb_player;
-    unsigned short nb_items;
 
     unsigned short bo;
     unsigned short selected_menu;
