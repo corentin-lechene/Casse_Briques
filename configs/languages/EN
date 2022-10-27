@@ -2,7 +2,7 @@ loading_init = Preparing the game
 loading_config = Retrieving configuration
 loading_language = Retrieving languages
 loading_items = Retrieving Items
-loading_maps = Retrieving maps
+loading_maps = Retrieving default_maps
 
 language_start = Play
 language_back = Back

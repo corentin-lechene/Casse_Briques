@@ -56,7 +56,7 @@ void display_menu_carte(unsigned short *cursor,Board *board){
         printf("\n");
        //printf("[%c]\n\n", i == *cursor ? 'X' : ' ');
         printf("[X]\n\n");
-        display_map(board->selected_maps[i]);
+        display_map(board->maps[i]);
     }
 }
 
@@ -169,10 +169,10 @@ void display_map(Map *map) {
 
 void _display_content(Board *board) {
     int item_index = 0;
-    for (int i = 0; i < board->selected_maps[board->selected_map]->rows; ++i) {
+    for (int i = 0; i < board->maps[board->current_map]->rows; ++i) {
         printf("|");
         _display_margin_x();
-        for (int j = 0; j < board->selected_maps[board->selected_map]->columns; ++j) {
+        for (int j = 0; j < board->maps[board->current_map]->columns; ++j) {
 //            printf("%c", _get_char_ascii(test[i][j]));
             printf("%c", test[i][j]);
         }
@@ -206,7 +206,7 @@ void _display_items(int *item_index, Board *board) {
 }
 
 void _display_margin_y(Board *board) {
-    unsigned short column_map = board->selected_maps[board->selected_map]->columns;
+    unsigned short column_map = board->maps[board->current_map]->columns;
     unsigned short len_board = MARGIN_X + column_map + MARGIN_X;
     unsigned short len_items = MARGIN_X + strlen(ITEMS_NAME[9]) + 4 + MARGIN_X + strlen(ITEMS_NAME[9]) + 4 + MARGIN_X;
     for (int j = 0; j < MARGIN_Y; ++j) {
@@ -229,7 +229,7 @@ void _display_margin_x() {
 }
 
 void _display_border(Board *board) {
-    unsigned short column_map = board->selected_maps[board->selected_map]->columns;
+    unsigned short column_map = board->maps[board->current_map]->columns;
     unsigned short len_board = 1 + MARGIN_X + column_map + MARGIN_X + 1;
     unsigned short len_items = MARGIN_X + strlen(ITEMS_NAME[9]) + 4 + MARGIN_X + strlen(ITEMS_NAME[9]) + 4 + MARGIN_X + 1;
 

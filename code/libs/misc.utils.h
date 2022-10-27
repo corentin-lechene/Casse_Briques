@@ -5,6 +5,7 @@
 #define MENU_SELECT_MAPS 5
 #define MENU_ONLINE 4
 #define IN_GAME 7
+#define IN_PREP_GAME 10
 #define IN_PLAYERS 6
 //#define IN_MAPS 6
 #define IN_CONFIG 9
@@ -162,7 +163,7 @@ typedef struct {
     unsigned short score;
     unsigned short heart;
     unsigned short nb_bomb;
-    Bomb *bomb;
+    Bomb **bombs;
     Item **items;
 
     unsigned int placed_bomb;
@@ -170,23 +171,25 @@ typedef struct {
 } Player;
 
 typedef struct {
-    Map **maps;
+    Map **default_maps;
     Player **players;
     Config *config;
     Lang **lang;
     Item **items;
 
-    Map **selected_maps;
+    Map **maps;
     Player *winner;
     Player *player_turn;
 
     unsigned short nb_map;
+    unsigned short nb_selected_map;
     unsigned short nb_player;
 
     unsigned short bo;
     unsigned short selected_menu;
     unsigned short selected_choice;
-    unsigned short selected_map;
+    unsigned short current_map;
+    unsigned short *selected_maps;
 } Board;
 
 typedef struct {

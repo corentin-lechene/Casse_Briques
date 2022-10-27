@@ -8,12 +8,16 @@
 #include "libs/functions.utils.h"
 #include "libs/display.utils.h"
 #include "libs/config.utils.h"
+#include "libs/map.utils.h"
 #include "libs/game.utils.h"
 
 
 void run_program(Board *board) {
     if(board->selected_menu == IN_GAME) {
         run_game(board);
+    } else if(board->selected_menu == IN_PREP_GAME) {
+        init_game(board);
+        exit(0);
     } else {
         run_menu(board);
     }
@@ -24,20 +28,20 @@ void run_program(Board *board) {
 int main() {
     Board *board = generate_board();
 
-    board->selected_maps = malloc(sizeof(Map) * 2);
-    board->selected_maps[0] = malloc(sizeof(Map));
-    board->selected_maps[0]->rows = 6;
-    board->selected_maps[0]->columns = 8;
+    board->default_maps = malloc(sizeof(Map) * 2);
+    board->default_maps[0] = malloc(sizeof(Map));
+    board->default_maps[0]->rows = 6;
+    board->default_maps[0]->columns = 8;
 
-    board->selected_maps[0]->body = malloc(sizeof(char *) * board->selected_maps[0]->rows);
+    board->default_maps[0]->body = malloc(sizeof(char *) * board->default_maps[0]->rows);
 
-    for (int i = 0; i < board->selected_maps[0]->rows; ++i) {
-        board->selected_maps[0]->body[i] = malloc(sizeof(char) * board->selected_maps[0]->columns);
+    for (int i = 0; i < board->default_maps[0]->rows; ++i) {
+        board->default_maps[0]->body[i] = malloc(sizeof(char) * board->default_maps[0]->columns);
     }
 
-    for (int i = 0; i < board->selected_maps[0]->rows; ++i) {
-        for (int y = 0; y < board->selected_maps[0]->columns; ++y) {
-            board->selected_maps[0]->body[i][y] = test[i][y];
+    for (int i = 0; i < board->default_maps[0]->rows; ++i) {
+        for (int y = 0; y < board->default_maps[0]->columns; ++y) {
+            board->default_maps[0]->body[i][y] = test[i][y];
         }
     }
 

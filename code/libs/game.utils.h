@@ -13,8 +13,34 @@ void tab_mix(char *tab[], int size);
 
 void get_maps_by_number_player(Board *board);
 
+
+void init_game(Board *board) {
+    copy_maps(board);
+//    init_players();
+//
+//    set_next_map(board);
+    board->selected_menu = IN_GAME;
+    display_map(board->maps[board->current_map]);
+}
+
+
 void run_game(Board *board) {
-    display_map(board->selected_maps[board->selected_map]);
+//    if(kbhit()) {
+//        int event = getch();
+//        const char *event_name = get_event();
+//
+//        if(strcmp(event_name, "move") == 0) {
+//            set_player_direction(event);
+//            if(move_player(board)) {
+//                display_map(board->selected_maps[board->selected_map]);
+//            }
+//        } else if(strcmp(event_name, "bomb") == 0) {
+//            plant_bomb(board);
+//            display_map(board->selected_maps[board->selected_map]);
+//        } else if(strcmp(event_name, "resume") == 0) {
+//            display_resume(board);
+//        }
+//    }
 }
 
 void run_menu(Board *board) {
@@ -34,10 +60,6 @@ void menu_events(Board *board, int event) {
     switch (event) {
         case CROSS_TOP:
         case KEY_z:
-            if (board->selected_choice - 1 >= 0) {
-                board->selected_choice -= 1;
-            }
-            break;
         case CROSS_BOTTOM:
         case KEY_s:
             board->selected_choice += 1;
@@ -92,18 +114,23 @@ Board *generate_board() {
 
     Board *board = malloc(sizeof(Board));
 
-    board->bo = 3;
-    board->selected_menu = 1;
-    board->selected_choice = 0;
-    board->selected_map = 0;
-
     board->winner = malloc(sizeof(Player));
     board->player_turn = malloc(sizeof(Player));
 
     board->config = get_config(loading);
     board->lang = get_langs(loading);
     board->items = get_items(loading);
-    board->maps = get_maps(loading);
+//    board->default_maps = get_maps(loading);
+    board->maps = malloc(sizeof(Map));
+
+//    board->nb_map = get_nb_map(board->maps);
+    board->nb_map = 1;
+    board->current_map = 0;
+    board->nb_selected_map = 1;
+
+    board->bo = 3;
+    board->selected_menu = 10;
+    board->selected_choice = 0;
 
     return board;
 }
