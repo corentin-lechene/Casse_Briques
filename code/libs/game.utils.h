@@ -75,7 +75,7 @@ Board *generate_board() {
     board->player_turn = malloc(sizeof(Player));
 
     board->config = get_config(loading);
-    board->lang = get_lang(loading);
+    board->lang = get_langs(loading);
     board->items = get_items(loading);
     board->maps = get_maps(loading);
 

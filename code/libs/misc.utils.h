@@ -24,6 +24,24 @@
 #define MARGIN_X 4
 #define MARGIN_Y 1
 
+/********************/
+/**      enums     **/
+/********************/
+enum loading_index {
+    loading_init = 0,
+    loading_config,
+    loading_language,
+    loading_items,
+    loading_maps,
+    loading_len
+};
+
+enum language_index {
+    language_start = 0,
+    language_back,
+    language_exit,
+    language_len
+};
 
 enum items_index {
     item_bomb = 0,
@@ -42,14 +60,25 @@ enum items_index {
     items_len
 };
 
-enum loading_index {
-    loading_init = 0,
-    loading_config,
-    loading_language,
-    loading_items,
-    loading_maps,
-    loading_len
+
+/********************/
+/**  const names   **/
+/********************/
+
+static char *LOADING_NAME[] = {
+        "loading_init",
+        "loading_config",
+        "loading_language",
+        "loading_items",
+        "loading_maps",
 };
+
+static char *LANGUAGES_NAME[] = {
+        "language_start",
+        "language_back",
+        "language_exit",
+};
+
 
 static char *ITEMS_NAME[] = {
         "item_bomb",
@@ -67,31 +96,16 @@ static char *ITEMS_NAME[] = {
         "item_life",
 };
 
-static char *LOADING_NAME[] = {
-        "loading_init",
-        "loading_config",
-        "loading_language",
-        "loading_items",
-        "loading_maps",
-};
-
 
 static char *CONFIG_DIR = "../app.config";
 static char *LANGUAGE_DIR = "../configs/languages/";
 static char *ITEM_DIR = "../configs/items";
-static char *LANGUAGE_ATTRIBUTES[] = {
-        "EXIT",
-        "START",
-        "OPTIONS",
-        NULL
-};
 
 
 typedef struct {
-    char *exit;
-    char *start;
-    char *options;
-} Language;
+    char *str;
+    unsigned int str_len;
+} Lang;
 
 typedef struct {
     unsigned short port;
@@ -139,13 +153,13 @@ typedef struct {
 
     unsigned int placed_bomb;
     unsigned short is_bot;
-} Player;;
+} Player;
 
 typedef struct {
     Map **maps;
     Player **players;
     Config *config;
-    Language *lang;
+    Lang **lang;
     Item **items;
 
     Map **selected_maps;

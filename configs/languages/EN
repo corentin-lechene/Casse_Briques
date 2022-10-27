@@ -3,3 +3,7 @@ loading_config = Retrieving configuration
 loading_language = Retrieving languages
 loading_items = Retrieving Items
 loading_maps = Retrieving maps
+
+language_start = Play
+language_back = Back
+language_exit = Exit

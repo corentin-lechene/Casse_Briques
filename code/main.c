@@ -41,7 +41,6 @@ int main() {
         }
     }
 
-
     display_opening_credits();
     while (board->selected_menu >= 1) {
         run_program(board);

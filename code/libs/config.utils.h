@@ -1,14 +1,14 @@
 
+Config *get_config(Loading *loading);
+Lang **get_langs(Loading *loading);
+Item **get_items(Loading *loading);
+Map **get_maps(Loading *loading);
+
+Item *_get_item(char *item_att);
+
 char *_get_value_of_file(const char *attribute, const char *dir);
 char *_get_attribute(char *line);
 char *_get_value(char *line);
-
-void _set_lang_attribute(Language *lang, char *attribute, char *value);
-
-Config *get_config(Loading *loading);
-Language *get_lang(Loading *loading);
-Item **get_items(Loading *loading);
-Map **get_maps(Loading *loading);
 
 
 
@@ -25,81 +25,24 @@ Config *get_config(Loading *loading) {
     return config;
 }
 
-Language *get_lang(Loading *loading) {
-    Language *lang = malloc(sizeof(Language));
+Lang **get_langs(Loading *loading) {
+    Lang **lang = malloc(sizeof(Lang) * language_len);
     char *lang_value = _get_value_of_file("language", CONFIG_DIR);
     char *lang_dir = str_cat(LANGUAGE_DIR, lang_value);
 
-    FILE *file_lang = fopen(lang_dir, "r");
-    char *line = malloc(sizeof(char) * 255);
-    char *attribute, *value;
-
-    if(file_lang != NULL) {
-        while (fgets(line, 255, file_lang) != NULL) {
-            attribute = _get_attribute(line);
-            value = _get_value(line);
-            ///fixme erreur
-            if(value == NULL || attribute == NULL) {
-                printf("Erreur dans les langues");
-                exit(0);
-            }
-            _set_lang_attribute(lang, attribute, value);
+    char *value;
+    for (int i = 0; i < language_len; ++i) {
+        lang[i] = malloc(sizeof(Lang));
+        value = _get_value_of_file(LANGUAGES_NAME[i], lang_dir);
+        if(value == NULL) {
+            printf("Erreur dans language");
+            exit(0);
         }
-        fclose(file_lang);
-        free(attribute);
-        free(value);
-        display_loading(loading, loading_language);
-        return lang;
+        lang[i]->str = value;
+        lang[i]->str_len = strlen(value);
     }
-    return NULL;
-}
-void _set_lang_attribute(Language *lang, char *attribute, char *value) {
-    if(attribute == NULL) {
-        return;
-    }
-
-    for (int i = 0; i < tab_length(LANGUAGE_ATTRIBUTES); ++i) {
-        //func("EXIT", attribute);
-        if(strcmp(attribute, "EXIT") == 0) {
-            if(value == NULL) {
-                printf("*Warning: value is NULL at %s\n", attribute);
-                return;
-            }
-            lang->exit = malloc(sizeof(char) * strlen(value) + 1);
-            strcpy(lang->exit, value);
-            return;
-        } else if(strcmp(attribute, "START") == 0) {
-            if(value == NULL) {
-                printf("*Warning: value is NULL at %s\n", attribute);
-                return;
-            }
-            lang->start = malloc(sizeof(char) * strlen(value) + 1);
-            strcpy(lang->start, value);
-            return;
-        } else if(strcmp(attribute, "OPTIONS") == 0) {
-            if(value == NULL) {
-                printf("*Warning: value is NULL at %s\n", attribute);
-                return;
-            }
-            lang->options = malloc(sizeof(char) * strlen(value) + 1);
-            strcpy(lang->options, value);
-            return;
-        }
-    }
-///    printf("*Warning: attribute [%s] does not exist\n", attribute);
-}
-
-
-Item *_get_item(char *item_att) {
-    Item *item = malloc(sizeof(Item));
-    char *values = _get_value_of_file(item_att, ITEM_DIR);
-
-    if(values != NULL) {
-        sscanf(values, "%d %c", &item->_int, &item->_char);
-        free(values);
-        return item;
-    }
-    return NULL;
+    free(value);
+    return lang;
 }
 
 Item **get_items(Loading *loading) {
@@ -122,6 +65,18 @@ Map **get_maps(Loading *loading) {
     return maps;
 }
 
+
+Item *_get_item(char *item_att) {
+    Item *item = malloc(sizeof(Item));
+    char *values = _get_value_of_file(item_att, ITEM_DIR);
+
+    if(values != NULL) {
+        sscanf(values, "%d %c", &item->_int, &item->_char);
+        free(values);
+        return item;
+    }
+    return NULL;
+}
 Loading *get_loading() {
     Loading *loading = malloc(sizeof(Loading));
     loading->loading_item = malloc(sizeof(Loading_item) * loading_len);
