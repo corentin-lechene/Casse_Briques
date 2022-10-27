@@ -2,4 +2,6 @@ loading_init = Preparation du jeu
 loading_config = Recuperation de la configuration
 loading_language = Recuperation des langues
 loading_items = Recuperation des objets
+
+
 loading_maps = Recuperation des cartes

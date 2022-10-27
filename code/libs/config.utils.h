@@ -149,9 +149,11 @@ char *_get_value_of_file(const char *attribute, const char *dir) {
         char *file_att, *file_value;
 
         while (fgets(line, 255, f) != NULL) {
+            if(strcmp(line, "\n") == 0) {
+                continue;
+            }
             file_att = _get_attribute(line);
             file_value = _get_value(line);
-
             if(strcmp(attribute, file_att) == 0) {
                 fclose(f);
                 free(file_att);
