@@ -42,6 +42,7 @@ Lang **get_langs(Loading *loading) {
         lang[i]->str_len = strlen(value);
     }
     free(value);
+    display_loading(loading, loading_language);
     return lang;
 }
 
