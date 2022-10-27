@@ -20,57 +20,63 @@
 #define ITEM_MI 219
 #define ITEM_MD 176
 #define ITEM_SP 32
-#define ITEM_TP 126
-#define ITEM_BB 162
-#define ITEM_BU 43
-#define ITEM_BD 45
-#define ITEM_BP 157
-#define ITEM_BK 15
-#define ITEM_FJ 24
-#define ITEM_FB 25
-#define ITEM_FR 5
-#define ITEM_IN 42
-#define ITEM_CO 254
-#define ITEM_VI 3
 
 #define MARGIN_X 4
 #define MARGIN_Y 1
 
 
 enum items_index {
-    bomb = 0,
-    destructible_wall,
-    indestructible_wall,
-    bomb_Up,
-    bomb_Down,
-    yellow_Flame,
-    blue_Flame,
-    red_Flame,
-    bomb_Passes,
-    bomb_Kick,
-    invincibility,
-    heart,
-    life,
+    item_bomb = 0,
+    item_destructible_wall,
+    item_indestructible_wall,
+    item_bomb_Up,
+    item_bomb_Down,
+    item_yellow_Flame,
+    item_blue_Flame,
+    item_red_Flame,
+    item_bomb_Passes,
+    item_bomb_Kick,
+    item_invincibility,
+    item_heart,
+    item_life,
     items_len
 };
 
+enum loading_index {
+    loading_init = 0,
+    loading_config,
+    loading_language,
+    loading_items,
+    loading_maps,
+    loading_len
+};
+
 static char *ITEMS_NAME[] = {
-        "bomb",
-        "destructible_wall",
-        "indestructible_wall",
-        "bomb_Up",
-        "bomb_Down",
-        "yellow_Flame",
-        "blue_Flame",
-        "red_Flame",
-        "bomb_Passes",
-        "bomb_Kick",
-        "invincibility",
-        "heart",
-        "life",
+        "item_bomb",
+        "item_destructible_wall",
+        "item_indestructible_wall",
+        "item_bomb_Up",
+        "item_bomb_Down",
+        "item_yellow_Flame",
+        "item_blue_Flame",
+        "item_red_Flame",
+        "item_bomb_Passes",
+        "item_bomb_Kick",
+        "item_invincibility",
+        "item_heart",
+        "item_life",
+};
+
+static char *LOADING_NAME[] = {
+        "loading_init",
+        "loading_config",
+        "loading_language",
+        "loading_items",
+        "loading_maps",
 };
 
 
+static char *CONFIG_DIR = "../app.config";
 static char *LANGUAGE_DIR = "../configs/languages/";
 static char *ITEM_DIR = "../configs/items";
 static char *LANGUAGE_ATTRIBUTES[] = {
@@ -144,7 +150,7 @@ typedef struct {
 
     Map **selected_maps;
     Player *winner;
-    Player *players_turn;
+    Player *player_turn;
 
     unsigned short nb_map;
     unsigned short nb_player;
@@ -155,3 +161,13 @@ typedef struct {
     unsigned short selected_choice;
     unsigned short selected_map;
 } Board;
+
+typedef struct {
+    unsigned short item;
+    char *name;
+} Loading_item;
+
+typedef struct {
+  Loading_item **loading_item;
+  unsigned short load_ended;
+} Loading;

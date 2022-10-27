@@ -8,7 +8,7 @@ void menu_events(Board *board, int event);
 
 
 void run_game(Board *board) {
-    display_board(board);
+    display_map(board->selected_maps[board->selected_map]);
 }
 
 void run_menu(Board *board) {
@@ -61,34 +61,23 @@ void menu_events(Board *board, int event) {
 }
 
 Board *generate_board() {
+    Loading *loading = get_loading();
+    display_loading(loading, loading_init);
 
     Board *board = malloc(sizeof(Board));
-    Config *config = malloc(sizeof(Config));
-
-    config->language = malloc(sizeof(char) * 3);
-    config->language = "FR";
-
-    board->config = config;
-    board->lang = get_lang(config->language);
-    board->winner = malloc(sizeof(Player));
-    board->players_turn = malloc(sizeof(Player));
-
-    board->items = get_items();
-    printf("end\n%d - %c", board->items[destructible_wall]->_int,  board->items[destructible_wall]->_char);
-
-
-    //    board->maps = get_maps();
-    //    board->nb_map = get_nb_map(board->maps);
-
-    //    unsigned short nb_map;          //le nombre de carte
-    //    unsigned short nb_player;       //le nombre de joueur
-
-    board->nb_items = 11;
 
     board->bo = 3;
     board->selected_menu = 10;
     board->selected_choice = 0;
     board->selected_map = 0;
+
+    board->winner = malloc(sizeof(Player));
+    board->player_turn = malloc(sizeof(Player));
+
+    board->config = get_config(loading);
+    board->lang = get_lang(loading);
+    board->items = get_items(loading);
+    board->maps = get_maps(loading);
 
     return board;
 }

@@ -1,3 +1,5 @@
-EXIT = Exit
-START = Start
-BONJOUR = hello
+loading_init = Preparing the game
+loading_config = Retrieving configuration
+loading_language = Retrieving languages
+loading_items = Retrieving Items
+loading_maps = Retrieving maps

@@ -135,6 +135,18 @@ int _get_char_ascii(char c) {
     return res;
 }
 
+void display_map(Map *map) {
+    clear_console();
+    for (int i = 0; i < map->rows; ++i) {
+        for (int j = 0; j < map->columns; ++j) {
+//            printf("%c", _get_char_ascii(test[i][j]));
+            printf("%c", test[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
 void _display_content(Board *board) {
     int item_index = 0;
     for (int i = 0; i < board->selected_maps[board->selected_map]->rows; ++i) {
@@ -155,18 +167,18 @@ void _display_content(Board *board) {
 
 void _display_items(int *item_index, Board *board) {
     //todo récuperer l'objet le plus long
-    for (int j = 0; j < board->nb_items / 5; ++j) {
-        if(*item_index < board->nb_items) {
+    for (int j = 0; j < items_len / 5; ++j) {
+        if(*item_index < items_len) {
 //            printf("%s : %s", ITEMS_NAME[*item_index], ITEMS_STRING[*item_index]);
             unsigned short offset = strlen(ITEMS_NAME[9]) - strlen(ITEMS_NAME[*item_index]);
-            if(*item_index + 1 >= board->nb_items) {
+            if(*item_index + 1 >= items_len) {
                 offset += strlen(ITEMS_NAME[9]) + 4;
             }
             for (int i = 0; i < offset; ++i) {
                 printf(" ");
             }
             *item_index += 1;
-            if(j == board->nb_items / 5 - 2) {
+            if(j == items_len / 5 - 2) {
                 _display_margin_x();
             }
         }
@@ -219,6 +231,15 @@ void display_ending_credits() {
 }
 
 void clear_console() {
-//    system("cls");
-    printf("\033[2J\033[1;1H");
+    system("cls");
+//    printf("\033[2J\033[1;1H");
+}
+
+
+void display_loading(Loading *loading, int loading_index) {
+    loading->loading_item[loading_index]->item = 1;
+    clear_console();
+    for (int i = 0; i < loading_len; ++i) {
+        printf("[%s] %s\n", loading->loading_item[i]->item ? "OK" : "..", loading->loading_item[i]->name);
+    }
 }

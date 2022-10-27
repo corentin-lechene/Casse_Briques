@@ -1,4 +1,12 @@
 
+char *str_cat(char *first, char *last) {
+    unsigned short len = strlen(first) + strlen(last) ;
+    char *cat = malloc(sizeof(char) * (len + 1));
+    strcat(strcpy(cat, first), last);
+    cat[len] = '\0';
+    return cat;
+}
+
 char *str_trim(char *str) {
     unsigned int len = strlen(str);
     if(len <= 0 || str[0] == '\0' || str[0] == '\n') {
