@@ -21,6 +21,7 @@ void run_menu(Board *board) {
     int event = getch();
     menu_events(board, event);
     display_menus(board);
+
     if(board->selected_menu == IN_PLAYERS) {
         get_players(board);
         get_maps_by_number_player(board);
@@ -69,7 +70,7 @@ void menu_events(Board *board, int event) {
                 }else if(board->selected_choice == 1){
                     board->config->language = "EN";
                 }
-                board->lang = get_lang(board->config->language);
+//                board->lang = get_langs(board->config->language);
                 board->selected_menu = MENU_START;
             }
             else {
@@ -92,7 +93,7 @@ Board *generate_board() {
     Board *board = malloc(sizeof(Board));
 
     board->bo = 3;
-    board->selected_menu = 10;
+    board->selected_menu = 1;
     board->selected_choice = 0;
     board->selected_map = 0;
 
@@ -108,14 +109,14 @@ Board *generate_board() {
 }
 
 void get_maps_by_number_player(Board *board){
-    int j =0;
-    for(int i =0; i<board->nb_map; i++){
-        if(board->maps[i]->player_max >= board->nb_player){
-            board->selected_maps[j] = board->maps[i];
-            board->selected_map++;
-            j++;
-        }
-    }
+//    int j =0;
+//    for(int i =0; i<board->nb_map; i++){
+////        if(board->maps[i]->player_max >= board->nb_player){
+//            board->selected_maps[j] = board->maps[i];
+//            board->selected_map++;
+//            j++;
+////        }
+//    }
 }
 
 

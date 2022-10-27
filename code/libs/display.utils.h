@@ -8,6 +8,7 @@ void display_menu_header(char *title);
 void display_menu(unsigned short *cursor, ...);
 
 void display_board(Board *board);
+void display_map(Map *map);
 
 void display_menu_carte(unsigned short *cursor,Board *board);
 void _display_border(Board *board);
@@ -55,14 +56,7 @@ void display_menu_carte(unsigned short *cursor,Board *board){
         printf("\n");
        //printf("[%c]\n\n", i == *cursor ? 'X' : ' ');
         printf("[X]\n\n");
-        //TODO : duplication fonction
-        for(int a = 0; a<board->selected_maps[i]->rows; a ++){
-            printf("\t");
-            for(int b = 0; b<board->selected_maps[i]->columns; b++){
-                printf("%c", board->selected_maps[i]->body[a][b]);
-            }
-            printf("\n");
-        }
+        display_map(board->selected_maps[i]);
     }
 }
 
