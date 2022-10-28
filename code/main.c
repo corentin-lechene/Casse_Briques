@@ -6,10 +6,11 @@
 #include <conio.h>
 #include "libs/misc.utils.h"
 #include "libs/functions.utils.h"
-#include "libs/display.utils.h"
-#include "libs/config.utils.h"
 #include "libs/map.utils.h"
+#include "libs/config.utils.h"
+#include "libs/display.utils.h"
 #include "libs/game.utils.h"
+#include "libs/config.utils.h"
 
 
 void run_program(Board *board) {
@@ -28,22 +29,22 @@ void run_program(Board *board) {
 int main() {
     Board *board = generate_board();
 
-    board->default_maps = malloc(sizeof(Map) * 2);
-    board->default_maps[0] = malloc(sizeof(Map));
-    board->default_maps[0]->rows = 6;
-    board->default_maps[0]->columns = 8;
-
-    board->default_maps[0]->body = malloc(sizeof(char *) * board->default_maps[0]->rows);
-
-    for (int i = 0; i < board->default_maps[0]->rows; ++i) {
-        board->default_maps[0]->body[i] = malloc(sizeof(char) * board->default_maps[0]->columns);
-    }
-
-    for (int i = 0; i < board->default_maps[0]->rows; ++i) {
-        for (int y = 0; y < board->default_maps[0]->columns; ++y) {
-            board->default_maps[0]->body[i][y] = test[i][y];
-        }
-    }
+//    board->default_maps = malloc(sizeof(Map) * 2);
+//    board->default_maps[0] = malloc(sizeof(Map));
+//    board->default_maps[0]->rows = 6;
+//    board->default_maps[0]->columns = 8;
+//
+//    board->default_maps[0]->body = malloc(sizeof(char *) * board->default_maps[0]->rows);
+//
+//    for (int i = 0; i < board->default_maps[0]->rows; ++i) {
+//        board->default_maps[0]->body[i] = malloc(sizeof(char) * board->default_maps[0]->columns);
+//    }
+//
+//    for (int i = 0; i < board->default_maps[0]->rows; ++i) {
+//        for (int y = 0; y < board->default_maps[0]->columns; ++y) {
+//            board->default_maps[0]->body[i][y] = test[i][y];
+//        }
+//    }
 
     display_opening_credits();
     while (board->selected_menu >= 1) {

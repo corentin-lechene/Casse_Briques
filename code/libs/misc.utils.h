@@ -95,6 +95,7 @@ static char *LANGUAGES_NAME[] = {
 };
 
 
+
 static char *ITEMS_NAME[] = {
         "item_bomb",
         "item_destructible_wall",
@@ -111,10 +112,10 @@ static char *ITEMS_NAME[] = {
         "item_life",
 };
 
-
-static char *CONFIG_DIR = "../app.config";
-static char *LANGUAGE_DIR = "../configs/languages/";
-static char *ITEM_DIR = "../configs/items";
+const char *MAP_DIR = "../configs/maps/";
+const char *CONFIG_DIR = "../app.config";
+const char *LANGUAGE_DIR = "../configs/languages/";
+const char *ITEM_DIR = "../configs/items";
 
 
 typedef struct {

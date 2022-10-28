@@ -1,5 +1,5 @@
 
-char *str_cat(char *first, char *last) {
+char *str_cat(const char *first, char *last) {
     unsigned short len = strlen(first) + strlen(last) ;
     char *cat = malloc(sizeof(char) * (len + 1));
     strcat(strcpy(cat, first), last);
