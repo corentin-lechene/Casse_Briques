@@ -20,7 +20,7 @@ void init_game(Board *board) {
 //
 //    set_next_map(board);
     board->selected_menu = IN_GAME;
-    display_map(board->maps[board->current_map]);
+    display_map(board->maps[0]);
 }
 
 
@@ -120,7 +120,7 @@ Board *generate_board() {
     board->config = get_config(loading);
     board->lang = get_langs(loading);
     board->items = get_items(loading);
-//    board->default_maps = get_maps(loading);
+    board->default_maps = get_maps(loading);
     board->maps = malloc(sizeof(Map));
 
 //    board->nb_map = get_nb_map(board->maps);
@@ -129,7 +129,7 @@ Board *generate_board() {
     board->nb_selected_map = 1;
 
     board->bo = 3;
-    board->selected_menu = 10;
+    board->selected_menu = IN_PREP_GAME;
     board->selected_choice = 0;
 
     return board;

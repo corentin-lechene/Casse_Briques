@@ -60,11 +60,6 @@ Item **get_items(Loading *loading) {
     return items;
 }
 
-Map **get_maps(Loading *loading) {
-    Map **maps = malloc(sizeof(Map));
-    display_loading(loading, loading_maps);
-    return maps;
-}
 
 
 Item *_get_item(char *item_att) {

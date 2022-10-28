@@ -160,7 +160,7 @@ void display_map(Map *map) {
     for (int i = 0; i < map->rows; ++i) {
         for (int j = 0; j < map->columns; ++j) {
 //            printf("%c", _get_char_ascii(test[i][j]));
-            printf("%c", test[i][j]);
+            printf("%c", map->body[i][j]);
         }
         printf("\n");
     }
