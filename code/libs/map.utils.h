@@ -18,7 +18,7 @@ Map *_get_map(const char *filename) {
     while (!feof(f)) {
         int c = fgetc(f);
         if (index == 0) {
-            map->bomb_max = c - 48; // index 0 49 - 48 = 1
+            map->bomb_default = c - 48; // index 0 49 - 48 = 1
         }
         if (index == 2) {
             map->columns = c - 48;    // index 2

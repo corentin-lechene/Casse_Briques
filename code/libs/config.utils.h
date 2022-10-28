@@ -67,10 +67,14 @@ Item *_get_item(char *item_att) {
     char *values = _get_value_of_file(item_att, ITEM_DIR);
 
     if(values != NULL) {
-        sscanf(values, "%d %c", &item->_int, &item->_char);
+//        printf("%s", values);
+        item->data = malloc(sizeof(Data_item));
+        sscanf(values, "%d %c", &item->data->_int, &item->data->_char);
         free(values);
         return item;
     }
+    printf("Erreur dans get_item()");
+    exit(0);
     return NULL;
 }
 Loading *get_loading() {

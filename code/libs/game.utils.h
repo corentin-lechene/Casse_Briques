@@ -13,6 +13,30 @@ void tab_mix(char *tab[], int size);
 
 void get_maps_by_number_player(Board *board);
 
+char *get_event(int event) {
+    switch (event) {
+        case CROSS_TOP:
+        case KEY_z:
+        case CROSS_BOTTOM:
+        case KEY_s:
+        case CROSS_LEFT:
+        case KEY_q:
+        case CROSS_RIGHT:
+        case KEY_d:
+            return "move";
+
+        case KEY_ENTER:
+        case KEY_SPACE:
+            return "bomb";
+
+        case KEY_ESCAPE:
+            return "resume";
+
+        default:
+            return NULL;
+    }
+}
+
 
 void init_game(Board *board) {
     copy_maps(board);
@@ -25,22 +49,23 @@ void init_game(Board *board) {
 
 
 void run_game(Board *board) {
-//    if(kbhit()) {
-//        int event = getch();
-//        const char *event_name = get_event();
-//
-//        if(strcmp(event_name, "move") == 0) {
+    if(kbhit()) {
+        int event = getch();
+        const char *event_name = get_event(event);
+
+        if(strcmp(event_name, "move") == 0) {
 //            set_player_direction(event);
 //            if(move_player(board)) {
-//                display_map(board->selected_maps[board->selected_map]);
+//                display_map(board->maps[board->selected_map]);
 //            }
-//        } else if(strcmp(event_name, "bomb") == 0) {
-//            plant_bomb(board);
-//            display_map(board->selected_maps[board->selected_map]);
-//        } else if(strcmp(event_name, "resume") == 0) {
+        } else if(strcmp(event_name, "bomb") == 0) {
+//            if(plant_bomb(board)) {
+//                display_map(board->maps[board->selected_map]);
+//            }
+        } else if(strcmp(event_name, "resume") == 0) {
 //            display_resume(board);
-//        }
-//    }
+        }
+    }
 }
 
 void run_menu(Board *board) {

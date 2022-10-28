@@ -59,16 +59,17 @@ enum language_index {
 };
 
 enum items_index {
-    item_bomb = 0,
-    item_destructible_wall,
+    item_destructible_wall = 0,
     item_indestructible_wall,
-    item_bomb_Up,
-    item_bomb_Down,
-    item_yellow_Flame,
-    item_blue_Flame,
-    item_red_Flame,
-    item_bomb_Passes,
-    item_bomb_Kick,
+    item_bomb_up,
+    item_bomb_down,
+    item_yellow_flame,
+    item_blue_flame,
+    item_red_flame,
+    item_bomb,
+    item_bomb_destroy,
+    item_bomb_kick,
+    item_bomb_passes,
     item_invincibility,
     item_heart,
     item_life,
@@ -97,19 +98,21 @@ static char *LANGUAGES_NAME[] = {
 
 
 static char *ITEMS_NAME[] = {
-        "item_bomb",
         "item_destructible_wall",
         "item_indestructible_wall",
-        "item_bomb_Up",
-        "item_bomb_Down",
-        "item_yellow_Flame",
-        "item_blue_Flame",
-        "item_red_Flame",
-        "item_bomb_Passes",
-        "item_bomb_Kick",
+        "item_bomb_up",
+        "item_bomb_down",
+        "item_yellow_flame",
+        "item_blue_flame",
+        "item_red_flame",
+        "item_bomb",
+        "item_bomb_destroy",
+        "item_bomb_kick",
+        "item_bomb_passes",
         "item_invincibility",
         "item_heart",
         "item_life",
+        "items_len"
 };
 
 const char *MAP_DIR = "../configs/maps/";
@@ -129,21 +132,29 @@ typedef struct {
 } Config;
 
 typedef struct {
+    int _int;
+    char _char;
+} Data_item;
+
+typedef struct {
+    char player_id;
+    Data_item *data;
+} Bomb;
+
+typedef struct {
     unsigned short id;
     unsigned short rows;
     unsigned short columns;
 
-    char **body;
-
     unsigned short player_max;
-    unsigned short bomb_max;
+    unsigned short bomb_default;
+
+    unsigned short heart;
+
+    char **body;
+    Bomb **Bombs;
 } Map;
 
-typedef struct {
-    char id;
-    int range;
-    short bomb_kick;
-} Bomb;
 
 typedef struct {
     char *name;
@@ -151,8 +162,7 @@ typedef struct {
     short rarity;
     short is_used;
 
-    int _int;
-    char _char;
+    Data_item *data;
 } Item;
 
 typedef struct {
@@ -161,13 +171,15 @@ typedef struct {
     char *color;
     unsigned short direction;
 
-    unsigned short score;
     unsigned short heart;
     unsigned short nb_bomb;
-    Bomb **bombs;
-    Item **items;
+    unsigned short bomb_range;
+    unsigned short bomb_type;
 
-    unsigned int placed_bomb;
+    Item **items;
+    Bomb **bombs;
+
+    unsigned short score;
     unsigned short is_bot;
 } Player;
 
