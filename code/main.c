@@ -8,6 +8,7 @@
 #include "libs/misc.utils.h"
 #include "libs/config.utils.h"
 #include "libs/display.utils.h"
+#include "libs/map.utils.h"
 #include "libs/game.utils.h"
 
 
@@ -22,12 +23,12 @@ void run_program(Board *board) {
 
 
 int main() {
-    Board *board = generate_board();
+    //Board *board = generate_board();
 
-    display_intro();
-    while (board->selected_menu >= 1) {
-        run_program(board);
-    }
-    printf("end");
+    Board *board = malloc(sizeof (Board));
+    board->maps = get_maps();
+    display_board(board);
+    free(board);
+
     return 0;
 }

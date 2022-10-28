@@ -5,7 +5,7 @@ char *_get_value(char *line);
 void _set_lang_attribute(Language *lang, char *attribute, char *value);
 Language *get_lang(char *language);
 
-Map **get_maps();
+//Map **get_maps();
 
 
 Language *get_lang(char *language) {
@@ -68,10 +68,10 @@ void _set_lang_attribute(Language *lang, char *attribute, char *value) {
     printf("*Warning: attribute [%s] does not exist\n", attribute);
 }
 
-Map **get_maps() {
-    Map **maps = malloc(sizeof(Map));
-    return maps;
-}
+//Map **get_maps() {
+//Map **maps = malloc(sizeof(Map));
+//return maps;
+//}
 
 
 char *_get_attribute(char *line) {

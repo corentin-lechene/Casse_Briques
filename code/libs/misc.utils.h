@@ -16,6 +16,7 @@
 #define KEY_ENTER 13
 #define KEY_SPACE 32
 
+const char *MAP_DIR = "../configs/maps/";
 static char *LANGUAGE_DIR = "../configs/LANGUAGES/";
 static char *LANGUAGE_ATTRIBUTES[] = {
         "EXIT",
