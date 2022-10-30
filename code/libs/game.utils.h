@@ -83,7 +83,7 @@ void display_menus(Board *board) {
             menu_home_case(board);
             break;
         case menu_options:
-            current_menu->nb_choice = 2;
+            menu_options_case(board);
             break;
         case menu_languages:
             break;
@@ -138,8 +138,8 @@ void run_menu(Board *board) {
                 display = 1;
             } else {
                 board->current_menu = current_menu->next_menu;
-                display = 1;
                 board->current_choice = 0;
+                display = 1;
             }
             break;
         case KEY_ESCAPE:

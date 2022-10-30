@@ -24,6 +24,7 @@ choice_options = Options
 choice_patch_notes = Patch notes
 choice_credits = Credits
 choice_leave = Quitter
+choice_languages = Langages
 choice_back = Retour
 choice_solo = En solo
 choice_local = En local
