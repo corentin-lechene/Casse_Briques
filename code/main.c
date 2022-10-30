@@ -11,7 +11,6 @@
 #include "libs/map.utils.h"
 #include "libs/game.utils.h"
 
-
 void run_program(Board *board) {
     if(board->selected_menu == IN_GAME) {
         run_game(board);
@@ -24,10 +23,13 @@ void run_program(Board *board) {
 }
 
 
-
 int main() {
-    Board *board = generate_board();
 
+    Board *board = generate_board();
+    board->players[0] = malloc(sizeof (Player));
+    board->players[0]->x = 1;
+    board->players[0]->y = 2;
+    //run_game(board);
     display_opening_credits();
     while (board->selected_menu >= 1) {
         run_program(board);
