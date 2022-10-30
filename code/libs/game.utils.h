@@ -1,3 +1,4 @@
+
 Board *generate_board();
 
 void run_game(Board *board);
@@ -6,12 +7,10 @@ void run_menu(Board *board);
 void menu_events(Board *board, int event);
 
 void get_players(Board *board);
-Player *create_player(int *index);
 Player *create_bot(Player *bot, int *index);
 void push(Board *dest, Player *source, int index);
 void tab_mix(char *tab[], int size);
 
-void get_maps_by_number_player(Board *board);
 
 char *get_event(int event) {
     switch (event) {
@@ -39,6 +38,7 @@ char *get_event(int event) {
 
 
 void init_game(Board *board) {
+    printf("[%d]", board->nb_selected_map);
     copy_maps(board);
 //    init_players();
 //
@@ -69,7 +69,6 @@ void run_game(Board *board) {
 }
 
 
-
 void display_menus(Board *board) {
     Menu *current_menu = board->menus[board->current_menu];
 
@@ -91,9 +90,13 @@ void display_menus(Board *board) {
         case menu_game_mode:
             menu_game_mode_case(board);
             break;
+        case menu_solo:
+            menu_solo_case(board);
+            break;
         case menu_players:
             break;
         case menu_maps:
+            menu_maps_case(board);
             break;
         case menu_init_game:
             break;
@@ -113,6 +116,7 @@ void display_menus(Board *board) {
             break;
     }
 }
+
 
 void run_menu(Board *board) {
     int event = getch();
@@ -166,56 +170,30 @@ void run_menu(Board *board) {
 }
 
 
-void get_maps_by_number_player(Board *board){
-//    int j =0;
-//    for(int i =0; i<board->nb_map; i++){
-////        if(board->maps[i]->player_max >= board->nb_player){
-//            board->selected_maps[j] = board->maps[i];
-//            board->selected_map++;
-//            j++;
-////        }
-//    }
-}
 
 
 
 /**
  * @fetaures : get players
  * */
-void get_players(Board *board){
-    clear_console();
-    board->players = malloc(sizeof (Player *)*board->nb_player);
-    for(int i =0; i<board->nb_player; i++){
-        push(board, create_player( &i), i);
-    }
+//void get_players(Board *board){
+//    clear_console();
+//    board->players = malloc(sizeof (Player *)*board->nb_player);
+//    for(int i =0; i<board->nb_player; i++){
+//        push(board, create_player( &i), i);
+//    }
+//
+//    for(int i =0; i<board->nb_player; i++){
+//        printf("\n%s", board->players[i]->color);
+//        printf(" Pseudo => %s", board->players[i]->name);
+//        printf(" IsBot => %d", board->players[i]->is_bot);
+//        printf(" ID => %d", board->players[i]->id);
+//    }
+//    printf("%s\n", WHITE);
+//    system("pause");
+//}
 
-    for(int i =0; i<board->nb_player; i++){
-        printf("\n%s", board->players[i]->color);
-        printf(" Pseudo => %s", board->players[i]->name);
-        printf(" IsBot => %d", board->players[i]->is_bot);
-        printf(" ID => %d", board->players[i]->id);
-    }
-    printf("%s\n", WHITE);
-    system("pause");
-}
 
-/**
- * @features : create player
- * */
-Player *create_player(int *index){
-    char *colors[6] = {RED, GREEN,YELLOW,BLUE,PURPLE,CYAN};
-    Player *player = malloc(sizeof(Player));
-    player->color = malloc(sizeof (char));
-    player->name = malloc(sizeof (char));
-    player->color = colors[*index];
-    player->id = *index+48;
-    player->score = 0;
-    player->heart = 1;
-    printf("Entrez votre pseudo : ");
-    scanf("%s", player->name);
-    player->is_bot = 0;
-    return player;
-}
 
 /**
  * @features : create a bot

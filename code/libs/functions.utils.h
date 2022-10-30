@@ -1,4 +1,6 @@
 
+double random_between(double min, double max);
+
 char *str_cat(const char *first, const char *last);
 char *str_trim(char *str);
 char *str_get_left(char *line, char separator);
@@ -6,9 +8,11 @@ char *str_get_right(char *line, char separator);
 
 char *file_get_value(const char *attribute, const char *dir);
 short file_display_content(const char *path);
+short file_get_nb(const char *dir);
 
 void text_color(int color);
 void text_color_default();
+enum colors_index get_random_color();
 
 void clear_console();
 void exit_error(char *desc);
@@ -22,6 +26,9 @@ void die();
 
 /* ---===       --------        ===--- */
 
+enum colors_index get_random_color() {
+    return random_between(0, colors_len);
+}
 
 char *str_cat(const char *first, const char *last) {
     unsigned short len = strlen(first) + strlen(last) ;
@@ -133,12 +140,34 @@ short file_display_content(const char *path) {
     }
     return 0;
 }
+short file_get_nb(const char *dir_name) {
+    struct dirent *dir;
+    DIR *d = opendir(dir_name);
+    short count = 0;
+
+    if(d != NULL) {
+        while ((dir = readdir(d)) != NULL) {
+            if(isalpha(dir->d_name[0])) {
+                count += 1;
+            }
+        }
+        closedir(d);
+        return count;
+    }
+    warningf("Ouverture du dossier impossible");
+    return 0;
+}
 
 void text_color(int color) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
 void text_color_default() {
     text_color(COLOR_DEFAULT);
+}
+
+double random_between(double min, double max) {
+    srand( time (NULL));
+    return min + ((int)rand() % (int)max);
 }
 
 void clear_console() {
@@ -163,8 +192,8 @@ void warningf(char *warn) {
 }
 
 char *set_value(char *value) {
-    char *v = malloc(sizeof(char) * strlen(value));
-    strcpy(value, v);
+    char *v = malloc(sizeof(char) * strlen(value) + 1);
+    strcpy(v, value);
     return v;
 }
 

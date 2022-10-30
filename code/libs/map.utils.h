@@ -1,10 +1,4 @@
-int startsWith(const char *a, const char *b) {
-    if (strncmp(a, b, strlen(b)) == 0) return 1;
-    return 0;
-}
-
-
-
+void get_maps_by_max_player(Board *board);
 
 
 char **_copy_body(Map *src) {
@@ -42,4 +36,24 @@ void copy_maps(Board *board) {
         board->maps[i]->body = _copy_body(board->default_maps[select_map]);
     }
 //    display_map(board->maps[0]);
+}
+
+void get_maps_by_max_player(Board *board) {
+    unsigned short maps[board->nb_map];
+    board->nb_selected_map = 0;
+
+
+    for (int i = 0; i < board->nb_map; i++) {
+        if(board->nb_player <= board->default_maps[i]->player_max) {
+            maps[board->nb_selected_map++] = i;
+        }
+    }
+    if(board->nb_selected_map == 0) {
+        errorf("0 maps");
+    }
+
+    board->selected_maps = malloc(sizeof(short) * board->nb_selected_map);
+    for (int i = 0; i < board->nb_selected_map; ++i) {
+        board->selected_maps[i] = maps[i];
+    }
 }

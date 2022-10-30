@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <stdarg.h>
 #include <dirent.h>
 #include <conio.h>
@@ -10,6 +11,7 @@
 #include "libs/functions.utils.h"
 #include "libs/display.utils.h"
 #include "libs/map.utils.h"
+#include "libs/player.utils.h"
 #include "libs/menu.utils.h"
 #include "libs/game.utils.h"
 #include "libs/config.utils.h"
@@ -19,6 +21,7 @@ void run_program(Board *board) {
     if(board->current_menu == menu_game) {
         run_game(board);
     } else if(board->current_menu == menu_init_game) {
+        printf("init _game");
         init_game(board);
         exit(0);
     } else {

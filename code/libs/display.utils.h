@@ -45,6 +45,16 @@ void display_choice_back(Board *board, int index) {
     printf("[%c]\t%s\n", index == board->current_choice ? 'X' : ' ', file_get_value(CHOICES_NAME[choice_back], board->config->lang_dir));
 }
 
+void display_choice_yes(Board *board, int index) {
+    board->menus[board->current_menu]->nb_choice += 1;
+    printf("[%c]\t%s\n", index == board->current_choice ? 'X' : ' ', file_get_value(CHOICES_NAME[choice_yes], board->config->lang_dir));
+}
+
+void display_choice_no(Board *board, int index) {
+    board->menus[board->current_menu]->nb_choice += 1;
+    printf("[%c]\t%s\n", index == board->current_choice ? 'X' : ' ', file_get_value(CHOICES_NAME[choice_no], board->config->lang_dir));
+}
+
 void display_menu(Board *board, choices_index *choices) {
     display_menu_header(board->menus[board->current_menu]->title);
     for (int i = 0; i < board->menus[board->current_menu]->nb_choice; ++i) {
@@ -79,6 +89,9 @@ char test3[12][20] = {
         "x xmmx mm xxxx  pxxx",
         "xxxxxxxxxxxxxxxxxxxx",
 };
+
+
+
 
 void display_board(Board *board){
     clear_console();
@@ -117,7 +130,6 @@ int _get_char_ascii(char c) {
 }
 
 void display_map(Map *map) {
-    clear_console();
     for (int i = 0; i < map->rows; ++i) {
         for (int j = 0; j < map->columns; ++j) {
 //            printf("%c", _get_char_ascii(test[i][j]));

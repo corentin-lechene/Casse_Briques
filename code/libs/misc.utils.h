@@ -23,21 +23,32 @@
 #define KEY_CROSS_LEFT 75
 #define KEY_CROSS_RIGHT 77
 
-#define BLACK "\033[;30m"
-#define RED "\033[;31m"
-#define GREEN "\033[;32m"
-#define YELLOW "\033[;33m"
-#define BLUE "\033[;34m"
-#define PURPLE "\033[;35m"
-#define CYAN "\033[;36m"
-#define WHITE "\033[;37m"
-
 #define ITEM_MI 219
 #define ITEM_MD 176
 #define ITEM_SP 32
 
 #define MARGIN_X 4
 #define MARGIN_Y 1
+
+enum colors_index {
+    color_black = 0,
+    color_blue,
+    color_green,
+    color_cyan,
+    color_red,
+    color_magenta,
+    color_brown,
+    color_light_gray,
+    color_dark_gray,
+    color_light_blue,
+    color_light_green,
+    color_light_cyan,
+    color_light_red,
+    color_light_magenta,
+    color_yellow,
+    color_white,
+    colors_len,
+};
 
 /* ---===  MENUS  ===--- */
 typedef enum {
@@ -46,6 +57,7 @@ typedef enum {
     menu_options,
     menu_languages,
     menu_game_mode,
+    menu_solo,
     menu_players,
     menu_maps,
     menu_online,
@@ -64,6 +76,7 @@ const char *MENUS_NAME[] = {
         "menu_options",
         "menu_languages",
         "menu_game_mode",
+        "menu_solo",
         "menu_players",
         "menu_maps",
         "menu_online",
@@ -82,6 +95,8 @@ typedef enum {
     choice_patch_notes,
     choice_credits,
     choice_leave,
+    choice_yes,
+    choice_no,
     choice_back,
     choice_languages,
     choice_solo,
@@ -98,6 +113,8 @@ const char *CHOICES_NAME[] = {
         "choice_patch_notes",
         "choice_credits",
         "choice_leave",
+        "choice_yes",
+        "choice_no",
         "choice_back",
         "choice_languages",
         "choice_solo",
@@ -244,7 +261,7 @@ typedef struct {
 typedef struct {
     char *name;
     char id;
-    char *color;
+    enum colors_index color;
     unsigned short direction;
 
     unsigned short heart;
@@ -280,7 +297,7 @@ typedef struct {
     unsigned short previous_menu;
     unsigned short current_choice;
     unsigned short current_map;
-    unsigned short *selected_maps;
+    short *selected_maps;
 } Board;
 
 const char *CONFIG_DIR = "../app.config";
@@ -290,23 +307,6 @@ const char *MAP_DIR = "../configs/maps/";
 const char *PATCH_NOTES_DIR = "../configs/patch_notes/";
 const char *CREDITS_DIR = "../configs/credits/";
 
-enum colors {
-    color_black = 0,
-    color_blue,
-    color_green,
-    color_cyan,
-    color_red,
-    color_magenta,
-    color_brown,
-    color_light_gray,
-    color_dark_gray,
-    color_light_blue,
-    color_light_green,
-    color_light_cyan,
-    color_light_red,
-    color_light_magenta,
-    color_yellow,
-    color_white,
-};
-
 const short COLOR_DEFAULT = color_light_gray;
+const short COLOR_BG_DEFAULT = color_black;
+
