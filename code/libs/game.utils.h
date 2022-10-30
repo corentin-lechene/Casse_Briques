@@ -133,32 +133,6 @@ void menu_events(Board *board, int event) {
     }
 }
 
-Board *generate_board() {
-    Loading *loading = get_loading();
-    display_loading(loading, loading_init);
-
-    Board *board = malloc(sizeof(Board));
-
-    board->winner = malloc(sizeof(Player));
-    board->player_turn = malloc(sizeof(Player));
-
-    board->config = get_config(loading);
-    board->lang = get_langs(loading);
-    board->items = get_items(loading);
-    board->default_maps = get_maps(loading);
-    board->maps = malloc(sizeof(Map));
-
-//    board->nb_map = get_nb_map(board->maps);
-    board->nb_map = 1;
-    board->current_map = 0;
-    board->nb_selected_map = 1;
-
-    board->bo = 3;
-    board->selected_menu = IN_PREP_GAME;
-    board->selected_choice = 0;
-
-    return board;
-}
 
 void get_maps_by_number_player(Board *board){
 //    int j =0;

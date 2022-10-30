@@ -250,10 +250,7 @@ void display_ending_credits() {
     printf("Merci d'avoir jouer");
 }
 
-void clear_console() {
-    system("cls");
-//    printf("\033[2J\033[1;1H");
-}
+
 
 
 void display_loading(Loading *loading, int loading_index) {

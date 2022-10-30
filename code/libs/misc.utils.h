@@ -115,10 +115,6 @@ static char *ITEMS_NAME[] = {
         "items_len"
 };
 
-const char *MAP_DIR = "../configs/maps/";
-const char *CONFIG_DIR = "../app.config";
-const char *LANGUAGE_DIR = "../configs/languages/";
-const char *ITEM_DIR = "../configs/items";
 
 
 typedef struct {
@@ -127,8 +123,8 @@ typedef struct {
 } Lang;
 
 typedef struct {
-    unsigned short port;
     char *language;
+    char *lang_dir;
 } Config;
 
 typedef struct {
@@ -212,5 +208,32 @@ typedef struct {
 
 typedef struct {
   Loading_item **loading_item;
-  unsigned short load_ended;
 } Loading;
+
+const char *CONFIG_DIR = "../app.config";
+const char *LANGUAGE_DIR = "../configs/languages/";
+const char *ITEM_DIR = "../configs/items";
+const char *MAP_DIR = "../configs/maps/";
+const char *PATCH_NOTES_DIR = "../configs/patch_notes/";
+const char *CREDITS_DIR = "../configs/credits/";
+
+enum colors {
+    color_black = 0,
+    color_blue,
+    color_green,
+    color_cyan,
+    color_red,
+    color_magenta,
+    color_brown,
+    color_light_gray,
+    color_dark_gray,
+    color_light_blue,
+    color_light_green,
+    color_light_cyan,
+    color_light_red,
+    color_light_magenta,
+    color_yellow,
+    color_white,
+};
+
+const short COLOR_DEFAULT = color_light_gray;

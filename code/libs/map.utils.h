@@ -4,73 +4,8 @@ int startsWith(const char *a, const char *b) {
 }
 
 
-Map *_get_map(const char *filename) {
-    Map *map = malloc(sizeof(Map));
-    int index = 0;
-    int numberPlayers = 0;
-
-    FILE *f = fopen(filename, "r");
-    if (f == NULL) {
-        printf("Erreur dans l'ouverture du fichier");
-        exit(1);
-    }
-    fseek(f, 0, SEEK_SET); // replace le curseur au début du fichier
-    while (!feof(f)) {
-        int c = fgetc(f);
-        if (index == 0) {
-            map->bomb_default = c - 48; // index 0 49 - 48 = 1
-        }
-        if (index == 2) {
-            map->columns = c - 48;    // index 2
-        } else if (index == 4) {
-            map->rows = c - 48;     // index 4
-            map->body = malloc(sizeof(char *) * map->rows);
-            for (int i = 0; i < map->rows; ++i) {
-                map->body[i] = malloc(sizeof(char) * (map->columns + 1));
-            }
-        }
-        if (index > 4) {
-            for (int i = 0; i < map->rows; ++i) {
-                for (int indexY = 0; indexY < map->columns + 1; ++indexY) {
-                    int tmp = fgetc(f);
-                    if (tmp == 'p') {
-                        numberPlayers++;
-                    }
-                    map->body[i][indexY] = (char) tmp;
-                }
-            }
-        }
-        index++;
-    }
-    map->player_max = numberPlayers;
-    fclose(f);
-    return map;
-}
 
 
-Map **get_maps(Loading *loading) { // tableau de map
-    Map **maps = malloc(sizeof(Map));
-    struct dirent *dir;
-    DIR *d = opendir(MAP_DIR);
-    char *path;
-
-    if (d != NULL) { // a verifier doc
-        int i = 0;
-        while ((dir = readdir(d)) != NULL) {
-            if (startsWith(dir->d_name, "map") == 1) {
-                path = str_cat(MAP_DIR, dir->d_name);
-                maps = realloc(maps, sizeof(Map) * (i + 1)); // a voir sur le github ou prendre push
-
-                maps[i] = _get_map(path);
-                i++;
-                free(path);
-            }
-        }
-        closedir(d);
-    }
-    display_loading(loading, loading_maps);
-    return maps;
-}
 
 char **_copy_body(Map *src) {
     char **body = malloc(sizeof(char *) * src->rows);

@@ -4,12 +4,14 @@
 #include <stdarg.h>
 #include <dirent.h>
 #include <conio.h>
+#include <ctype.h>
+#include <windows.h>
 #include "libs/misc.utils.h"
 #include "libs/functions.utils.h"
 #include "libs/display.utils.h"
-#include "libs/config.utils.h"
 #include "libs/map.utils.h"
 #include "libs/game.utils.h"
+#include "libs/config.utils.h"
 
 
 void run_program(Board *board) {
@@ -26,6 +28,7 @@ void run_program(Board *board) {
 
 
 int main() {
+    text_color_default();
     Board *board = generate_board();
 
     display_opening_credits();
