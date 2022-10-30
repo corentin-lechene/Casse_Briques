@@ -48,6 +48,7 @@ typedef enum {
     menu_game_mode,
     menu_players,
     menu_maps,
+    menu_online,
     menu_init_game,
     menu_game,
     menu_winner_summary,
@@ -65,6 +66,7 @@ const char *MENUS_NAME[] = {
         "menu_game_mode",
         "menu_players",
         "menu_maps",
+        "menu_online",
         "menu_init_game",
         "menu_game",
         "menu_winner_summary",
@@ -236,7 +238,6 @@ typedef struct {
 typedef struct {
     char *title;
     menus_index next_menu;
-    menus_index prev_menu;
     unsigned short nb_choice;
 } Menu;
 

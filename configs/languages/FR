@@ -12,6 +12,7 @@ menu_languages = Langages
 menu_game_mode = Mode de jeu
 menu_players = Joueurs
 menu_maps = Cartes
+menu_online = Jeu en ligne
 menu_init_game = Preparation du jeu
 menu_game = En jeu
 menu_winner_summary = Recapitulatif du gagnant

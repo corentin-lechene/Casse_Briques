@@ -41,6 +41,7 @@ void display_menu_header(char *title) {
 }
 
 void display_choice_back(Board *board, int index) {
+    board->menus[board->current_menu]->nb_choice += 1;
     printf("[%c]\t%s\n", index == board->current_choice ? 'X' : ' ', file_get_value(CHOICES_NAME[choice_back], board->config->lang_dir));
 }
 

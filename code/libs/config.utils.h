@@ -140,7 +140,6 @@ Menu **get_menus(Config *config) {
         }
     }
     menus[1]->next_menu = menu_game_mode;
-    menus[1]->prev_menu = menu_leave;
     display_loading(config->loading, loading_menus);
     return menus;
 

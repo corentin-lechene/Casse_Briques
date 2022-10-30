@@ -74,7 +74,7 @@ void display_menus(Board *board) {
     Menu *current_menu = board->menus[board->current_menu];
 
     printf("menu: %s/%d | %d | choices: %d\n", board->menus[board->current_menu]->title, board->current_menu, board->current_choice, board->menus[board->current_menu]->nb_choice);
-    printf("prev: %d, next: %d\n\n", current_menu->prev_menu, current_menu->next_menu);
+    printf("next: %d\n\n", current_menu->next_menu);
 
     switch (board->current_menu) {
         case menu_leave:
@@ -134,7 +134,7 @@ void run_menu(Board *board) {
             break;
         case KEY_ENTER:
             if(board->current_choice == current_menu->nb_choice - 1) {
-                board->current_menu = current_menu->prev_menu;
+                board->current_menu = current_menu->next_menu;
                 board->current_choice = 0;
                 display = 1;
             } else {
