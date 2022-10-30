@@ -15,13 +15,13 @@ void get_maps_by_number_player(Board *board);
 
 char *get_event(int event) {
     switch (event) {
-        case CROSS_TOP:
+        case KEY_CROSS_TOP:
         case KEY_z:
-        case CROSS_BOTTOM:
+        case KEY_CROSS_BOTTOM:
         case KEY_s:
-        case CROSS_LEFT:
+        case KEY_CROSS_LEFT:
         case KEY_q:
-        case CROSS_RIGHT:
+        case KEY_CROSS_RIGHT:
         case KEY_d:
             return "move";
 
@@ -43,7 +43,7 @@ void init_game(Board *board) {
 //    init_players();
 //
 //    set_next_map(board);
-    board->selected_menu = IN_GAME;
+    board->current_menu = IN_GAME;
     display_map(board->maps[0]);
 }
 
@@ -68,8 +68,100 @@ void run_game(Board *board) {
     }
 }
 
-void run_menu(Board *board) {
 
+
+void display_menus(Board *board) {
+    Menu *current_menu = board->menus[board->current_menu];
+
+    printf("menu: %s/%d | %d | choices: %d\n", board->menus[board->current_menu]->title, board->current_menu, board->current_choice, board->menus[board->current_menu]->nb_choice);
+    printf("prev: %d, next: %d\n\n", current_menu->prev_menu, current_menu->next_menu);
+
+    switch (board->current_menu) {
+        case menu_leave:
+            break;
+        case menu_home:
+            menu_home_case(board);
+            break;
+        case menu_options:
+            current_menu->nb_choice = 2;
+            break;
+        case menu_languages:
+            break;
+        case menu_game_mode:
+            menu_game_mode_case(board);
+            break;
+        case menu_players:
+            break;
+        case menu_maps:
+            break;
+        case menu_init_game:
+            break;
+        case menu_game:
+            break;
+        case menu_winner_summary:
+            break;
+        case menu_resume:
+            break;
+        case menu_patch_notes:
+            menu_patch_notes_case(board);
+            break;
+        case menu_credits:
+            menu_credits_case(board);
+            break;
+        default:
+            break;
+    }
+}
+
+void run_menu(Board *board) {
+    int event = getch();
+    int display = 0;
+
+    Menu *current_menu = board->menus[board->current_menu];
+    switch (event) {
+        case KEY_CROSS_TOP:
+            if(board->current_choice - 1 >= 0) {
+                board->current_choice -= 1;
+                display = 1;
+            }
+            break;
+        case KEY_CROSS_BOTTOM:
+            if(board->current_choice + 1 < current_menu->nb_choice) {
+                board->current_choice += 1;
+                display = 1;
+            }
+            break;
+        case KEY_ENTER:
+            if(board->current_choice == current_menu->nb_choice - 1) {
+                board->current_menu = current_menu->prev_menu;
+                board->current_choice = 0;
+                display = 1;
+            } else {
+                board->current_menu = current_menu->next_menu;
+                display = 1;
+                board->current_choice = 0;
+            }
+            break;
+        case KEY_ESCAPE:
+//            if(
+//                    board->current_menu == menu_patch_notes ||
+//                    board->current_menu == menu_credits
+//                    ) {
+//                board->current_menu = menu_home;
+//                display = 1;
+//            }
+            break;
+
+        case 'p':
+            die();
+        default:
+            break;
+    }
+
+    if(display) {
+        clear_console();
+        display_menus(board);
+    }
 }
 
 

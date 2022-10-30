@@ -10,18 +10,18 @@
 //#define IN_MAPS 6
 #define IN_CONFIG 9
 
-#define CROSS_TOP 72
-#define CROSS_BOTTOM 80
-#define CROSS_LEFT 75
-#define CROSS_RIGHT 77
-
 #define KEY_z 122
 #define KEY_s 115
 #define KEY_d 100
 #define KEY_q 113
+
 #define KEY_ESCAPE 27
 #define KEY_ENTER 13
 #define KEY_SPACE 32
+#define KEY_CROSS_TOP 72
+#define KEY_CROSS_BOTTOM 80
+#define KEY_CROSS_LEFT 75
+#define KEY_CROSS_RIGHT 77
 
 #define BLACK "\033[;30m"
 #define RED "\033[;31m"
@@ -39,9 +39,74 @@
 #define MARGIN_X 4
 #define MARGIN_Y 1
 
+/* ---===  MENUS  ===--- */
+typedef enum {
+    menu_leave = 0,
+    menu_home,
+    menu_options,
+    menu_languages,
+    menu_game_mode,
+    menu_players,
+    menu_maps,
+    menu_init_game,
+    menu_game,
+    menu_winner_summary,
+    menu_resume,
+    menu_patch_notes,
+    menu_credits,
+    menus_len
+} menus_index;
+
+const char *MENUS_NAME[] = {
+        "menu_leave",
+        "menu_home",
+        "menu_options",
+        "menu_languages",
+        "menu_game_mode",
+        "menu_players",
+        "menu_maps",
+        "menu_init_game",
+        "menu_game",
+        "menu_winner_summary",
+        "menu_resume",
+        "menu_patch_notes",
+        "menu_credits",
+};
+
+/* ---===  CHOICES  ===--- */
+typedef enum {
+    choice_play,
+    choice_options,
+    choice_patch_notes,
+    choice_credits,
+    choice_leave,
+    choice_back,
+    choice_solo,
+    choice_local,
+    choice_online,
+    choice_join_server,
+    choice_create_server,
+    choices_len,
+} choices_index;
+
+const char *CHOICES_NAME[] = {
+        "choice_play",
+        "choice_options",
+        "choice_patch_notes",
+        "choice_credits",
+        "choice_leave",
+        "choice_back",
+        "choice_solo",
+        "choice_local",
+        "choice_online",
+        "choice_join_server",
+        "choice_create_server",
+};
+
 /********************/
 /**      enums     **/
 /********************/
+
 enum loading_index {
     loading_init = 0,
     loading_config,
@@ -53,9 +118,6 @@ enum loading_index {
 };
 
 enum language_index {
-    language_start = 0,
-    language_back,
-    language_exit,
     language_len
 };
 
@@ -91,11 +153,7 @@ static char *LOADING_NAME[] = {
         "loading_maps",
 };
 
-static char *LANGUAGES_NAME[] = {
-        "language_start",
-        "language_back",
-        "language_exit",
-};
+static char *LANGUAGES_NAME[] = {};
 
 
 
@@ -175,6 +233,9 @@ typedef struct {
 
 typedef struct {
     char *title;
+    menus_index next_menu;
+    menus_index prev_menu;
+    unsigned short nb_choice;
 } Menu;
 
 typedef struct {
@@ -212,8 +273,9 @@ typedef struct {
     unsigned short nb_player;
 
     unsigned short bo;
-    unsigned short selected_menu;
-    unsigned short selected_choice;
+    unsigned short current_menu;
+    unsigned short previous_menu;
+    unsigned short current_choice;
     unsigned short current_map;
     unsigned short *selected_maps;
 } Board;
@@ -224,40 +286,6 @@ const char *ITEM_DIR = "../configs/items";
 const char *MAP_DIR = "../configs/maps/";
 const char *PATCH_NOTES_DIR = "../configs/patch_notes/";
 const char *CREDITS_DIR = "../configs/credits/";
-
-/* ---===  MENUS  ===--- */
-enum menus_index {
-    menu_leave = 0,
-    menu_home,
-    menu_options,
-    menu_languages,
-    menu_game_mode,
-    menu_players,
-    menu_maps,
-    menu_init_game,
-    menu_game,
-    menu_winner_summary,
-    menu_resume,
-    menu_patch_notes,
-    menu_credits,
-    menus_len
-};
-
-const char *MENUS_NAME[] = {
-        "menu_leave",
-        "menu_home",
-        "menu_options",
-        "menu_languages",
-        "menu_game_mode",
-        "menu_players",
-        "menu_maps",
-        "menu_init_game",
-        "menu_game",
-        "menu_winner_summary",
-        "menu_resume",
-        "menu_patch_notes",
-        "menu_credits",
-};
 
 enum colors {
     color_black = 0,

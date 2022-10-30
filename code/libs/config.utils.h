@@ -36,8 +36,8 @@ Board *generate_board() {
     board->nb_selected_map = 1;
 
     board->bo = 3;
-    board->selected_menu = 1;
-    board->selected_choice = 0;
+    board->current_menu = menu_home;
+    board->current_choice = 0;
 
     return board;
 }
@@ -88,7 +88,6 @@ Lang **get_langs(Config *config) {
         lang[i]->str = value;
         lang[i]->str_len = strlen(value);
     }
-    free(value);
     display_loading(config->loading, loading_language);
     return lang;
 }
@@ -140,6 +139,8 @@ Menu **get_menus(Config *config) {
             exit_error("Menu[i] = NULL");
         }
     }
+    menus[1]->next_menu = menu_game_mode;
+    menus[1]->prev_menu = menu_leave;
     display_loading(config->loading, loading_menus);
     return menus;
 
@@ -205,6 +206,7 @@ Menu *_get_menu(const char *menu_name, Config *config) {
 
     if(value != NULL) {
         menu->title = value;
+        menu->nb_choice = 1;
         return menu;
     }
     return NULL;

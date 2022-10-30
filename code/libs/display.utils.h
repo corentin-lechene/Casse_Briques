@@ -3,9 +3,8 @@ void clear_console();
 void display_opening_credits();
 void display_ending_credits();
 
-void display_menus(Board *board);
 void display_menu_header(char *title);
-void display_menu(unsigned short *cursor, ...);
+void display_menu(Board *board, choices_index *choices);
 
 void display_board(Board *board);
 void display_map(Map *map);
@@ -19,31 +18,6 @@ void _display_items(int *item_index, Board *board);
 int _get_char_ascii(char c);
 
 
-
-void display_menus(Board *board) {
-    switch (board->selected_menu) {
-        case 1 :
-            display_menu(&board->selected_choice, "MENU PRINCIPAL","Jouer","Configuration","Quitter", NULL);
-            break;
-        case 2 :
-            display_menu(&board->selected_choice,"MODE DE JEU","Jouer contre l'ordinateur","Jouer en Local","Jouer en Ligne","Retour", NULL);
-            break;
-        case 3 :
-            display_menu(&board->selected_choice, "Nombre de Joueur","1 Joueur", "2 Joueurs","3 Joueurs","4 Joueurs", "Plus...","Retour",NULL);
-            break;
-        case 4 :
-            display_menu(&board->selected_choice, "EN LIGNE","Demarrer un serveur","Rejoindre un serveur","Retour", NULL);
-            break;
-        case 5 :
-            display_menu_carte(&board->selected_choice,board);
-            break;
-        case 9 :
-            display_menu(&board->selected_choice, "Choix de langues","FR","EN","Retour",NULL);
-            break;
-        default:
-            break;
-    }
-}
 
 /**
  * @features : display maps
@@ -66,30 +40,12 @@ void display_menu_header(char *title) {
     printf("\n----------------------------------\n\n");
 }
 
-void display_menu(unsigned short *cursor, ...) {
-    clear_console();
-    va_list ap, temp;
-    va_start(ap, cursor);
-    temp = ap;
-    int i = 0;
-    while (va_arg(ap, char* ) != NULL) {
-        i++;
-    }
-    va_end(ap);
-    if(*cursor >= i-1) {
-        *cursor = i-2;
-    }
+void display_menu(Board *board, choices_index *choices) {
+    printf("[%s]\n", board->menus[board->current_menu]->title);
+    for (int i = 0; i < board->menus[board->current_menu]->nb_choice; ++i) {
+        printf("[%c]\t%s\n", i == board->current_choice ? 'X' : ' ', file_get_value(CHOICES_NAME[choices[i]], board->config->lang_dir));
 
-    va_start(temp, cursor);
-    char *arg = va_arg(temp, char* );
-    display_menu_header(arg);
-    arg = va_arg(temp, char*);
-    for (int j = 0; j < i-1; ++j) {
-        printf("[%c] %s\n\n", j == *cursor ? 'X' : ' ', arg);
-        arg = va_arg(temp, char*);
     }
-    va_end(temp);
-
 }
 
 char test[6][8] = {

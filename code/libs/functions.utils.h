@@ -5,7 +5,7 @@ char *str_get_left(char *line, char separator);
 char *str_get_right(char *line, char separator);
 
 char *file_get_value(const char *attribute, const char *dir);
-
+short file_display_content(const char *path);
 
 void text_color(int color);
 void text_color_default();
@@ -121,7 +121,18 @@ char *file_get_value(const char *attribute, const char *dir) {
     printf("-= FILE NOT FOUND =-\n");
     return NULL;
 }
+short file_display_content(const char *path) {
+    FILE *f = fopen(path, "r");
 
+    if(f != NULL) {
+        while (!feof(f)) {
+            printf("%c", fgetc(f));
+        }
+        fclose(f);
+        return 1;
+    }
+    return 0;
+}
 
 void text_color(int color) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);

@@ -10,14 +10,15 @@
 #include "libs/functions.utils.h"
 #include "libs/display.utils.h"
 #include "libs/map.utils.h"
+#include "libs/menu.utils.h"
 #include "libs/game.utils.h"
 #include "libs/config.utils.h"
 
 
 void run_program(Board *board) {
-    if(board->selected_menu == menu_game) {
+    if(board->current_menu == menu_game) {
         run_game(board);
-    } else if(board->selected_menu == menu_init_game) {
+    } else if(board->current_menu == menu_init_game) {
         init_game(board);
         exit(0);
     } else {
@@ -32,7 +33,8 @@ int main() {
     Board *board = generate_board();
 
     display_opening_credits();
-    while (board->selected_menu >= 1) {
+    display_menus(board);
+    while (board->current_menu >= 1) {
         run_program(board);
     }
     display_ending_credits();
