@@ -2,8 +2,23 @@ loading_init = Preparing the game
 loading_config = Retrieving configuration
 loading_language = Retrieving languages
 loading_items = Retrieving Items
+loading_menus = Retrieving menus
 loading_maps = Retrieving default_maps
 
 language_start = Play
 language_back = Back
 language_exit = Exit
+
+menu_leave = Quitter
+menu_home = Menu principal
+menu_options = Configurations
+menu_languages = Langues
+menu_game_mode = Mode de jeu
+menu_players = Joueurs
+menu_maps = Cartes
+menu_init_game = Préparation du jeu
+menu_game = En jeu
+menu_winner_summary = Récapitulatif du gagnant
+menu_resume = Pause
+menu_patch_notes = Notes de mise à jour
+menu_credits = Crédits

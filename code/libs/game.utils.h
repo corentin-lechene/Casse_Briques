@@ -69,68 +69,7 @@ void run_game(Board *board) {
 }
 
 void run_menu(Board *board) {
-    int event = getch();
-    menu_events(board, event);
-    display_menus(board);
 
-    if(board->selected_menu == IN_PLAYERS) {
-        get_players(board);
-        get_maps_by_number_player(board);
-        board->selected_menu = MENU_SELECT_MAPS;
-        display_menus(board);
-    }
-}
-
-void menu_events(Board *board, int event) {
-    switch (event) {
-        case CROSS_TOP:
-        case KEY_z:
-        case CROSS_BOTTOM:
-        case KEY_s:
-            board->selected_choice += 1;
-            break;
-        case KEY_ENTER:
-            if(board->selected_menu == MENU_START && board->selected_choice == 2){
-                board->selected_menu = IN_EXIT;
-            } else if ((board->selected_menu == MENU_MODE_GAME && board->selected_choice == 3) ||
-                    (board->selected_menu == MENU_NUMBER_PLAYER && board->selected_choice == 6)) {
-                board->selected_menu -= 1;
-            } else if (board->selected_menu == MENU_ONLINE && board->selected_choice == 2) {
-                board->selected_menu = MENU_MODE_GAME;
-            } else if (board->selected_menu == MENU_MODE_GAME && board->selected_choice == 2) {
-                board->selected_menu = MENU_ONLINE;
-            }else if(board->selected_menu == MENU_SELECT_MAPS && board->selected_choice == 3){
-                board->selected_menu = MENU_NUMBER_PLAYER;
-            }else if(board->selected_menu == MENU_NUMBER_PLAYER){
-                board->nb_player = board->selected_choice + 1; //recup le nombre de joueur réel choisit
-                board->selected_menu = IN_PLAYERS;
-            }else if(board->selected_menu == MENU_START && board->selected_choice == 1){
-                board->selected_menu = IN_CONFIG;
-            } else if(board->selected_menu == MENU_SELECT_MAPS){
-                board->selected_menu = IN_GAME;
-            }
-            else if(board->selected_menu == IN_CONFIG){
-                if(board->selected_choice == 2){
-                    board->selected_menu = MENU_START;
-                }else if(board->selected_choice == 0){
-                    board->config->language = "FR";
-                }else if(board->selected_choice == 1){
-                    board->config->language = "EN";
-                }
-//                board->lang = get_langs(board->config->language);
-                board->selected_menu = MENU_START;
-            }
-            else {
-                    if (board->selected_menu + 1 < 12) {
-                        board->selected_menu += 1;
-                    }
-                }
-
-            board->selected_choice = 0;
-            break;
-        default:
-            break;
-    }
 }
 
 

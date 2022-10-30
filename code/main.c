@@ -15,9 +15,9 @@
 
 
 void run_program(Board *board) {
-    if(board->selected_menu == IN_GAME) {
+    if(board->selected_menu == menu_game) {
         run_game(board);
-    } else if(board->selected_menu == IN_PREP_GAME) {
+    } else if(board->selected_menu == menu_init_game) {
         init_game(board);
         exit(0);
     } else {

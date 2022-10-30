@@ -47,6 +47,7 @@ enum loading_index {
     loading_config,
     loading_language,
     loading_items,
+    loading_menus,
     loading_maps,
     loading_len
 };
@@ -86,6 +87,7 @@ static char *LOADING_NAME[] = {
         "loading_config",
         "loading_language",
         "loading_items",
+        "loading_menus",
         "loading_maps",
 };
 
@@ -123,6 +125,16 @@ typedef struct {
 } Lang;
 
 typedef struct {
+    unsigned short item;
+    char *name;
+} Loading_item;
+
+typedef struct {
+    Loading_item **loading_item;
+} Loading;
+
+typedef struct {
+    Loading *loading;
     char *language;
     char *lang_dir;
 } Config;
@@ -162,6 +174,10 @@ typedef struct {
 } Item;
 
 typedef struct {
+    char *title;
+} Menu;
+
+typedef struct {
     char *name;
     char id;
     char *color;
@@ -185,6 +201,7 @@ typedef struct {
     Config *config;
     Lang **lang;
     Item **items;
+    Menu **menus;
 
     Map **maps;
     Player *winner;
@@ -201,21 +218,46 @@ typedef struct {
     unsigned short *selected_maps;
 } Board;
 
-typedef struct {
-    unsigned short item;
-    char *name;
-} Loading_item;
-
-typedef struct {
-  Loading_item **loading_item;
-} Loading;
-
 const char *CONFIG_DIR = "../app.config";
 const char *LANGUAGE_DIR = "../configs/languages/";
 const char *ITEM_DIR = "../configs/items";
 const char *MAP_DIR = "../configs/maps/";
 const char *PATCH_NOTES_DIR = "../configs/patch_notes/";
 const char *CREDITS_DIR = "../configs/credits/";
+
+/* ---===  MENUS  ===--- */
+enum menus_index {
+    menu_leave = 0,
+    menu_home,
+    menu_options,
+    menu_languages,
+    menu_game_mode,
+    menu_players,
+    menu_maps,
+    menu_init_game,
+    menu_game,
+    menu_winner_summary,
+    menu_resume,
+    menu_patch_notes,
+    menu_credits,
+    menus_len
+};
+
+const char *MENUS_NAME[] = {
+        "menu_leave",
+        "menu_home",
+        "menu_options",
+        "menu_languages",
+        "menu_game_mode",
+        "menu_players",
+        "menu_maps",
+        "menu_init_game",
+        "menu_game",
+        "menu_winner_summary",
+        "menu_resume",
+        "menu_patch_notes",
+        "menu_credits",
+};
 
 enum colors {
     color_black = 0,

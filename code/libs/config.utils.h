@@ -1,33 +1,33 @@
 
 Board *generate_board();
 
-Loading *get_loading();
-Config *get_config(Loading *loading);
+Loading *init_loading(Config *config);
+Config *get_config();
 
-Lang **get_langs(Config *config, Loading *loading);
-Item **get_items(Config *config, Loading *loading);
-Map **get_maps(Config *config, Loading *loading);
+Lang **get_langs(Config *config);
+Item **get_items(Config *config);
+Map **get_maps(Config *config);
+Menu **get_menus(Config *config);
 
 
 Item *_get_item(char *item_att);
 Map *_get_map(const char *filename);
+Menu *_get_menu(const char *menu_name, Config *config);
 
 
 /* GENERATE BOARD */
 
 Board *generate_board() {
-    Loading *loading = get_loading();
-    display_loading(loading, loading_init);
-
     Board *board = malloc(sizeof(Board));
 
     board->winner = malloc(sizeof(Player));
     board->player_turn = malloc(sizeof(Player));
 
-    board->config = get_config(loading);
-    board->lang = get_langs(board->config, loading);
-    board->items = get_items(board->config, loading);
-    board->default_maps = get_maps(board->config, loading);
+    board->config = get_config();
+    board->lang = get_langs(board->config);
+    board->items = get_items(board->config);
+    board->menus = get_menus(board->config);
+    board->default_maps = get_maps(board->config);
     board->maps = malloc(sizeof(Map));
 
 //    board->nb_map = get_nb_map(board->maps);
@@ -44,47 +44,43 @@ Board *generate_board() {
 
 
 
-Loading *get_loading() {
+Loading *init_loading(Config *config) {
     Loading *loading = malloc(sizeof(Loading));
     loading->loading_item = malloc(sizeof(Loading_item) * loading_len);
-
-    char *value = file_get_value("language", CONFIG_DIR);
-    char *lang_dir = str_cat(LANGUAGE_DIR, value);
 
     for (int i = 0; i < loading_len; ++i) {
         loading->loading_item[i] = malloc(sizeof(Loading_item));
         loading->loading_item[i]->item = 0;
-        loading->loading_item[i]->name = file_get_value(LOADING_NAME[i], lang_dir);
+        loading->loading_item[i]->name = file_get_value(LOADING_NAME[i], config->lang_dir);
     }
-    free(lang_dir);
-    free(value);
+
+    display_loading(loading, loading_init);
     return loading;
 }
-Config *get_config(Loading *loading) {
+Config *get_config() {
     Config *config = malloc(sizeof(Config));
-    config->language = file_get_value("language", CONFIG_DIR);
-    config->lang_dir = str_cat("language", LANGUAGE_DIR);
-    //et le reste de la config
 
+    config->language = file_get_value("language", CONFIG_DIR);
     if(config->language == NULL) {
-        exit_error("language est à NULL");
-    } else if(config->lang_dir == NULL) {
-        exit_error("lang_dir est à NULL");
+        exit_error("config err, language = NULL");
     }
 
-    display_loading(loading, loading_config);
+    config->lang_dir = str_cat(LANGUAGE_DIR, config->language);
+
+    config->loading = init_loading(config);
+    //et le reste de la config
+
+    display_loading(config->loading, loading_config);
     return config;
 }
 
-Lang **get_langs(Config *config, Loading *loading) {
+Lang **get_langs(Config *config) {
     Lang **lang = malloc(sizeof(Lang) * language_len);
-    char *lang_value = file_get_value("language", CONFIG_DIR);
-    char *lang_dir = str_cat(LANGUAGE_DIR, lang_value);
 
     char *value;
     for (int i = 0; i < language_len; ++i) {
         lang[i] = malloc(sizeof(Lang));
-        value = file_get_value(LANGUAGES_NAME[i], lang_dir);
+        value = file_get_value(LANGUAGES_NAME[i], config->lang_dir);
         if(value == NULL) {
             warningf(str_cat(LANGUAGES_NAME[i], " est a NULL. Existe-il ?"));
             value = set_value("null");
@@ -93,10 +89,10 @@ Lang **get_langs(Config *config, Loading *loading) {
         lang[i]->str_len = strlen(value);
     }
     free(value);
-    display_loading(loading, loading_language);
+    display_loading(config->loading, loading_language);
     return lang;
 }
-Item **get_items(Config *config, Loading *loading) {
+Item **get_items(Config *config) {
     Item **items = malloc(sizeof(Item) * items_len);
 
     for (int i = 0; i < items_len; ++i) {
@@ -105,10 +101,10 @@ Item **get_items(Config *config, Loading *loading) {
             exit_error("items[i] = NULL");
         }
     }
-    display_loading(loading, loading_items);
+    display_loading(config->loading, loading_items);
     return items;
 }
-Map **get_maps(Config *config, Loading *loading) { // tableau de map
+Map **get_maps(Config *config) { // tableau de map
     Map **maps = malloc(sizeof(Map));
     struct dirent *dir;
     DIR *d = opendir(MAP_DIR);
@@ -130,12 +126,24 @@ Map **get_maps(Config *config, Loading *loading) { // tableau de map
             }
         }
         closedir(d);
-        display_loading(loading, loading_maps);
+        display_loading(config->loading, loading_maps);
         return maps;
     }
     exit_error("--== Dossier introuvable ==--");
 }
+Menu **get_menus(Config *config) {
+    Menu **menus = malloc(sizeof(Menu) * menus_len);
 
+    for (int i = 0; i < menus_len; ++i) {
+        menus[i] = _get_menu(MENUS_NAME[i], config);
+        if(menus[i] == NULL) {
+            exit_error("Menu[i] = NULL");
+        }
+    }
+    display_loading(config->loading, loading_menus);
+    return menus;
+
+}
 
 
 Item *_get_item(char *item_att) {
@@ -190,6 +198,16 @@ Map *_get_map(const char *filename) {
     map->player_max = numberPlayers;
     fclose(f);
     return map;
+}
+Menu *_get_menu(const char *menu_name, Config *config) {
+    Menu *menu = malloc(sizeof(menu));
+    char *value = file_get_value(menu_name, config->lang_dir);
+
+    if(value != NULL) {
+        menu->title = value;
+        return menu;
+    }
+    return NULL;
 }
 
 
