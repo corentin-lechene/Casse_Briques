@@ -40,8 +40,12 @@ void display_menu_header(char *title) {
     printf("\n----------------------------------\n\n");
 }
 
+void display_choice_back(Board *board, int index) {
+    printf("[%c]\t%s\n", index == board->current_choice ? 'X' : ' ', file_get_value(CHOICES_NAME[choice_back], board->config->lang_dir));
+}
+
 void display_menu(Board *board, choices_index *choices) {
-    printf("[%s]\n", board->menus[board->current_menu]->title);
+    display_menu_header(board->menus[board->current_menu]->title);
     for (int i = 0; i < board->menus[board->current_menu]->nb_choice; ++i) {
         printf("[%c]\t%s\n", i == board->current_choice ? 'X' : ' ', file_get_value(CHOICES_NAME[choices[i]], board->config->lang_dir));
 

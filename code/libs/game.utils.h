@@ -86,6 +86,7 @@ void display_menus(Board *board) {
             menu_options_case(board);
             break;
         case menu_languages:
+            menu_languages_case(board);
             break;
         case menu_game_mode:
             menu_game_mode_case(board);
