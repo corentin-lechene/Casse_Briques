@@ -8,6 +8,8 @@ void menu_patch_notes_case(Board *board);
 void menu_credits_case(Board *board);
 void menu_maps_case(Board *board);
 void menu_init_game_case(Board *board);
+void menu_resume_case(Board *board);
+
 
 
 void menu_home_case(Board *board) {
@@ -128,8 +130,6 @@ void menu_maps_case(Board *board) {
         return;
     }
 
-    free(board->selected_maps);
-    printf("end\n");
     int index = 0;
     for (int i = 0; i < board->nb_selected_map; ++i) {
         if(new_selected_map[i] != -1) {
@@ -147,3 +147,14 @@ void menu_maps_case(Board *board) {
     board->nb_selected_map = index;
     board->current_menu = menu_init_game;
 }
+
+void menu_resume_case(Board *board) {
+    menus_index next_menu[] = {menu_game, menu_init_game, menu_home};
+    choices_index choices_menu[] = {choice_continue, choice_restart, choice_leave};
+
+    board->menus[board->current_menu]->nb_choice = 3;
+    board->menus[board->current_menu]->next_menu = next_menu[board->current_choice];
+
+    display_menu(board, choices_menu);
+}
+

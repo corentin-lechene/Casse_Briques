@@ -105,6 +105,7 @@ void display_menus(Board *board) {
         case menu_winner_summary:
             break;
         case menu_resume:
+            menu_resume_case(board);
             break;
         case menu_patch_notes:
             menu_patch_notes_case(board);
