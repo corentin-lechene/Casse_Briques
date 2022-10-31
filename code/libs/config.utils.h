@@ -40,7 +40,7 @@ Board *generate_board() {
     board->nb_selected_map = 0;
 
     board->bo = 3;
-    board->current_menu = menu_home;
+    board->current_menu = menu_game_mode;
     board->current_choice = 0;
 
     return board;

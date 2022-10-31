@@ -9,6 +9,7 @@ void menu_credits_case(Board *board);
 void menu_maps_case(Board *board);
 void menu_init_game_case(Board *board);
 void menu_resume_case(Board *board);
+void menu_players_case(Board *board);
 
 
 
@@ -156,5 +157,25 @@ void menu_resume_case(Board *board) {
     board->menus[board->current_menu]->next_menu = next_menu[board->current_choice];
 
     display_menu(board, choices_menu);
+}
+
+void menu_players_case(Board *board) {
+    char q[3];
+    do {
+        clear_console();
+        printf("Le nombre de joueur max est de 9\n");
+        printf("Saisir le nombre de joueur (q pour quitter) : ");
+        fflush(stdin);
+        scanf("%s", q);
+    } while(strcmp(q, "q") != 0 && !(atoi(q) > 1 && atoi(q) < 10));
+
+    if(strcmp(q, "q") == 0) {
+        clear_console();
+        display_next_menu(board, menu_game_mode, &menu_game_mode_case);
+        return;
+    }
+    board->nb_player = atoi(q);
+    printf("%d", board->nb_player);
+    die();
 }
 

@@ -94,6 +94,7 @@ void display_menus(Board *board) {
             menu_solo_case(board);
             break;
         case menu_players:
+            menu_players_case(board);
             break;
         case menu_maps:
             menu_maps_case(board);
