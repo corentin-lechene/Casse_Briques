@@ -267,8 +267,8 @@ typedef struct {
     char id;
     enum colors_index color;
     unsigned short direction;
-    int x;
-    int y;
+    unsigned short x;
+    unsigned short y;
     //char *direction;
 
     unsigned short heart;
@@ -293,7 +293,6 @@ typedef struct {
 
     Map **maps;
     Player *winner;
-    Player *player_turn;
 
     unsigned short nb_map;
     unsigned short nb_selected_map;
@@ -304,6 +303,7 @@ typedef struct {
     unsigned short previous_menu;
     unsigned short current_choice;
     unsigned short current_map;
+    unsigned short player_turn;
     short *selected_maps;
 } Board;
 

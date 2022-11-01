@@ -4,6 +4,8 @@ void create_players(Board *board);
 Player *_create_player(Board *board, int id);
 
 void init_players(Board *board);
+void set_player_turn(Board *board);
+short get_pos_player(Board *board, int index, char pos);
 enum colors_index get_random_color_player(Board *board, int index);
 
 
@@ -44,7 +46,7 @@ Player *_create_player(Board *board, int id) {
 
     player->name = set_value(name);
     player->color = get_random_color_player(board, id);
-    player->id = id + 48;
+    player->id = id + 48 + 1;
     player->is_bot = 0;
     player->score = 0;
     return player;
@@ -54,11 +56,33 @@ void init_players(Board *board) {
     for (int i = 0; i < board->nb_player; ++i) {
         board->players[i]->heart = 1;
         board->players[i]->nb_bomb = board->maps[board->current_map]->bomb_default;
+        board->players[i]->x = get_pos_player(board, i, 'x');
+        board->players[i]->y = get_pos_player(board, i, 'y');
         board->players[i]->bomb_range = 2;
         board->players[i]->bomb_type = item_bomb;
         board->players[i]->items = malloc(sizeof(Item));
         board->players[i]->bombs = malloc(sizeof(Bomb));
+
+        display_board(board);
     }
+}
+void set_player_turn(Board *board) {
+    board->player_turn = board->player_turn + 1 > board->nb_player ? 0 : board->player_turn + 1;
+}
+short get_pos_player(Board *board, int index, char pos) {
+    int nb_p = 0;
+
+    for (int y = 0; y < board->maps[board->current_map]->rows; ++y) {
+        for (int x = 0; x < board->maps[board->current_map]->columns; ++x) {
+            if(board->maps[board->current_map]->body[y][x] == 'p') {
+                if(nb_p == index) {
+                    return pos == 'x' ? x : y;
+                }
+                nb_p += 1;
+            }
+        }
+    }
+    return -1;
 }
 enum colors_index get_random_color_player(Board *board, int index) {
     enum colors_index color;
