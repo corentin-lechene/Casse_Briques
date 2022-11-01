@@ -108,8 +108,6 @@ int move_player(Board *board) {
     Map *map = board->maps[board->current_map];
 
     if (can_move(board, player->x, player->y, map->rows-1, map->columns-1) == 0) {
-        display_board(board);
-
         return 0;
     }
     map->body[player->x][player->y] = ' ';
@@ -131,9 +129,37 @@ int move_player(Board *board) {
     return 1;
 }
 
+
+void putItems(Board *board){
+    Map *map = board->maps[board->current_map];
+    items_rarity items_rarity[] = {blue_flame, yellow_flame, bomb_up, bomb_down};
+    items_rarity_epic items_rarity_epic[] = {bomb_passes, bomb_kick, invincibility, heart};
+    items_rarity_legendary items_rarity_legendary[] = {life, red_flame, bomb_destroy};
+
+    char item;
+    unsigned int item_rarity;
+    unsigned int choice_item;
+    int is_item = random_between(1,3);
+
+    if(is_item == 1){
+        item_rarity = random_between(1,100);
+
+        if(item_rarity >= 50 && item_rarity <= 100){
+            choice_item = random_between(0, items_len_rare-1);
+            item = board->items[items_rarity[choice_item]]->data->_char;
+        }else if(item_rarity >= 20 && item_rarity < 45){
+            choice_item = random_between(0, items_len_epic-1);
+            item = board->items[items_rarity_epic[choice_item]]->data->_char;
+        }else {
+            choice_item = random_between(0, items_len_leg-1);
+            item = board->items[items_rarity_legendary[choice_item]]->data->_char;
+        }
+        map->body[1][1] = item;
+    }
+}
+
 void run_game(Board *board) {
     display_board(board);
-
     //if (kbhit()) {
 
         int event = my_getch();
@@ -143,6 +169,7 @@ void run_game(Board *board) {
             move_player(board);
 
         } else if (strcmp(event_name, "bomb") == 0) {
+            putItems(board);
             //            if(plant_bomb(board)) {
             //                display_map(board->maps[board->selected_map]);
             //            }
