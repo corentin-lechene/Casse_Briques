@@ -10,27 +10,18 @@
 //#define IN_MAPS 6
 #define IN_CONFIG 9
 
-#define CROSS_TOP 72
-#define CROSS_BOTTOM 80
-#define CROSS_LEFT 75
-#define CROSS_RIGHT 77
-
 #define KEY_z 122
 #define KEY_s 115
 #define KEY_d 100
 #define KEY_q 113
+
 #define KEY_ESCAPE 27
 #define KEY_ENTER 13
 #define KEY_SPACE 32
-
-#define BLACK "\033[;30m"
-#define RED "\033[;31m"
-#define GREEN "\033[;32m"
-#define YELLOW "\033[;33m"
-#define BLUE "\033[;34m"
-#define PURPLE "\033[;35m"
-#define CYAN "\033[;36m"
-#define WHITE "\033[;37m"
+#define KEY_CROSS_TOP 72
+#define KEY_CROSS_BOTTOM 80
+#define KEY_CROSS_LEFT 75
+#define KEY_CROSS_RIGHT 77
 
 #define ITEM_MI 219
 #define ITEM_MD 176
@@ -39,22 +30,119 @@
 #define MARGIN_X 4
 #define MARGIN_Y 1
 
+enum colors_index {
+    color_black = 0,
+    color_blue,
+    color_green,
+    color_cyan,
+    color_red,
+    color_magenta,
+    color_brown,
+    color_light_gray,
+    color_dark_gray,
+    color_light_blue,
+    color_light_green,
+    color_light_cyan,
+    color_light_red,
+    color_light_magenta,
+    color_yellow,
+    color_white,
+    colors_len,
+};
+
+/* ---===  MENUS  ===--- */
+typedef enum {
+    menu_leave = 0,
+    menu_home,
+    menu_options,
+    menu_languages,
+    menu_game_mode,
+    menu_solo,
+    menu_players,
+    menu_maps,
+    menu_online,
+    menu_init_game,
+    menu_game,
+    menu_winner_summary,
+    menu_resume,
+    menu_patch_notes,
+    menu_credits,
+    menus_len
+} menus_index;
+
+const char *MENUS_NAME[] = {
+        "menu_leave",
+        "menu_home",
+        "menu_options",
+        "menu_languages",
+        "menu_game_mode",
+        "menu_solo",
+        "menu_players",
+        "menu_maps",
+        "menu_online",
+        "menu_init_game",
+        "menu_game",
+        "menu_winner_summary",
+        "menu_resume",
+        "menu_patch_notes",
+        "menu_credits",
+};
+
+/* ---===  CHOICES  ===--- */
+typedef enum {
+    choice_play,
+    choice_options,
+    choice_patch_notes,
+    choice_credits,
+    choice_leave,
+    choice_yes,
+    choice_no,
+    choice_continue,
+    choice_restart,
+    choice_back,
+    choice_languages,
+    choice_solo,
+    choice_local,
+    choice_online,
+    choice_join_server,
+    choice_create_server,
+    choices_len,
+} choices_index;
+
+const char *CHOICES_NAME[] = {
+        "choice_play",
+        "choice_options",
+        "choice_patch_notes",
+        "choice_credits",
+        "choice_leave",
+        "choice_yes",
+        "choice_no",
+        "choice_continue",
+        "choice_restart",
+        "choice_back",
+        "choice_languages",
+        "choice_solo",
+        "choice_local",
+        "choice_online",
+        "choice_join_server",
+        "choice_create_server",
+};
+
 /********************/
 /**      enums     **/
 /********************/
+
 enum loading_index {
     loading_init = 0,
     loading_config,
     loading_language,
     loading_items,
+    loading_menus,
     loading_maps,
     loading_len
 };
 
 enum language_index {
-    language_start = 0,
-    language_back,
-    language_exit,
     language_len
 };
 
@@ -86,14 +174,11 @@ static char *LOADING_NAME[] = {
         "loading_config",
         "loading_language",
         "loading_items",
+        "loading_menus",
         "loading_maps",
 };
 
-static char *LANGUAGES_NAME[] = {
-        "language_start",
-        "language_back",
-        "language_exit",
-};
+static char *LANGUAGES_NAME[] = {};
 
 
 
@@ -115,10 +200,6 @@ static char *ITEMS_NAME[] = {
         "items_len"
 };
 
-const char *MAP_DIR = "../configs/maps/";
-const char *CONFIG_DIR = "../app.config";
-const char *LANGUAGE_DIR = "../configs/languages/";
-const char *ITEM_DIR = "../configs/items";
 
 
 typedef struct {
@@ -127,8 +208,18 @@ typedef struct {
 } Lang;
 
 typedef struct {
-    unsigned short port;
+    unsigned short item;
+    char *name;
+} Loading_item;
+
+typedef struct {
+    Loading_item **loading_item;
+} Loading;
+
+typedef struct {
+    Loading *loading;
     char *language;
+    char *lang_dir;
 } Config;
 
 typedef struct {
@@ -166,9 +257,15 @@ typedef struct {
 } Item;
 
 typedef struct {
+    char *title;
+    menus_index next_menu;
+    unsigned short nb_choice;
+} Menu;
+
+typedef struct {
     char *name;
     char id;
-    char *color;
+    enum colors_index color;
     unsigned short direction;
     int x;
     int y;
@@ -191,6 +288,7 @@ typedef struct {
     Config *config;
     Lang **lang;
     Item **items;
+    Menu **menus;
 
     Map **maps;
     Player *winner;
@@ -201,18 +299,20 @@ typedef struct {
     unsigned short nb_player;
 
     unsigned short bo;
-    unsigned short selected_menu;
-    unsigned short selected_choice;
+    unsigned short current_menu;
+    unsigned short previous_menu;
+    unsigned short current_choice;
     unsigned short current_map;
-    unsigned short *selected_maps;
+    short *selected_maps;
 } Board;
 
-typedef struct {
-    unsigned short item;
-    char *name;
-} Loading_item;
+const char *CONFIG_DIR = "../app.config";
+const char *LANGUAGE_DIR = "../configs/languages/";
+const char *ITEM_DIR = "../configs/items";
+const char *MAP_DIR = "../configs/maps/";
+const char *PATCH_NOTES_DIR = "../configs/patch_notes/";
+const char *CREDITS_DIR = "../configs/credits/";
 
-typedef struct {
-  Loading_item **loading_item;
-  unsigned short load_ended;
-} Loading;
+const short COLOR_DEFAULT = color_light_gray;
+const short COLOR_BG_DEFAULT = color_black;
+

@@ -1,160 +1,218 @@
 
-Config *get_config(Loading *loading);
-Lang **get_langs(Loading *loading);
-Item **get_items(Loading *loading);
-Map **get_maps(Loading *loading);
+Board *generate_board();
+
+Loading *init_loading(Config *config);
+Config *get_config();
+
+Lang **get_langs(Config *config);
+Item **get_items(Config *config);
+Map **get_maps(Config *config);
+Menu **get_menus(Config *config);
+
 
 Item *_get_item(char *item_att);
-
-char *_get_value_of_file(const char *attribute, const char *dir);
-char *_get_attribute(char *line);
-char *_get_value(char *line);
+Map *_get_map(const char *filename);
+Menu *_get_menu(const char *menu_name, Config *config);
 
 
+/* GENERATE BOARD */
 
-Config *get_config(Loading *loading) {
+Board *generate_board() {
+    Board *board = malloc(sizeof(Board));
+
+    board->winner = malloc(sizeof(Player));
+    board->player_turn = malloc(sizeof(Player));
+
+    board->nb_map = file_get_nb(MAP_DIR);
+
+    if(board->nb_map == 0) {
+        exit_error("0 map detected");
+    }
+
+    board->config = get_config();
+    board->lang = get_langs(board->config);
+    board->items = get_items(board->config);
+    board->menus = get_menus(board->config);
+    board->default_maps = get_maps(board->config);
+    board->maps = malloc(sizeof(Map));
+
+    board->current_map = board->nb_map;
+    board->nb_selected_map = 0;
+
+    board->bo = 3;
+    board->current_menu = menu_game_mode;
+    board->current_choice = 0;
+
+    return board;
+}
+
+
+
+Loading *init_loading(Config *config) {
+    Loading *loading = malloc(sizeof(Loading));
+    loading->loading_item = malloc(sizeof(Loading_item) * loading_len);
+
+    for (int i = 0; i < loading_len; ++i) {
+        loading->loading_item[i] = malloc(sizeof(Loading_item));
+        loading->loading_item[i]->item = 0;
+        loading->loading_item[i]->name = file_get_value(LOADING_NAME[i], config->lang_dir);
+    }
+
+    display_loading(loading, loading_init);
+    return loading;
+}
+Config *get_config() {
     Config *config = malloc(sizeof(Config));
-    config->language = _get_value_of_file("language", CONFIG_DIR);
+
+    config->language = file_get_value("language", CONFIG_DIR);
+    if(config->language == NULL) {
+        exit_error("config err, language = NULL");
+    }
+
+    config->lang_dir = str_cat(LANGUAGE_DIR, config->language);
+
+    config->loading = init_loading(config);
     //et le reste de la config
 
-    if(config->language == NULL) {
-        printf("Erreur dans la config");
-        exit(0);
-    }
-    display_loading(loading, loading_config);
+    display_loading(config->loading, loading_config);
     return config;
 }
 
-Lang **get_langs(Loading *loading) {
+Lang **get_langs(Config *config) {
     Lang **lang = malloc(sizeof(Lang) * language_len);
-    char *lang_value = _get_value_of_file("language", CONFIG_DIR);
-    char *lang_dir = str_cat(LANGUAGE_DIR, lang_value);
 
     char *value;
     for (int i = 0; i < language_len; ++i) {
         lang[i] = malloc(sizeof(Lang));
-        value = _get_value_of_file(LANGUAGES_NAME[i], lang_dir);
+        value = file_get_value(LANGUAGES_NAME[i], config->lang_dir);
         if(value == NULL) {
-            printf("Erreur dans language");
-            exit(0);
+            warningf(str_cat(LANGUAGES_NAME[i], " est a NULL. Existe-il ?"));
+            value = set_value("null");
         }
         lang[i]->str = value;
         lang[i]->str_len = strlen(value);
     }
-    free(value);
-    display_loading(loading, loading_language);
+    display_loading(config->loading, loading_language);
     return lang;
 }
-
-Item **get_items(Loading *loading) {
+Item **get_items(Config *config) {
     Item **items = malloc(sizeof(Item) * items_len);
 
     for (int i = 0; i < items_len; ++i) {
         items[i] = _get_item(ITEMS_NAME[i]);
         if(items[i] == NULL) {
-            printf("Erreur dans get_item()");
-            exit(0);
+            exit_error("items[i] = NULL");
         }
     }
-    display_loading(loading, loading_items);
+    display_loading(config->loading, loading_items);
     return items;
 }
+Map **get_maps(Config *config) { // tableau de map
+    Map **maps = malloc(sizeof(Map));
+    struct dirent *dir;
+    DIR *d = opendir(MAP_DIR);
+    char *path;
 
+    if (d != NULL) { // a verifier doc
+        int i = 0;
+        while ((dir = readdir(d)) != NULL) {
+            if(isalpha(dir->d_name[0])) {
+                path = str_cat(MAP_DIR, dir->d_name);
+                maps = realloc(maps, sizeof(Map) * (i + 1)); // a voir sur le github ou prendre push
+                maps[i] = _get_map(path);
+
+                if(maps[i] == NULL) {
+                    warningf("maps[i] = NULL\n");
+                }
+                i++;
+                free(path);
+            }
+        }
+        closedir(d);
+        display_loading(config->loading, loading_maps);
+        return maps;
+    }
+    exit_error("--== Dossier introuvable ==--");
+}
+Menu **get_menus(Config *config) {
+    Menu **menus = malloc(sizeof(Menu) * menus_len);
+
+    for (int i = 0; i < menus_len; ++i) {
+        menus[i] = _get_menu(MENUS_NAME[i], config);
+        if(menus[i] == NULL) {
+            exit_error("Menu[i] = NULL");
+        }
+    }
+    menus[1]->next_menu = menu_game_mode;
+    display_loading(config->loading, loading_menus);
+    return menus;
+
+}
 
 
 Item *_get_item(char *item_att) {
     Item *item = malloc(sizeof(Item));
-    char *values = _get_value_of_file(item_att, ITEM_DIR);
+    char *values = file_get_value(item_att, ITEM_DIR);
 
     if(values != NULL) {
-//        printf("%s", values);
         item->data = malloc(sizeof(Data_item));
         sscanf(values, "%d %c", &item->data->_int, &item->data->_char);
         free(values);
         return item;
     }
-    printf("Erreur dans get_item()");
-    exit(0);
     return NULL;
 }
-Loading *get_loading() {
-    Loading *loading = malloc(sizeof(Loading));
-    loading->loading_item = malloc(sizeof(Loading_item) * loading_len);
-    loading->load_ended = 0;
+Map *_get_map(const char *filename) {
+    Map *map = malloc(sizeof(Map));
+    int index = 0;
+    int numberPlayers = 0;
 
-    char *value = _get_value_of_file("language", CONFIG_DIR);
-    char *lang_dir = str_cat(LANGUAGE_DIR, value);
-
-    for (int i = 0; i < loading_len; ++i) {
-        loading->loading_item[i] = malloc(sizeof(Loading_item));
-        loading->loading_item[i]->item = 0;
-        loading->loading_item[i]->name = _get_value_of_file(LOADING_NAME[i], lang_dir);
+    FILE *f = fopen(filename, "r");
+    if (f == NULL) {
+        return NULL;
     }
-    free(lang_dir);
-    free(value);
-    return loading;
-}
-
-
-char *_get_value_of_file(const char *attribute, const char *dir) {
-    FILE *f = fopen(dir, "r");
-
-    if(f != NULL) {
-        char *line = malloc(sizeof(char) * 255);
-        char *file_att, *file_value;
-
-        while (fgets(line, 255, f) != NULL) {
-            if(strcmp(line, "\n") == 0) {
-                continue;
-            }
-            file_att = _get_attribute(line);
-            file_value = _get_value(line);
-            if(strcmp(attribute, file_att) == 0) {
-                fclose(f);
-                free(file_att);
-                return file_value;
+    fseek(f, 0, SEEK_SET); // replace le curseur au début du fichier
+    while (!feof(f)) {
+        int c = fgetc(f);
+        if (index == 0) {
+            map->bomb_default = c - 48; // index 0 49 - 48 = 1
+        }
+        if (index == 2) {
+            map->columns = c - 48;    // index 2
+        } else if (index == 4) {
+            map->rows = c - 48;     // index 4
+            map->body = malloc(sizeof(char *) * map->rows);
+            for (int i = 0; i < map->rows; ++i) {
+                map->body[i] = malloc(sizeof(char) * (map->columns + 1));
             }
         }
+        if (index > 4) {
+            for (int i = 0; i < map->rows; ++i) {
+                for (int indexY = 0; indexY < map->columns + 1; ++indexY) {
+                    int tmp = fgetc(f);
+                    if (tmp == 'p') {
+                        numberPlayers++;
+                    }
+                    map->body[i][indexY] = (char) tmp;
+                }
+            }
+        }
+        index++;
     }
-    printf("-= FILE NOT FOUND =-\n");
+    map->player_max = numberPlayers;
+    fclose(f);
+    return map;
+}
+Menu *_get_menu(const char *menu_name, Config *config) {
+    Menu *menu = malloc(sizeof(menu));
+    char *value = file_get_value(menu_name, config->lang_dir);
+
+    if(value != NULL) {
+        menu->title = value;
+        menu->nb_choice = 1;
+        return menu;
+    }
     return NULL;
 }
-char *_get_attribute(char *line) {
-    if(strlen(line) <= 0) {
-        return NULL;
-    }
 
-    char *temp = malloc(sizeof(char) * 255);
-    int i = 0;
-    while (line[i] != '=') {
-        if(line[i] == '\0' || line[i] == '\n') {
-            break;
-        }
-        temp[i] = line[i];
-        i++;
-    }
-    temp[i] = '\0';
-    return str_trim(temp);
-}
-char *_get_value(char *line) {
-    if(strlen(line) <= 0) {
-        return NULL;
-    }
-
-    char *temp = malloc(sizeof(char) * 255);
-    for (int i = 0; i < strlen(line); ++i) {
-        if(line[i] == '=') {
-            i++;
-            int index = 0;
-            while (line[i] != '\n' && line[i] != '\0') {
-                temp[index] = line[i];
-                index++;
-                i++;
-            }
-            temp[index] = '\0';
-            break;
-        }
-    }
-    return str_trim(temp);
-}
 

@@ -17,17 +17,18 @@ void set_player_direction(char event, Board *board);
 
 char *get_event(int event) {
     switch (event) {
-        case CROSS_TOP:
+        case KEY_CROSS_TOP:
         case KEY_z:
-        case CROSS_BOTTOM:
+        case KEY_CROSS_BOTTOM:
         case KEY_s:
-        case CROSS_LEFT:
+        case KEY_CROSS_LEFT:
         case KEY_q:
-        case CROSS_RIGHT:
+        case KEY_CROSS_RIGHT:
         case KEY_d:
             return "move";
 
         case KEY_ENTER:
+
             return "bomb";
 
         case KEY_SPACE:
@@ -43,12 +44,11 @@ char *get_event(int event) {
 
 
 void init_game(Board *board) {
+    set_next_map(board);
     copy_maps(board);
-//    init_players();
-//
-//    set_next_map(board);
-    board->selected_menu = IN_GAME;
-    display_map(board->maps[0]);
+    init_players(board);
+
+    display_next_menu(board, menu_game, &run_game);
 }
 
 //TODO:avoir la position du joueur => Corentin
@@ -185,152 +185,136 @@ void set_player_direction(char event, Board *board){
             board->players[0]->direction = 1;
             break;
     }
-
 }
 
 
-void run_menu(Board *board) {
-    int event = getch();
-    menu_events(board, event);
-    display_menus(board);
+void display_menus(Board *board) {
+    Menu *current_menu = board->menus[board->current_menu];
 
-    if(board->selected_menu == IN_PLAYERS) {
-        get_players(board);
-        get_maps_by_number_player(board);
-        board->selected_menu = MENU_SELECT_MAPS;
-        display_menus(board);
-    }
-}
+    printf("menu: %s/%d | %d | choices: %d\n", board->menus[board->current_menu]->title, board->current_menu, board->current_choice, board->menus[board->current_menu]->nb_choice);
+    printf("next: %d\n\n", current_menu->next_menu);
 
-void menu_events(Board *board, int event) {
-    switch (event) {
-        case CROSS_TOP:
-        case KEY_z:
-        case CROSS_BOTTOM:
-        case KEY_s:
-            board->selected_choice += 1;
+    switch (board->current_menu) {
+        case menu_leave:
             break;
-        case KEY_ENTER:
-            if(board->selected_menu == MENU_START && board->selected_choice == 2){
-                board->selected_menu = IN_EXIT;
-            } else if ((board->selected_menu == MENU_MODE_GAME && board->selected_choice == 3) ||
-                    (board->selected_menu == MENU_NUMBER_PLAYER && board->selected_choice == 6)) {
-                board->selected_menu -= 1;
-            } else if (board->selected_menu == MENU_ONLINE && board->selected_choice == 2) {
-                board->selected_menu = MENU_MODE_GAME;
-            } else if (board->selected_menu == MENU_MODE_GAME && board->selected_choice == 2) {
-                board->selected_menu = MENU_ONLINE;
-            }else if(board->selected_menu == MENU_SELECT_MAPS && board->selected_choice == 3){
-                board->selected_menu = MENU_NUMBER_PLAYER;
-            }else if(board->selected_menu == MENU_NUMBER_PLAYER){
-                board->nb_player = board->selected_choice + 1; //recup le nombre de joueur réel choisit
-                board->selected_menu = IN_PLAYERS;
-            }else if(board->selected_menu == MENU_START && board->selected_choice == 1){
-                board->selected_menu = IN_CONFIG;
-            } else if(board->selected_menu == MENU_SELECT_MAPS){
-                board->selected_menu = IN_GAME;
-            }
-            else if(board->selected_menu == IN_CONFIG){
-                if(board->selected_choice == 2){
-                    board->selected_menu = MENU_START;
-                }else if(board->selected_choice == 0){
-                    board->config->language = "FR";
-                }else if(board->selected_choice == 1){
-                    board->config->language = "EN";
-                }
-//                board->lang = get_langs(board->config->language);
-                board->selected_menu = MENU_START;
-            }
-            else {
-                    if (board->selected_menu + 1 < 12) {
-                        board->selected_menu += 1;
-                    }
-                }
-
-            board->selected_choice = 0;
+        case menu_home:
+            menu_home_case(board);
+            break;
+        case menu_options:
+            menu_options_case(board);
+            break;
+        case menu_languages:
+            menu_languages_case(board);
+            break;
+        case menu_game_mode:
+            menu_game_mode_case(board);
+            break;
+        case menu_solo:
+            menu_solo_case(board);
+            break;
+        case menu_players:
+            menu_players_case(board);
+            break;
+        case menu_maps:
+            menu_maps_case(board);
+            break;
+        case menu_init_game:
+            break;
+        case menu_game:
+            break;
+        case menu_winner_summary:
+            break;
+        case menu_resume:
+            menu_resume_case(board);
+            break;
+        case menu_patch_notes:
+            menu_patch_notes_case(board);
+            break;
+        case menu_credits:
+            menu_credits_case(board);
             break;
         default:
             break;
     }
 }
 
-Board *generate_board() {
-    Loading *loading = get_loading();
-    display_loading(loading, loading_init);
 
-    Board *board = malloc(sizeof(Board));
+void run_menu(Board *board) {
+    int event = getch();
+    int display = 0;
 
-    board->winner = malloc(sizeof(Player));
-    board->player_turn = malloc(sizeof(Player));
+    Menu *current_menu = board->menus[board->current_menu];
+    switch (event) {
+        case KEY_CROSS_TOP:
+            if(board->current_choice - 1 >= 0) {
+                board->current_choice -= 1;
+                display = 1;
+            }
+            break;
+        case KEY_CROSS_BOTTOM:
+            if(board->current_choice + 1 < current_menu->nb_choice) {
+                board->current_choice += 1;
+                display = 1;
+            }
+            break;
+        case KEY_ENTER:
+            if(board->current_choice == current_menu->nb_choice - 1) {
+                board->current_menu = current_menu->next_menu;
+                board->current_choice = 0;
+                display = 1;
+            } else {
+                board->current_menu = current_menu->next_menu;
+                board->current_choice = 0;
+                display = 1;
+            }
+            break;
+        case KEY_ESCAPE:
+//            if(
+//                    board->current_menu == menu_patch_notes ||
+//                    board->current_menu == menu_credits
+//                    ) {
+//                board->current_menu = menu_home;
+//                display = 1;
+//            }
+            break;
 
-    board->config = get_config(loading);
-    board->lang = get_langs(loading);
-    board->items = get_items(loading);
-    board->default_maps = get_maps(loading);
-    board->maps = malloc(sizeof(Map));
+        case 'p':
+            die();
+        default:
+            break;
+    }
 
-//    board->nb_map = get_nb_map(board->maps);
-    board->nb_map = 1;
-    board->current_map = 0;
-    board->nb_selected_map = 1;
-
-    board->bo = 3;
-    board->selected_menu = IN_GAME;
-    board->selected_choice = 0;
-
-    return board;
+    if(display) {
+        clear_console();
+        display_menus(board);
+    }
 }
 
-void get_maps_by_number_player(Board *board){
-//    int j =0;
-//    for(int i =0; i<board->nb_map; i++){
-////        if(board->maps[i]->player_max >= board->nb_player){
-//            board->selected_maps[j] = board->maps[i];
-//            board->selected_map++;
-//            j++;
-////        }
-//    }
-}
+
 
 
 
 /**
  * @fetaures : get players
  * */
-void get_players(Board *board){
-    clear_console();
-    board->players = malloc(sizeof (Player *)*board->nb_player);
-    for(int i =0; i<board->nb_player; i++){
-        push(board, create_player( &i), i);
-    }
+//void get_players(Board *board){
+//    clear_console();
+//    board->players = malloc(sizeof (Player *)*board->nb_player);
+//    for(int i =0; i<board->nb_player; i++){
+//        push(board, create_player( &i), i);
+//    }
+//
+//    for(int i =0; i<board->nb_player; i++){
+//        printf("\n%s", board->players[i]->color);
+//        printf(" Pseudo => %s", board->players[i]->name);
+//        printf(" IsBot => %d", board->players[i]->is_bot);
+//        printf(" ID => %d", board->players[i]->id);
+//    }
+//    printf("%s\n", WHITE);
+//    system("pause");
+//}
 
-    for(int i =0; i<board->nb_player; i++){
-        printf("\n%s", board->players[i]->color);
-        printf(" Pseudo => %s", board->players[i]->name);
-        printf(" IsBot => %d", board->players[i]->is_bot);
-        printf(" ID => %d", board->players[i]->id);
-    }
-    printf("%s\n", WHITE);
-    system("pause");
-}
 
-/**
- * @features : create player
- * */
-Player *create_player(int *index){
-    char *colors[6] = {RED, GREEN,YELLOW,BLUE,PURPLE,CYAN};
-    Player *player = malloc(sizeof(Player));
-    player->color = malloc(sizeof (char));
-    player->name = malloc(sizeof (char));
-    player->color = colors[*index];
-    player->id = *index+48;
-    player->score = 0;
-    player->heart = 1;
-    printf("Entrez votre pseudo : ");
-    scanf("%s", player->name);
-    player->is_bot = 0;
-    return player;
-}
 
 /**
  * @features : create a bot
