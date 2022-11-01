@@ -24,7 +24,6 @@ char *get_event(int event) {
         case KEY_q:
         case KEY_CROSS_RIGHT:
         case KEY_d:
-            printf("[%d]", event);
             return "move";
 
         case KEY_ENTER:
@@ -52,9 +51,8 @@ void init_game(Board *board) {
     display_next_menu(board, menu_game, &run_game);
 }
 
-//TODO:avoir la position du joueur => Corentin
 int can_move(Board *board, int x, int y, int rows, int columns) {
-    //TODO:bombe + id + next
+    //TODO:bombe + next
     switch (board->players[board->player_turn]->direction) {
         case 0 :
             if (x == 0 && board->maps[board->current_map]->body[rows][y] != ' ') {
@@ -109,57 +107,41 @@ int move_player(Board *board) {
     Player *player = board->players[board->player_turn];
     Map *map = board->maps[board->current_map];
 
-    if (can_move(board, player->x, player->y, map->rows, map->columns) == 0) {
+    if (can_move(board, player->x, player->y, map->rows-1, map->columns-1) == 0) {
+        display_board(board);
+
         return 0;
     }
-
-    map->body[player->y][player->x] = ' ';
-    printf("player x: %d; y: %d", player->x, player->y);
-
+    map->body[player->x][player->y] = ' ';
     switch (player->direction) {
         case 0:
-            decrement_or_reset(&player->y, map->rows);
+            decrement_or_reset(&player->x, map->rows-1);
             break;
         case 2:
-            increment_or_reset(&player->y, map->rows);
+            increment_or_reset(&player->x, map->rows-1);
             break;
         case 1:
-            decrement_or_reset(&player->x, map->columns);
+            increment_or_reset(&player->y, map->columns-1);
             break;
         case 3 :
-            increment_or_reset(&player->x, map->columns);
+            decrement_or_reset(&player->y, map->columns-1);
             break;
-//        case 0:
-//            player->x = --board->players[0]->x;
-//            if (player->x == -1) {
-//                board->players[0]->x = map->rows;
-//                player->x = map->rows;
-//            }
-//            break;
-//        case 2:
-//            x = ++board->players[0]->x;
-//            if (x == rows + 1) {
-//                board->players[0]->x = 0;
-//                x = 0;
-//            }
-//            break;
-
     }
-    printf("player x: %d; y: %d", player->x, player->y);
-    map->body[player->y][player->x] = player->id;
+    map->body[player->x][player->y] = player->id;
     return 1;
 }
 
 void run_game(Board *board) {
-    if (kbhit()) {
+    display_board(board);
+
+    //if (kbhit()) {
+
         int event = my_getch();
         const char *event_name = get_event(event);
         if (strcmp(event_name, "move") == 0) {
             set_player_direction(event, board);
-            if (move_player(board)) {
-                printf("move player \n");
-                display_board(board);
-            }
+            move_player(board);
+
         } else if (strcmp(event_name, "bomb") == 0) {
             //            if(plant_bomb(board)) {
             //                display_map(board->maps[board->selected_map]);
@@ -167,9 +149,10 @@ void run_game(Board *board) {
         } else if (strcmp(event_name, "resume") == 0) {
             //            display_resume(board);
         }
-    } else {
-        display_board(board);
-    }
+    //}
+    //else {
+      //  display_board(board);
+    //}
 }
 
 void set_player_direction(char event, Board *board) {
