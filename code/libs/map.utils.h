@@ -29,8 +29,8 @@ void copy_maps(Board *board) {
 //        board->maps[i]->id = board->default_maps[select_maps]->id;
         board->maps[i]->rows = board->default_maps[select_maps]->rows;
         board->maps[i]->columns = board->default_maps[select_maps]->columns;
-//        board->maps[i]->bomb_max = board->default_maps[select_maps]->bomb_max;
-//        board->maps[i]->player_max = board->default_maps[select_maps]->player_max;
+        board->maps[i]->bomb_default = board->default_maps[select_maps]->bomb_default;
+        board->maps[i]->player_max = board->default_maps[select_maps]->player_max;
         board->maps[i]->body = _copy_body(board->default_maps[select_maps]);
     }
 }
@@ -60,4 +60,17 @@ void get_maps_by_max_player(Board *board) {
 
 void set_next_map(Board *board) {
     board->current_map = board->current_map + 1 > board->nb_selected_map ? 0 : board->current_map + 1;
+}
+
+void init_map(Board *board) {
+    for (int i = 0; i < board->nb_player; ++i) {
+        for (int j = 0; j < board->maps[board->current_map]->rows; ++j) {
+            for (int k = 0; k < board->maps[board->current_map]->columns; ++k) {
+                if(board->maps[board->current_map]->body[j][k] == 'p') {
+                    board->maps[board->current_map]->body[j][k] = board->players[i]->id;
+                    i += 1;
+                }
+            }
+        }
+    }
 }

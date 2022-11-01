@@ -102,13 +102,9 @@ char test3[12][20] = {
 void display_board(Board *board){
     clear_console();
 
-    _display_border(board);
-    _display_margin_y(board);
-
-    _display_content(board);
-
-    _display_margin_y(board);
-    _display_border(board);
+    printf("player_turn: %s[%d]\n", board->players[board->player_turn]->name, board->player_turn);
+    printf("x: %d | y: %d\n", board->players[board->player_turn]->x, board->players[board->player_turn]->y);
+    display_map(board->maps[board->current_map]);
 }
 
 

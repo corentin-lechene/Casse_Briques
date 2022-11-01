@@ -21,9 +21,7 @@ void run_program(Board *board) {
     if(board->current_menu == menu_game) {
         run_game(board);
     } else if(board->current_menu == menu_init_game) {
-        printf("init _game");
         init_game(board);
-        exit(0);
     } else {
         run_menu(board);
     }

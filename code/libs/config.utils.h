@@ -21,7 +21,6 @@ Board *generate_board() {
     Board *board = malloc(sizeof(Board));
 
     board->winner = malloc(sizeof(Player));
-    board->player_turn = malloc(sizeof(Player));
 
     board->nb_map = file_get_nb(MAP_DIR);
 
@@ -40,8 +39,9 @@ Board *generate_board() {
     board->nb_selected_map = 0;
 
     board->bo = 3;
-    board->current_menu = menu_game_mode;
+    board->current_menu = menu_home;
     board->current_choice = 0;
+    board->player_turn = board->nb_player;
 
     return board;
 }

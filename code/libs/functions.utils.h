@@ -1,5 +1,5 @@
 
-double random_between(double min, double max);
+int my_getch();
 
 char *str_cat(const char *first, const char *last);
 char *str_trim(char *str);
@@ -14,6 +14,10 @@ void text_color(int color);
 void text_color_default();
 enum colors_index get_random_color();
 
+void increment_or_reset(unsigned short *val, short max);
+void decrement_or_reset(unsigned short *val, short max);
+double random_between(double min, double max);
+
 void clear_console();
 void exit_error(char *desc);
 void errorf(char *err);
@@ -25,10 +29,6 @@ void die();
 
 
 /* ---===       --------        ===--- */
-
-enum colors_index get_random_color() {
-    return random_between(0, colors_len);
-}
 
 char *str_cat(const char *first, const char *last) {
     unsigned short len = strlen(first) + strlen(last) ;
@@ -165,10 +165,29 @@ void text_color_default() {
     text_color(COLOR_DEFAULT);
 }
 
+enum colors_index get_random_color() {
+    return random_between(0, colors_len);
+}
 double random_between(double min, double max) {
     srand( time (NULL));
     return min + ((int)rand() % (int)max);
 }
+void increment_or_reset(unsigned short *val, short max) {
+    if(*val + 1 > max) {
+        *val = 0;
+        return;
+    }
+    *val += 1;
+}
+
+void decrement_or_reset(unsigned short *val, short max) {
+    if(*val - 1 < 0) {
+        *val = max;
+        return;
+    }
+    *val -= 1;
+}
+
 
 void clear_console() {
     system("cls");
@@ -199,4 +218,37 @@ char *set_value(char *value) {
 
 void die() {
     exit(0);
+}
+
+int my_getch()  {
+    int ch = _getch ();
+
+    if (ch == 0 || ch == 224) {
+        int ch2 = _getch();
+        switch (ch2) {
+            case 72:
+            case 80:
+            case 75:
+            case 77:
+                return ch2;
+
+            default:
+                return -1;
+                break;
+        }
+    } else {
+        switch (ch) {
+            case 13:
+            case 27:
+            case 32:
+            case 'z':
+            case 's':
+            case 'q':
+            case 'd':
+                return ch;
+            default:
+                return -1;
+                break;
+        }
+    }
 }
