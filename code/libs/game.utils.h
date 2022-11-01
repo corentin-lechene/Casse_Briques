@@ -12,6 +12,8 @@ void push(Board *dest, Player *source, int index);
 void tab_mix(char *tab[], int size);
 
 
+void set_player_direction(char event, Board *board);
+
 char *get_event(int event) {
     switch (event) {
         case KEY_CROSS_TOP:
@@ -45,26 +47,142 @@ void init_game(Board *board) {
     display_next_menu(board, menu_game, &run_game);
 }
 
+//TODO:avoir la position du joueur => Corentin
+int can_move(Board *board, int x, int y, int rows, int columns){
+    //TODO:bombe + id + next
+    switch (board->players[0]->direction) {
+        case 0 :
+            if(x== 0 && board->default_maps[0]->body[rows][y] != ' '){
+                return 0;
+            }else if(x== 0 && board->default_maps[0]->body[rows][y] == ' '){
+                return 1;
+            }
+            if(board->default_maps[0]->body[x-1][y] == 'x' || board->default_maps[0]->body[x-1][y] == 'm'||
+                board->default_maps[0]->body[x-1][y] == 'p'){
+                return 0;
+            }
+            break;
+        case 1 :
+            if(y== columns && board->default_maps[0]->body[x][0] != ' '){
+                return 0;
+            }else if(y == columns && board->default_maps[0]->body[x][0] == ' '){
+                return 1;
+            }
+            if(board->default_maps[0]->body[x][y+1] == 'x' || board->default_maps[0]->body[x][y+1] == 'm' ||
+                board->default_maps[0]->body[x][y+1] == 'p'){
+                return 0;
+            }
+            break;
+        case 2 :
+            if(x== rows && board->default_maps[0]->body[0][y] != ' '){
+                return 0;
+            }else if(x== rows && board->default_maps[0]->body[0][y] == ' '){
+                return 1;
+            }
+            if(board->default_maps[0]->body[x+1][y] == 'x' || board->default_maps[0]->body[x+1][y] == 'm' ||
+                board->default_maps[0]->body[x+1][y] == 'p'){
+                return 0;
+            }
+            break;
+        case 3:
+            if(y == 0 && board->default_maps[0]->body[x][columns] != ' '){
+                return 0;
+            }else if(y == 0 && board->default_maps[0]->body[x][columns] == ' '){
+                return 1;
+            }
+            if(board->default_maps[0]->body[x][y-1] == 'x' || board->default_maps[0]->body[x][y-1] == 'm' ||
+                board->default_maps[0]->body[x][y-1] == 'p'){
+                return 0;
+            }
+            break;
+    }
+    return 1;
+}
+
+//TODO : gestion player_turn
+int move_player(Board *board){
+    int x = board->players[0]->x;
+    int y = board->players[0]->y;
+    int rows = board->default_maps[0]->rows -1;
+    int columns = board->default_maps[0]->columns -1;
+    if(can_move(board,x,y, rows,columns) == 0){
+        display_map(board->default_maps[0]);
+        return 0;
+    }
+    board->default_maps[0]->body[x][y] = ' ';
+    switch (board->players[0]->direction) {
+        case 0:
+            x = --board->players[0]->x;
+            if(x == -1){
+                board->players[0]->x = rows;
+                x = rows;
+            }
+            break;
+        case 1:
+            y = ++board->players[0]->y;
+            if(y == columns+1){
+                board->players[0]->y = 0;
+                y = 0;
+            }
+            break;
+        case 2:
+            x = ++board->players[0]->x;
+            if(x == rows+1){
+                board->players[0]->x = 0;
+                x = 0;
+            }
+            break;
+        case 3 :
+            y = --board->players[0]->y;
+            if(y == -1){
+                board->players[0]->y = columns;
+                y = columns;
+            }
+            break;
+    }
+    board->default_maps[0]->body[x][y] = 'p';
+    return  1;
+}
 
 void run_game(Board *board) {
-    if(kbhit()) {
+    //if(kbhit()) {
         int event = getch();
         const char *event_name = get_event(event);
-
         if(strcmp(event_name, "move") == 0) {
-//            set_player_direction(event);
-//            if(move_player(board)) {
-//                display_map(board->maps[board->selected_map]);
-//            }
+            set_player_direction(event, board);
+            if(move_player(board)) {
+                //display_map(board->maps[board->selected_map]);
+                display_map(board->default_maps[0]);
+            }
         } else if(strcmp(event_name, "bomb") == 0) {
-//            if(plant_bomb(board)) {
-//                display_map(board->maps[board->selected_map]);
-//            }
+    //            if(plant_bomb(board)) {
+    //                display_map(board->maps[board->selected_map]);
+    //            }
         } else if(strcmp(event_name, "resume") == 0) {
-//            display_resume(board);
+    //            display_resume(board);
         }
-    }
+  //  }
 }
+
+void set_player_direction(char event, Board *board){
+
+    switch (event) {
+        case KEY_z :
+            board->players[0]->direction = 0;
+            break;
+        case KEY_q :
+            board->players[0]->direction = 3;
+            break;
+        case KEY_s :
+            board->players[0]->direction = 2;
+            break;
+        case KEY_d :
+            board->players[0]->direction = 1;
+            break;
+    }
+
+}
+
 
 
 void display_menus(Board *board) {
@@ -168,31 +286,6 @@ void run_menu(Board *board) {
         display_menus(board);
     }
 }
-
-
-
-
-
-/**
- * @fetaures : get players
- * */
-//void get_players(Board *board){
-//    clear_console();
-//    board->players = malloc(sizeof (Player *)*board->nb_player);
-//    for(int i =0; i<board->nb_player; i++){
-//        push(board, create_player( &i), i);
-//    }
-//
-//    for(int i =0; i<board->nb_player; i++){
-//        printf("\n%s", board->players[i]->color);
-//        printf(" Pseudo => %s", board->players[i]->name);
-//        printf(" IsBot => %d", board->players[i]->is_bot);
-//        printf(" ID => %d", board->players[i]->id);
-//    }
-//    printf("%s\n", WHITE);
-//    system("pause");
-//}
-
 
 
 /**

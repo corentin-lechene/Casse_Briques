@@ -267,6 +267,9 @@ typedef struct {
     char id;
     enum colors_index color;
     unsigned short direction;
+    int x;
+    int y;
+    //char *direction;
 
     unsigned short heart;
     unsigned short nb_bomb;
