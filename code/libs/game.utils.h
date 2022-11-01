@@ -28,8 +28,10 @@ char *get_event(int event) {
             return "move";
 
         case KEY_ENTER:
-        case KEY_SPACE:
             return "bomb";
+
+        case KEY_SPACE:
+            return "next";
 
         case KEY_ESCAPE:
             return "resume";
@@ -51,7 +53,7 @@ void init_game(Board *board) {
 
 //TODO:avoir la position du joueur => Corentin
 int can_move(Board *board, int x, int y, int rows, int columns){
-    //TODO:bombe + id + next
+    //TODO:bombe + id
     switch (board->players[0]->direction) {
         case 0 :
             if(x== 0 && board->default_maps[0]->body[rows][y] != ' '){
@@ -103,46 +105,40 @@ int can_move(Board *board, int x, int y, int rows, int columns){
 
 //TODO : gestion player_turn
 int move_player(Board *board){
-    int x = board->players[0]->x;
-    int y = board->players[0]->y;
     int rows = board->default_maps[0]->rows -1;
     int columns = board->default_maps[0]->columns -1;
-    if(can_move(board,x,y, rows,columns) == 0){
+    if(can_move(board,board->players[0]->x,board->players[0]->y, rows,columns) == 0){
         display_map(board->default_maps[0]);
         return 0;
     }
-    board->default_maps[0]->body[x][y] = ' ';
+    board->default_maps[0]->body[board->players[0]->x][board->players[0]->y] = ' ';
     switch (board->players[0]->direction) {
         case 0:
-            x = --board->players[0]->x;
-            if(x == -1){
+            --board->players[0]->x;
+            if(board->players[0]->x == -1){
                 board->players[0]->x = rows;
-                x = rows;
             }
             break;
         case 1:
-            y = ++board->players[0]->y;
-            if(y == columns+1){
+            ++board->players[0]->y;
+            if(board->players[0]->y == columns+1){
                 board->players[0]->y = 0;
-                y = 0;
             }
             break;
         case 2:
-            x = ++board->players[0]->x;
-            if(x == rows+1){
+            ++board->players[0]->x;
+            if(board->players[0]->x == rows+1){
                 board->players[0]->x = 0;
-                x = 0;
             }
             break;
         case 3 :
-            y = --board->players[0]->y;
-            if(y == -1){
+            --board->players[0]->y;
+            if(board->players[0]->y == -1){
                 board->players[0]->y = columns;
-                y = columns;
             }
             break;
     }
-    board->default_maps[0]->body[x][y] = 'p';
+    board->default_maps[0]->body[board->players[0]->x][board->players[0]->y] = 'p';
     return  1;
 }
 
@@ -166,18 +162,25 @@ void run_game(Board *board) {
   //  }
 }
 
+//TODO : Bombe_kick => rare ; bomb_destroy=> encore plus rare (1x) ;
+//TODO : 33% => 100% (items) ; 10% (items très rare) ;
+
 void set_player_direction(char event, Board *board){
 
     switch (event) {
-        case KEY_z :
+        case KEY_z:
+        //case CROSS_TOP :
             board->players[0]->direction = 0;
             break;
         case KEY_q :
+        //case CROSS_LEFT :
             board->players[0]->direction = 3;
             break;
         case KEY_s :
+        //case CROSS_BOTTOM :
             board->players[0]->direction = 2;
             break;
+        //case CROSS_RIGHT :
         case KEY_d :
             board->players[0]->direction = 1;
             break;

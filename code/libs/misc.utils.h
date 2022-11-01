@@ -172,7 +172,6 @@ typedef struct {
     unsigned short direction;
     int x;
     int y;
-    //char *direction;
 
     unsigned short heart;
     unsigned short nb_bomb;

@@ -26,14 +26,18 @@ void run_program(Board *board) {
 int main() {
 
     Board *board = generate_board();
-    board->players[0] = malloc(sizeof (Player));
-    board->players[0]->x = 1;
-    board->players[0]->y = 2;
-    //run_game(board);
-    display_opening_credits();
-    while (board->selected_menu >= 1) {
-        run_program(board);
-    }
-    display_ending_credits();
+    //TODO : Position initiale des joueurs/map
+//    board->players[0] = malloc(sizeof (Player));
+//    board->players[0]->x = 1;
+//    board->players[0]->y = 2;
+//    display_opening_credits();
+//    while (board->selected_menu >= 1) {
+//        run_program(board);
+//    }
+//    display_ending_credits();
+
+
+    printf("%c", board->items[0]->data->_char);
+
     return 0;
 }
