@@ -38,13 +38,11 @@ char *get_event(int event) {
 
 
 void init_game(Board *board) {
-    printf("[%d]", board->nb_selected_map);
+    set_next_map(board);
     copy_maps(board);
-//    init_players();
-//
-//    set_next_map(board);
-    board->current_menu = IN_GAME;
-    display_map(board->maps[0]);
+    init_players(board);
+
+    display_next_menu(board, menu_game, &run_game);
 }
 
 

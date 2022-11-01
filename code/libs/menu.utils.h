@@ -10,7 +10,7 @@ void menu_maps_case(Board *board);
 void menu_init_game_case(Board *board);
 void menu_resume_case(Board *board);
 void menu_players_case(Board *board);
-
+void menu_game_case(Board *board);
 
 
 void menu_home_case(Board *board) {
@@ -104,10 +104,12 @@ void menu_maps_case(Board *board) {
     for (int i = 0; i < board->nb_selected_map; ++i) {
         do {
             clear_console();
-            printf("Map %d/%d : \n%d\n", i + 1, board->nb_selected_map);
-            printf("\n\n");
+            printf("Map %d/%d : \n\n", i + 1, board->nb_selected_map);
 
-            printf("Voulez vous jouer sur cette map ? \n\t- Oui: y\n\t- Non: n\n\t- %s q\n\nVotre choix : ", i == 0 ? "Quitter" : "Retour");
+            printf("Voulez vous jouer sur cette carte ? \n\t- Oui: y\n\t- Non: n\n\t- %s q\n\n", i == 0 ? "Quitter" : "Retour");
+            display_map(board->default_maps[board->selected_maps[i]]);
+
+            printf("Votre choix : ");
             fflush(stdin);
             scanf("%c", &q);
         } while(q != 'y' && q != 'n' && q != 'q');
@@ -175,7 +177,7 @@ void menu_players_case(Board *board) {
         return;
     }
     board->nb_player = atoi(q);
-    printf("%d", board->nb_player);
-    die();
+    create_players(board);
+    display_next_menu(board, menu_maps, &menu_maps_case);
 }
 
