@@ -7,7 +7,7 @@ void display_menu_header(char *title);
 void display_menu(Board *board, choices_index *choices);
 
 void display_board(Board *board);
-void display_map(Map *map);
+void display_map(Map *map, Player **players);
 
 void display_menu_carte(unsigned short *cursor,Board *board);
 void _display_border(Board *board);
@@ -30,7 +30,7 @@ void display_menu_carte(unsigned short *cursor,Board *board){
         printf("\n");
        //printf("[%c]\n\n", i == *cursor ? 'X' : ' ');
         printf("[X]\n\n");
-        display_map(board->maps[i]);
+        display_map(board->maps[i], board->players);
     }
 }
 
@@ -101,10 +101,10 @@ char test3[12][20] = {
 
 void display_board(Board *board){
     clear_console();
-
     printf("player_turn: %s[%d]\n", board->players[board->player_turn]->name, board->player_turn);
     printf("x: %d | y: %d\n", board->players[board->player_turn]->x, board->players[board->player_turn]->y);
-    display_map(board->maps[board->current_map]);
+    display_map(board->maps[board->current_map], board->players);
+
 }
 
 
@@ -131,11 +131,18 @@ int _get_char_ascii(char c) {
     return res;
 }
 
-void display_map(Map *map) {
+void display_map(Map *map, Player **players) {
     for (int i = 0; i < map->rows; ++i) {
         for (int j = 0; j < map->columns; ++j) {
 //            printf("%c", _get_char_ascii(test[i][j]));
-            printf("%c", map->body[i][j]);
+            if(map->body[i][j] >= 48 && map->body[i][j] <= 57){
+                int nb = map->body[i][j] - 49;
+                text_color(players[nb]->color);
+                printf("%c", map->body[i][j]);
+                text_color_default();
+            }else {
+                printf("%c", map->body[i][j]);
+            }
         }
         printf("\n");
     }

@@ -67,7 +67,7 @@ void init_players(Board *board) {
     }
 }
 void set_player_turn(Board *board) {
-    board->player_turn = board->player_turn + 1 > board->nb_player ? 0 : board->player_turn + 1;
+    board->player_turn = board->player_turn + 1 >= board->nb_player ? 0 : board->player_turn + 1;
 }
 short get_pos_player(Board *board, int index, char pos) {
     int nb_p = 0;

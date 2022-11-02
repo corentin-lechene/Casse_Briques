@@ -61,7 +61,8 @@ int can_move(Board *board, int x, int y, int rows, int columns) {
                 return 1;
             }
             if (board->maps[board->current_map]->body[x - 1][y] == 'x' || board->maps[board->current_map]->body[x - 1][y] == 'm' ||
-                board->maps[board->current_map]->body[x - 1][y] == 'p') {
+                board->maps[board->current_map]->body[x - 1][y] == 'p' ||
+                (board->maps[board->current_map]->body[x - 1][y] >= 48 && board->maps[board->current_map]->body[x - 1][y] <= 57)) {
                 return 0;
             }
             break;
@@ -72,7 +73,8 @@ int can_move(Board *board, int x, int y, int rows, int columns) {
                 return 1;
             }
             if (board->maps[board->current_map]->body[x][y + 1] == 'x' || board->maps[board->current_map]->body[x][y + 1] == 'm' ||
-                board->maps[board->current_map]->body[x][y + 1] == 'p') {
+                board->maps[board->current_map]->body[x][y + 1] == 'p' ||
+                (board->maps[board->current_map]->body[x][y+1] >= 48 && board->maps[board->current_map]->body[x][y+1] <= 57)) {
                 return 0;
             }
             break;
@@ -83,7 +85,8 @@ int can_move(Board *board, int x, int y, int rows, int columns) {
                 return 1;
             }
             if (board->maps[board->current_map]->body[x + 1][y] == 'x' || board->maps[board->current_map]->body[x + 1][y] == 'm' ||
-                board->maps[board->current_map]->body[x + 1][y] == 'p') {
+                board->maps[board->current_map]->body[x + 1][y] == 'p' ||
+                (board->maps[board->current_map]->body[x + 1][y] >= 48 && board->maps[board->current_map]->body[x + 1][y] <= 57)) {
                 return 0;
             }
             break;
@@ -94,7 +97,8 @@ int can_move(Board *board, int x, int y, int rows, int columns) {
                 return 1;
             }
             if (board->maps[board->current_map]->body[x][y - 1] == 'x' || board->maps[board->current_map]->body[x][y - 1] == 'm' ||
-                board->maps[board->current_map]->body[x][y - 1] == 'p') {
+                board->maps[board->current_map]->body[x][y - 1] == 'p' ||
+                (board->maps[board->current_map]->body[x][y-1] >= 48 && board->maps[board->current_map]->body[x][y-1] <= 57)) {
                 return 0;
             }
             break;
@@ -159,7 +163,9 @@ void putItems(Board *board){
 }
 
 void run_game(Board *board) {
+
     display_board(board);
+
     //if (kbhit()) {
 
         int event = my_getch();
@@ -176,6 +182,9 @@ void run_game(Board *board) {
         } else if (strcmp(event_name, "resume") == 0) {
             //            display_resume(board);
         }
+
+    set_player_turn(board);
+
     //}
     //else {
       //  display_board(board);

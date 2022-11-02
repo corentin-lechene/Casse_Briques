@@ -107,7 +107,7 @@ void menu_maps_case(Board *board) {
             printf("Map %d/%d : \n\n", i + 1, board->nb_selected_map);
 
             printf("Voulez vous jouer sur cette carte ? \n\t- Oui: y\n\t- Non: n\n\t- %s q\n\n", i == 0 ? "Quitter" : "Retour");
-            display_map(board->default_maps[board->selected_maps[i]]);
+            display_map(board->default_maps[board->selected_maps[i]], board->players);
 
             printf("Votre choix : ");
             fflush(stdin);
