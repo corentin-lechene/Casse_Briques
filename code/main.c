@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <windows.h>
 #include "libs/misc.utils.h"
+#include "libs/free.utils.h"
 #include "libs/functions.utils.h"
 #include "libs/display.utils.h"
 #include "libs/map.utils.h"
@@ -31,6 +32,11 @@ void run_program(Board *board) {
 int main() {
     text_color_default();
     Board *board = generate_board();
+
+    free_board(&board);
+
+    free_board(&board);
+    return 0;
 
     display_opening_credits();
     display_menus(board);
