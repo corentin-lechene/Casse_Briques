@@ -33,11 +33,6 @@ int main() {
     text_color_default();
     Board *board = generate_board();
 
-    free_board(&board);
-
-    free_board(&board);
-    return 0;
-
     display_opening_credits();
     display_menus(board);
     while (board->current_menu >= 1) {
