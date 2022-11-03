@@ -1,7 +1,7 @@
 loading_init = Preparing the game
 loading_config = Retrieving configuration
 loading_language = Retrieving languages
-loading_items = Retrieving Items
+loading_items = Retrieving items
 loading_menus = Retrieving menus
 loading_maps = Retrieving default_maps
 
@@ -35,5 +35,21 @@ choice_languages = Languages
 choice_solo = Solo
 choice_local = Local
 choice_online = Online
-choice_join_server = Join Server
-choice_create_server = Create Server
+choice_join_server = Join server
+choice_create_server = Create server
+
+item_destructible_wall = Destructible wall
+item_indestructible_wall = Indestructible wall
+item_bomb_up = Bomb up
+item_bomb_down = Bomb down
+item_yellow_flame = Yellow flame
+item_blue_flame = Blue flame
+item_red_flame = Red flame
+item_bomb = Bomb
+item_bomb_destroy = Bomb destroy
+item_bomb_kick = Bomb kick
+item_bomb_passes = Bomb passes
+item_bomb_push = Bomb push
+item_invincibility = Invincibility
+item_heart = Heart
+item_life = Life
