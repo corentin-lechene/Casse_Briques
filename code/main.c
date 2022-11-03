@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <windows.h>
 #include "libs/misc.utils.h"
+#include "libs/free.utils.h"
 #include "libs/functions.utils.h"
 #include "libs/display.utils.h"
 #include "libs/map.utils.h"

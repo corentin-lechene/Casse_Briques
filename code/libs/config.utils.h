@@ -10,7 +10,7 @@ Map **get_maps(Config *config);
 Menu **get_menus(Config *config);
 
 
-Item *_get_item(char *item_att);
+Item *_get_item(char *item_att, Config *config);
 Map *_get_map(const char *filename);
 Menu *_get_menu(const char *menu_name, Config *config);
 
@@ -79,7 +79,7 @@ Config *get_config() {
 }
 
 Lang **get_langs(Config *config) {
-    Lang **lang = malloc(sizeof(Lang) * language_len);
+    Lang **lang = malloc(sizeof(Lang *) * language_len);
 
     char *value;
     for (int i = 0; i < language_len; ++i) {
@@ -96,10 +96,10 @@ Lang **get_langs(Config *config) {
     return lang;
 }
 Item **get_items(Config *config) {
-    Item **items = malloc(sizeof(Item) * items_len);
+    Item **items = malloc(sizeof(Item *) * items_len);
 
     for (int i = 0; i < items_len; ++i) {
-        items[i] = _get_item(ITEMS_NAME[i]);
+        items[i] = _get_item(ITEMS_NAME[i], config);
         if(items[i] == NULL) {
             exit_error("items[i] = NULL");
         }
@@ -108,7 +108,7 @@ Item **get_items(Config *config) {
     return items;
 }
 Map **get_maps(Config *config) { // tableau de map
-    Map **maps = malloc(sizeof(Map));
+    Map **maps = malloc(sizeof(Map *));
     struct dirent *dir;
     DIR *d = opendir(MAP_DIR);
     char *path;
@@ -118,7 +118,7 @@ Map **get_maps(Config *config) { // tableau de map
         while ((dir = readdir(d)) != NULL) {
             if(isalpha(dir->d_name[0])) {
                 path = str_cat(MAP_DIR, dir->d_name);
-                maps = realloc(maps, sizeof(Map) * (i + 1)); // a voir sur le github ou prendre push
+                maps = realloc(maps, sizeof(Map *) * (i + 1)); // a voir sur le github ou prendre push
                 maps[i] = _get_map(path);
 
                 if(maps[i] == NULL) {
@@ -135,7 +135,7 @@ Map **get_maps(Config *config) { // tableau de map
     exit_error("--== Dossier introuvable ==--");
 }
 Menu **get_menus(Config *config) {
-    Menu **menus = malloc(sizeof(Menu) * menus_len);
+    Menu **menus = malloc(sizeof(Menu *) * menus_len);
 
     for (int i = 0; i < menus_len; ++i) {
         menus[i] = _get_menu(MENUS_NAME[i], config);
@@ -150,11 +150,12 @@ Menu **get_menus(Config *config) {
 }
 
 
-Item *_get_item(char *item_att) {
+Item *_get_item(char *item_att, Config *config) {
     Item *item = malloc(sizeof(Item));
     char *values = file_get_value(item_att, ITEM_DIR);
 
     if(values != NULL) {
+        item->name = set_value(file_get_value(item_att, config->lang_dir));
         item->data = malloc(sizeof(Data_item));
         sscanf(values, "%d %c", &item->data->_int, &item->data->_char);
         free(values);
@@ -164,6 +165,9 @@ Item *_get_item(char *item_att) {
 }
 Map *_get_map(const char *filename) {
     Map *map = malloc(sizeof(Map));
+    map->bombs = NULL;
+    map->nb_bomb = 0;
+
     int index = 0;
     int numberPlayers = 0;
 

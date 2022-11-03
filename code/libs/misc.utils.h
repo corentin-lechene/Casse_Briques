@@ -241,11 +241,11 @@ typedef struct {
 
     unsigned short player_max;
     unsigned short bomb_default;
-
+    unsigned short nb_bomb;
     unsigned short heart;
 
     char **body;
-    Bomb **Bombs;
+    Bomb **bombs;
 } Map;
 
 
@@ -275,6 +275,7 @@ typedef struct {
 
     unsigned short heart;
     unsigned short nb_bomb;
+    unsigned short nb_item;
     unsigned short bomb_range;
     unsigned short bomb_type;
 
