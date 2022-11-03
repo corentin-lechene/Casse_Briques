@@ -230,25 +230,26 @@ int my_getch()  {
             case 80:
             case 75:
             case 77:
+            case 13:
+            case 32:
+            case 27:
                 return ch2;
 
             default:
                 return -1;
-                break;
         }
     } else {
         switch (ch) {
-            case 13:
-            case 27:
-            case 32:
             case 'z':
             case 's':
             case 'q':
             case 'd':
+            case 'p':
+            case 13:
+            case 27:
                 return ch;
             default:
                 return -1;
-                break;
         }
     }
 }

@@ -157,6 +157,11 @@ void run_game(Board *board) {
     if (kbhit()) {
         int event = my_getch();
         const char *event_name = get_event(event);
+
+        if(event_name == NULL) {
+            return;
+        }
+
         if (strcmp(event_name, "move") == 0) {
             set_player_direction(event, board);
             if (move_player(board)) {
@@ -168,7 +173,7 @@ void run_game(Board *board) {
             //                display_map(board->maps[board->selected_map]);
             //            }
         } else if (strcmp(event_name, "resume") == 0) {
-            //            display_resume(board);
+            display_next_menu(board, menu_resume, &menu_resume_case);
         }
     } else {
         display_board(board);
@@ -278,16 +283,6 @@ void run_menu(Board *board) {
                 display = 1;
             }
             break;
-        case KEY_ESCAPE:
-//            if(
-//                    board->current_menu == menu_patch_notes ||
-//                    board->current_menu == menu_credits
-//                    ) {
-//                board->current_menu = menu_home;
-//                display = 1;
-//            }
-            break;
-
         case 'p':
             die();
         default:
