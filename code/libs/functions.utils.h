@@ -208,7 +208,7 @@ void clear_console() {
 }
 void exit_error(char *desc) {
     text_color(color_red);
-    printf("Erreur-> %s", desc);
+    printf("Erreur-> %s\n", desc);
     text_color_default();
     pause();
     exit(0);

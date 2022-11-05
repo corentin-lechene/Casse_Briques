@@ -111,7 +111,7 @@ Item **get_items(Config *config) {
     return items;
 }
 Map **get_maps(Config *config) { // tableau de map
-    Map **maps = malloc(sizeof(Map *));
+    Map **maps = malloc(sizeof(Map *) * file_get_nb(MAP_DIR));
 
     DIR *d = opendir(MAP_DIR);
     if(d != NULL) {
@@ -121,7 +121,6 @@ Map **get_maps(Config *config) { // tableau de map
         int i = 1;
         while ((dir = readdir(d)) != NULL) {
             if(dir->d_name[0] != '.') {
-                maps = realloc(maps, sizeof(Map *) * (i));
                 path = str_cat(MAP_DIR, str_cat("/", dir->d_name));
                 maps[i - 1] = _get_map(path);
 
@@ -135,11 +134,11 @@ Map **get_maps(Config *config) { // tableau de map
         if(path != NULL) {
             free(path);
         }
+        display_loading(config->loading, loading_menus);
         closedir(d);
         return maps;
     }
     exit_error("--== Dossier introuvable ==--");
-
 }
 Menu **get_menus(Config *config) {
     Menu **menus = malloc(sizeof(Menu *) * menus_len);
@@ -175,25 +174,82 @@ Map *_get_map(const char *filename) {
 
     FILE *f = fopen(filename, "r");
     if(f != NULL) {
-        fscanf(f, "%hu", &map->bomb_default);
-        while(fgetc(f) != '\n');
-        fscanf(f, "%hu %hu", &map->columns, &map->rows);
-        while(fgetc(f) != '\n');
+        char t[255];
+        int temp;
+
+        //prevent space and \n
+        while(!isalnum(fgetc(f)));
+        fseek(f, -1, SEEK_CUR);
+
+        //get nb_bomb
+        fgets(t, 255, f);
+        if(sscanf(t, "%hu %d", &map->nb_bomb, &temp) != 1 || map->nb_bomb == 0) {
+            fclose(f);
+            errorf("Map unrecognized (first line)");
+        }
+
+        //prevent space and \n
+        while(!isalnum(fgetc(f)));
+        fseek(f, -1, SEEK_CUR);
+
+        //get columns and rows
+        fgets(t, 255, f);
+        if(sscanf(t, "%hu %hu %d", &map->columns, &map->rows, &temp) != 2) {
+            fclose(f);
+            errorf("Map unrecognized (second line)");
+        }
+
+        //size map
+        if(map->rows < 6 || map->columns < 6) {
+            fclose(f);
+            errorf("rows min > 6, columns min > 6 (second line)");
+        }
+
+        //prevent space and \n
+        temp = fgetc(f);
+        while(temp == ' ' || temp == '\n') {
+            temp= fgetc(f);
+        }
+
+        if(feof(f)) {
+            fclose(f);
+            errorf("Map unrecognized (map empty)");
+        }
 
         map->body = malloc(sizeof(char *) * map->rows);
         for (int i = 0; i < map->rows; ++i) {
             map->body[i] = malloc(sizeof(char) * map->columns);
         }
 
-        char t[255];
-        for (int i = 0; i < map->rows; ++i) {
+        fseek(f, -1, SEEK_CUR);
+
+        int i;
+        for (i = 0; i < map->rows; ++i) {
             fgets(t, 255, f);
-            if(strlen(t) - 1 > map->columns) {
-                fclose(f);
-                exit_error("Map too large");
+            if(feof(f)) {
+                if(i + 1 != map->rows) {
+                    i--;
+                    break;
+                }
             }
             strncpy(map->body[i], t, map->columns);
         }
+
+        if(i + 1 < map->rows) {
+            fclose(f);
+            errorf("Map unrecognized (row size)");
+        }
+
+        temp = fgetc(f);
+        while(temp == ' ' || temp == '\n') {
+            temp= fgetc(f);
+        }
+
+        if(!feof(f)) {
+            fclose(f);
+            errorf("Map unrecognized (row size)");
+        }
+
 
         map->bombs = malloc(sizeof(Bomb *));
         map->nb_bomb = 0;
@@ -209,6 +265,7 @@ Map *_get_map(const char *filename) {
         fclose(f);
         return map;
     }
+    warningf("cant open file");
     free(map);
     return NULL;
 }
