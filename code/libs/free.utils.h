@@ -108,14 +108,13 @@ void free_bomb_dim_arr(Bomb ***tf, int len) {
     }
 }
 void _free_bomb_array(Bomb **tf, int len) {
-    printf("[%c]", tf[0]->player_id);
-//    for (int i = 0; i < len; ++i) {
-//        if(tf[i] != NULL) {
-//            _free((void **) &tf[i]->data);
-//            free(tf[i]);
-//            tf[i] = NULL;
-//        }
-//    }
+    for (int i = 0; i < len; ++i) {
+        if(tf[i] != NULL) {
+            _free((void **) &tf[i]->data);
+            free(tf[i]);
+            tf[i] = NULL;
+        }
+    }
 }
 
 void free_item_dim_arr(Item ***tf, int len) {
@@ -127,9 +126,8 @@ void free_item_dim_arr(Item ***tf, int len) {
 void _free_item_array(Item **tf, int len) {
     for (int i = 0; i < len; ++i) {
         if(tf[i] != NULL) {
-//            _free((void **) &tf[i]->data);
-            free(tf[i]->data);
-            free(tf[i]->name);
+            _free((void **) &tf[i]->data);
+            _free((void **) &tf[i]->name);
             free(tf[i]);
             tf[i] = NULL;
         }
