@@ -150,7 +150,7 @@ enum language_index {
     language_len
 };
 
-enum items_index {
+typedef enum {
     item_destructible_wall = 0,
     item_indestructible_wall,
     item_bomb_up,
@@ -167,7 +167,29 @@ enum items_index {
     item_heart,
     item_life,
     items_len
-};
+}items_index;
+
+typedef enum {
+    blue_flame = item_blue_flame,
+    yellow_flame = item_yellow_flame,
+    bomb_up = item_bomb_up,
+    bomb_down = item_bomb_down,
+    items_len_rare = 4
+}items_rarity;
+typedef enum  {
+    bomb_passes = item_bomb_passes,
+    bomb_kick = item_bomb_kick,
+    invincibility = item_invincibility,
+    heart = item_heart,
+    items_len_epic = 4
+}items_rarity_epic;
+typedef enum {
+    life = item_life,
+    red_flame = item_red_flame,
+    bomb_destroy = item_bomb_destroy,
+    items_len_leg = 3
+
+}items_rarity_legendary;
 
 
 /********************/

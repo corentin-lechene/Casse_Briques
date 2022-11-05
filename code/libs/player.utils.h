@@ -97,14 +97,14 @@ void init_players(Board *board) {
     }
 }
 void set_player_turn(Board *board) {
-    board->player_turn = board->player_turn + 1 > board->nb_player ? 0 : board->player_turn + 1;
+    board->player_turn = board->player_turn + 1 >= board->nb_player ? 0 : board->player_turn + 1;
 }
 short get_pos_player(Board *board, int index, char pos) {
     int nb_p = 0;
 
-    for (int y = 0; y < board->maps[board->current_map]->rows; ++y) {
-        for (int x = 0; x < board->maps[board->current_map]->columns; ++x) {
-            if(board->maps[board->current_map]->body[y][x] == 'p') {
+    for (int x = 0; x < board->maps[board->current_map]->rows; ++x) {
+        for (int y = 0; y < board->maps[board->current_map]->columns; ++y) {
+            if(board->maps[board->current_map]->body[x][y] == 'p') {
                 if(nb_p == index) {
                     return pos == 'x' ? x : y;
                 }

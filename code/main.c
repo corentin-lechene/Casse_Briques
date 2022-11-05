@@ -29,6 +29,7 @@ void run_program(Board *board) {
 }
 
 
+
 int main() {
     text_color_default();
     Board *board = generate_board();
