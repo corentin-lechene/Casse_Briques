@@ -1,6 +1,4 @@
 
-Board *generate_board();
-
 void run_game(Board *board);
 void run_menu(Board *board);
 
@@ -210,8 +208,6 @@ void display_menus(Board *board) {
     printf("next: %d\n\n", current_menu->next_menu);
 
     switch (board->current_menu) {
-        case menu_leave:
-            break;
         case menu_home:
             menu_home_case(board);
             break;
@@ -233,9 +229,8 @@ void display_menus(Board *board) {
         case menu_maps:
             menu_maps_case(board);
             break;
-        case menu_init_game:
-            break;
-        case menu_game:
+        case menu_reset_game:
+            menu_reset_game_case(board);
             break;
         case menu_winner_summary:
             break;

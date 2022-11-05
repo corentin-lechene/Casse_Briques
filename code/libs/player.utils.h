@@ -1,4 +1,6 @@
 
+void display_menus(Board *board);
+
 void create_players(Board *board);
 
 Player *_create_player(Board *board, int id);
@@ -17,6 +19,7 @@ void create_players(Board *board) {
         board->players[i] = _create_player(board, i);
         if(board->players[i] == NULL) {
             board->current_menu = menu_game_mode;
+            display_menus(board);
             break;
         }
     }
@@ -49,6 +52,21 @@ Player *_create_player(Board *board, int id) {
     player->id = id + 48 + 1;
     player->is_bot = 0;
     player->score = 0;
+
+    player->bombs = malloc(sizeof(Bomb *));
+    player->nb_bomb = 1;
+    for (int j = 0; j < player->nb_bomb; ++j) {
+        player->bombs[j] = malloc(sizeof(Bomb));
+        player->bombs[j]->data = malloc(sizeof(Data_item));
+    }
+
+    player->items = malloc(sizeof(Item *));
+    player->nb_item = 1;
+    for (int i = 0; i < player->nb_item; ++i) {
+        player->items[i] = malloc(sizeof(Item));
+        player->items[i]->data = malloc(sizeof(Data_item));
+        player->items[i]->name = malloc(sizeof(char) * 1);
+    }
     return player;
 }
 
@@ -60,8 +78,20 @@ void init_players(Board *board) {
         board->players[i]->y = get_pos_player(board, i, 'y');
         board->players[i]->bomb_range = 2;
         board->players[i]->bomb_type = item_bomb;
-        board->players[i]->items = malloc(sizeof(Item));
-        board->players[i]->bombs = malloc(sizeof(Bomb));
+
+        board->players[i]->bombs = malloc(sizeof(Bomb *));
+        for (int j = 0; j < board->players[i]->nb_bomb; ++j) {
+            board->players[i]->bombs[j] = malloc(sizeof(Bomb));
+            board->players[i]->bombs[j]->data = malloc(sizeof(Data_item));
+        }
+
+        board->players[i]->items = malloc(sizeof(Item *));
+        board->players[i]->nb_item = 1;
+        for (int j = 0; j < board->players[i]->nb_item; ++j) {
+            board->players[i]->items[j] = malloc(sizeof(Item));
+            board->players[i]->items[j]->data = malloc(sizeof(Data_item));
+            board->players[i]->items[j]->name = NULL;
+        }
 
         display_board(board);
     }

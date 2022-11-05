@@ -151,11 +151,22 @@ void menu_maps_case(Board *board) {
     board->current_menu = menu_init_game;
 }
 
-void menu_resume_case(Board *board) {
-    menus_index next_menu[] = {menu_game, menu_init_game, menu_home};
-    choices_index choices_menu[] = {choice_continue, choice_restart, choice_leave};
+void menu_reset_game_case(Board *board) {
+    free_map_dim_arr(&board->maps, board->nb_selected_map);
+    free_player_dim_arr(&board->players, board->nb_player);
+    free_array((void **) &board->selected_maps, board->nb_selected_map);
+    board->current_map = board->nb_map;
+    board->nb_selected_map = 0;
+    board->player_turn = board->nb_player;
 
-    board->menus[board->current_menu]->nb_choice = 3;
+    display_next_menu(board, menu_home, &menu_home_case);
+}
+
+void menu_resume_case(Board *board) {
+    menus_index next_menu[] = {menu_game, menu_reset_game};
+    choices_index choices_menu[] = {choice_continue, choice_leave};
+
+    board->menus[board->current_menu]->nb_choice = 2;
     board->menus[board->current_menu]->next_menu = next_menu[board->current_choice];
 
     display_menu(board, choices_menu);

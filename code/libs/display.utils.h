@@ -65,7 +65,6 @@ void display_menu(Board *board, choices_index *choices) {
     display_menu_header(board->menus[board->current_menu]->title);
     for (int i = 0; i < board->menus[board->current_menu]->nb_choice; ++i) {
         printf("[%c]\t%s\n", i == board->current_choice ? 'X' : ' ', file_get_value(CHOICES_NAME[choices[i]], board->config->lang_dir));
-
     }
 }
 

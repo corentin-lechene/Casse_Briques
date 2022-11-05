@@ -23,6 +23,7 @@ Board *generate_board() {
     board->winner = malloc(sizeof(Player));
 
     board->nb_map = file_get_nb(MAP_DIR);
+    board->nb_player = 0;
 
     if(board->nb_map == 0) {
         exit_error("0 map detected");
@@ -34,6 +35,7 @@ Board *generate_board() {
     board->menus = get_menus(board->config);
     board->default_maps = get_maps(board->config);
     board->maps = malloc(sizeof(Map));
+    board->players = NULL;
 
     board->current_map = board->nb_map;
     board->nb_selected_map = 0;

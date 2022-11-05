@@ -18,7 +18,6 @@ char **_copy_body(Map *src) {
 
 void copy_maps(Board *board) {
 //    free(board->maps[0]->body);
-    free(board->maps);
 
     board->maps = malloc(sizeof(Map) * board->nb_selected_map);
 
@@ -32,6 +31,12 @@ void copy_maps(Board *board) {
         board->maps[i]->bomb_default = board->default_maps[select_maps]->bomb_default;
         board->maps[i]->player_max = board->default_maps[select_maps]->player_max;
         board->maps[i]->body = _copy_body(board->default_maps[select_maps]);
+        board->maps[i]->bombs = malloc(sizeof(Bomb *));
+        board->maps[i]->nb_bomb = 1;
+        for (int j = 0; j < board->maps[i]->nb_bomb; ++j) {
+            board->maps[i]->bombs[j] = malloc(sizeof(Bomb));
+            board->maps[i]->bombs[j]->data = malloc(sizeof(Data_item));
+        }
     }
 }
 
