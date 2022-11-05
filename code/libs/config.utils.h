@@ -112,32 +112,34 @@ Item **get_items(Config *config) {
 }
 Map **get_maps(Config *config) { // tableau de map
     Map **maps = malloc(sizeof(Map *));
-    struct dirent *dir;
+
     DIR *d = opendir(MAP_DIR);
-    char *path;
+    if(d != NULL) {
+        struct dirent *dir;
+        char *path = NULL;
 
-    if (d != NULL) { // a verifier doc
-        int i = 0;
+        int i = 1;
         while ((dir = readdir(d)) != NULL) {
-            if(isalpha(dir->d_name[0])) {
-                path = str_cat(MAP_DIR, dir->d_name);
-                maps = realloc(maps, sizeof(Map *) * (i + 1)); // a voir sur le github ou prendre push
-                maps[i] = _get_map(path);
+            if(dir->d_name[0] != '.') {
+                maps = realloc(maps, sizeof(Map *) * (i));
+                path = str_cat(MAP_DIR, str_cat("/", dir->d_name));
+                maps[i - 1] = _get_map(path);
 
-                if(maps[i] == NULL) {
-                    printf("%s", dir->d_name);
+                if(maps[i - 1] == NULL) {
                     warningf("maps[i] = NULL\n");
+                    continue;
                 }
                 i++;
-                free(path);
             }
         }
+        if(path != NULL) {
+            free(path);
+        }
         closedir(d);
-        pause();
-        display_loading(config->loading, loading_maps);
         return maps;
     }
     exit_error("--== Dossier introuvable ==--");
+
 }
 Menu **get_menus(Config *config) {
     Menu **menus = malloc(sizeof(Menu *) * menus_len);
@@ -170,46 +172,45 @@ Item *_get_item(char *item_att, Config *config) {
 }
 Map *_get_map(const char *filename) {
     Map *map = malloc(sizeof(Map));
-    map->bombs = NULL;
-    map->nb_bomb = 0;
-
-    int index = 0;
-    int numberPlayers = 0;
 
     FILE *f = fopen(filename, "r");
-    if (f == NULL) {
-        return NULL;
-    }
-    while (!feof(f)) {
-        int c = fgetc(f);
-        if (index == 0) {
-            map->bomb_default = c - 48; // index 0 49 - 48 = 1
+    if(f != NULL) {
+        fscanf(f, "%hu", &map->bomb_default);
+        while(fgetc(f) != '\n');
+        fscanf(f, "%hu %hu", &map->columns, &map->rows);
+        while(fgetc(f) != '\n');
+
+        map->body = malloc(sizeof(char *) * map->rows);
+        for (int i = 0; i < map->rows; ++i) {
+            map->body[i] = malloc(sizeof(char) * map->columns);
         }
-        if (index == 2) {
-            map->columns = c - 48;    // index 2
-        } else if (index == 4) {
-            map->rows = c - 48;     // index 4
-            map->body = malloc(sizeof(char *) * map->rows);
-            for (int i = 0; i < map->rows; ++i) {
-                map->body[i] = malloc(sizeof(char) * (map->columns + 1));
+
+        char t[255];
+        for (int i = 0; i < map->rows; ++i) {
+            fgets(t, 255, f);
+            if(strlen(t) - 1 > map->columns) {
+                fclose(f);
+                exit_error("Map too large");
             }
+            strncpy(map->body[i], t, map->columns);
         }
-        if (index > 4) {
-            for (int i = 0; i < map->rows; ++i) {
-                for (int indexY = 0; indexY < map->columns + 1; ++indexY) {
-                    int tmp = fgetc(f);
-                    if (tmp == 'p') {
-                        numberPlayers++;
-                    }
-                    map->body[i][indexY] = (char) tmp;
+
+        map->bombs = malloc(sizeof(Bomb *));
+        map->nb_bomb = 0;
+        map->player_max = 0;
+        for (int i = 0; i < map->rows; ++i) {
+            for (int j = 0; j < map->columns; ++j) {
+                if(map->body[i][j] == 'p') {
+                    map->player_max += 1;
                 }
             }
         }
-        index++;
+
+        fclose(f);
+        return map;
     }
-    map->player_max = numberPlayers;
-    fclose(f);
-    return map;
+    free(map);
+    return NULL;
 }
 Menu *_get_menu(const char *menu_name, Config *config) {
     Menu *menu = malloc(sizeof(menu));

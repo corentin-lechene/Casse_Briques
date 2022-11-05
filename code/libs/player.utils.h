@@ -27,7 +27,6 @@ int create_players(Board *board) {
             board->current_menu = menu_game_mode;
             display_menus(board);
             return 0;
-            break;
         }
     }
     return 1;

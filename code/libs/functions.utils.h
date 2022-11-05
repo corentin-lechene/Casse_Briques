@@ -148,7 +148,7 @@ short file_get_nb(const char *dir_name) {
 
     if(d != NULL) {
         while ((dir = readdir(d)) != NULL) {
-            if(isalpha(dir->d_name[0])) {
+            if(dir->d_name[0] != '.') {
                 count += 1;
             }
         }
@@ -210,12 +210,14 @@ void exit_error(char *desc) {
     text_color(color_red);
     printf("Erreur-> %s", desc);
     text_color_default();
+    pause();
     exit(0);
 }
 void errorf(char *err) {
     text_color(color_red);
     printf("Erreur-> %s\n", err);
     text_color_default();
+    pause();
 }
 void warningf(char *warn) {
     text_color(color_yellow);
