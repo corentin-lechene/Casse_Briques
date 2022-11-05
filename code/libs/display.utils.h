@@ -100,8 +100,9 @@ char test3[12][20] = {
 
 void display_board(Board *board){
     clear_console();
-    printf("player_turn: %s[%d]\n", board->players[board->player_turn]->name, board->player_turn);
-    printf("x: %d | y: %d\n", board->players[board->player_turn]->x, board->players[board->player_turn]->y);
+    text_color(board->players[board->player_turn]->color);
+    printf("%s(%d), a toi de jouer.\n", board->players[board->player_turn]->name, board->player_turn);
+    text_color_default();
     display_map(board->maps[board->current_map], board->players);
 
 }
@@ -135,7 +136,7 @@ void display_map(Map *map, Player **players) {
         for (int j = 0; j < map->columns; ++j) {
 //            printf("%c", _get_char_ascii(test[i][j]));
             if(map->body[i][j] >= 48 && map->body[i][j] <= 57){
-                int nb = map->body[i][j] - 49;
+                int nb = map->body[i][j] - 48;
                 text_color(players[nb]->color);
                 printf("%c", map->body[i][j]);
                 text_color_default();

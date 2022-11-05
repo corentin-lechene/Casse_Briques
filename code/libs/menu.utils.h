@@ -7,10 +7,8 @@ void menu_solo_case(Board *board);
 void menu_patch_notes_case(Board *board);
 void menu_credits_case(Board *board);
 void menu_maps_case(Board *board);
-void menu_init_game_case(Board *board);
 void menu_resume_case(Board *board);
 void menu_players_case(Board *board);
-void menu_game_case(Board *board);
 
 
 void menu_home_case(Board *board) {

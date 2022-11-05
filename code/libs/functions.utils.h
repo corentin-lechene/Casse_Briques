@@ -26,6 +26,7 @@ void warningf(char *warn);
 char *set_value(char *value);
 
 void die();
+void pause();
 
 
 /* ---===       --------        ===--- */
@@ -166,7 +167,19 @@ void text_color_default() {
 }
 
 enum colors_index get_random_color() {
-    return random_between(0, colors_len);
+    enum colors_index colors[] = {
+            color_blue,
+            color_green,
+            color_magenta,
+            color_yellow,
+            color_cyan,
+            color_light_blue,
+            color_light_green,
+            color_light_cyan,
+            color_red,
+            color_light_magenta
+    };
+    return colors[(int) random_between(0, 10)];
 }
 double random_between(double min, double max) {
     srand( time (NULL));
@@ -216,6 +229,9 @@ char *set_value(char *value) {
     return v;
 }
 
+void pause() {
+    system("pause");
+}
 void die() {
     exit(0);
 }

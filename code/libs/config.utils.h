@@ -20,7 +20,7 @@ Menu *_get_menu(const char *menu_name, Config *config);
 Board *generate_board() {
     Board *board = malloc(sizeof(Board));
 
-    board->winner = malloc(sizeof(Player));
+    board->winner = NULL;
 
     board->nb_map = file_get_nb(MAP_DIR);
     board->nb_player = 0;
@@ -34,7 +34,7 @@ Board *generate_board() {
     board->items = get_items(board->config);
     board->menus = get_menus(board->config);
     board->default_maps = get_maps(board->config);
-    board->maps = malloc(sizeof(Map));
+    board->maps = NULL;
     board->players = NULL;
 
     board->current_map = board->nb_map;
@@ -44,6 +44,7 @@ Board *generate_board() {
     board->current_menu = menu_home;
     board->current_choice = 0;
     board->player_turn = board->nb_player;
+    board->selected_maps = NULL;
 
     return board;
 }
