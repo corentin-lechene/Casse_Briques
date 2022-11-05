@@ -339,7 +339,7 @@ typedef struct {
 const char *CONFIG_DIR = "../app.config";
 const char *LANGUAGE_DIR = "../configs/languages/";
 const char *ITEM_DIR = "../configs/items";
-const char *MAP_DIR = "../configs/maps/";
+const char *MAP_DIR = "../configs/maps";
 const char *PATCH_NOTES_DIR = "../configs/patch_notes/";
 const char *CREDITS_DIR = "../configs/credits/";
 

@@ -125,6 +125,7 @@ Map **get_maps(Config *config) { // tableau de map
                 maps[i] = _get_map(path);
 
                 if(maps[i] == NULL) {
+                    printf("%s", dir->d_name);
                     warningf("maps[i] = NULL\n");
                 }
                 i++;
@@ -132,6 +133,7 @@ Map **get_maps(Config *config) { // tableau de map
             }
         }
         closedir(d);
+        pause();
         display_loading(config->loading, loading_maps);
         return maps;
     }
@@ -178,7 +180,6 @@ Map *_get_map(const char *filename) {
     if (f == NULL) {
         return NULL;
     }
-    fseek(f, 0, SEEK_SET); // replace le curseur au début du fichier
     while (!feof(f)) {
         int c = fgetc(f);
         if (index == 0) {

@@ -1,7 +1,7 @@
 
 void display_menus(Board *board);
 
-void create_players(Board *board);
+int create_players(Board *board);
 
 Player *_create_player(Board *board, int id, short is_bot);
 void add_bot_player(Board *board);
@@ -18,7 +18,7 @@ enum colors_index get_random_color_player(Board *board, int index);
 
 
 
-void create_players(Board *board) {
+int create_players(Board *board) {
     board->players = malloc(sizeof(Player) * board->nb_player);
 
     for (int i = 0; i < board->nb_player; ++i) {
@@ -26,9 +26,11 @@ void create_players(Board *board) {
         if(board->players[i] == NULL) {
             board->current_menu = menu_game_mode;
             display_menus(board);
+            return 0;
             break;
         }
     }
+    return 1;
 }
 
 Player *_create_player(Board *board, int id, short is_bot) {

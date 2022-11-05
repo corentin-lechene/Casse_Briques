@@ -69,10 +69,10 @@ void menu_game_mode_case(Board *board) {
 
 void menu_solo_case(Board *board) {
     board->nb_player = 1;
-    create_players(board);
-
-    board->current_menu = menu_maps;
-    menu_maps_case(board);
+    if(create_players(board)) {
+        board->current_menu = menu_maps;
+        menu_maps_case(board);
+    }
 }
 
 void menu_patch_notes_case(Board *board) {
@@ -185,8 +185,10 @@ void menu_players_case(Board *board) {
         display_next_menu(board, menu_game_mode, &menu_game_mode_case);
         return;
     }
+    
     board->nb_player = atoi(q);
-    create_players(board);
-    display_next_menu(board, menu_maps, &menu_maps_case);
+    if(create_players(board)) {
+        display_next_menu(board, menu_maps, &menu_maps_case);
+    }
 }
 
