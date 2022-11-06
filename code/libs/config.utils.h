@@ -37,6 +37,7 @@ Board *generate_board() {
     board->maps = NULL;
     board->players = NULL;
 
+
     board->current_map = board->nb_map;
     board->nb_selected_map = 0;
 

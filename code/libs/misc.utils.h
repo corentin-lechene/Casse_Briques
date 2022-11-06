@@ -259,7 +259,9 @@ typedef struct {
 
 typedef struct {
     char player_id;
-    int nb_turn;
+    unsigned int nb_turn;
+    unsigned int x;
+    unsigned int y;
     Data_item *data;
 } Bomb;
 

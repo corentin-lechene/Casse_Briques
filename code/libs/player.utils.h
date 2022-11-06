@@ -93,8 +93,10 @@ void init_players(Board *board) {
         board->players[i]->nb_item = 0;
     }
 }
+
 void set_player_turn(Board *board) {
     board->player_turn = board->player_turn + 1 >= board->nb_player ? 0 : board->player_turn + 1;
+
 }
 void set_player_direction(char event, Board *board) {
     switch (event) {
@@ -124,7 +126,9 @@ int move_player(Board *board) {
     if (can_move(board, player->x, player->y, map->rows-1, map->columns-1) == 0) {
         return 0;
     }
-    map->body[player->x][player->y] = ' ';
+    if(map->body[player->x][player->y] != 'P'){
+        map->body[player->x][player->y] = ' ';
+    }
     switch (player->direction) {
         case 0:
             decrement_or_reset(&player->x, map->rows-1);
@@ -165,6 +169,8 @@ int can_move(Board *board, int x, int y, int rows, int columns) {
             }
             if (board->maps[board->current_map]->body[x][y + 1] == 'x' || board->maps[board->current_map]->body[x][y + 1] == 'm' ||
                 board->maps[board->current_map]->body[x][y + 1] == 'p') {
+                printf("%d", y+1);
+                pause();
                 return 0;
             }
             break;
