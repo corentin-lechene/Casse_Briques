@@ -68,11 +68,85 @@ Config *get_config() {
     Config *config = malloc(sizeof(Config));
 
     config->language = file_get_value("language", CONFIG_DIR);
-    if(config->language == NULL) {
-        exit_error("config err, language = NULL");
-    }
-
     config->lang_dir = str_cat(LANGUAGE_DIR, config->language);
+
+    if(config->language == NULL || fopen(config->lang_dir, "r") == NULL) {
+        file_set_value("language", "FR", CONFIG_DIR);
+        FILE *f = fopen(CONFIG_DIR, "w");
+
+        if(f == NULL) {
+            exit_error("Config cant be created");
+        }
+        fputs("language = FR", f);
+        fclose(f);
+        config->language = set_value("FR");
+        config->lang_dir = str_cat(LANGUAGE_DIR, "FR");
+        f = fopen(config->lang_dir, "w");
+        if(f == NULL) {
+            exit_error("Langugage file cant be created");
+        }
+        fputs(
+                "loading_init = Preparation du jeu\n"
+                "loading_config = Recuperation de la configuration\n"
+                "loading_language = Recuperation des langues\n"
+                "loading_items = Recuperation des objets\n"
+                "loading_menus = Recuperation des menus\n"
+                "loading_maps = Recuperation des cartes\n"
+                "\n"
+                "menu_leave = Quitter\n"
+                "menu_home = Menu principal\n"
+                "menu_options = Configurations\n"
+                "menu_languages = Langages\n"
+                "menu_set_languages = Langages\n"
+                "menu_game_mode = Mode de jeu\n"
+                "menu_solo = En solo\n"
+                "menu_players = Joueurs\n"
+                "menu_maps = Cartes\n"
+                "menu_online = Jeu en ligne\n"
+                "menu_reset_game = Reinitialisation du jeu\n"
+                "menu_restart_game = Relancement du jeu\n"
+                "menu_init_game = Preparation du jeu\n"
+                "menu_game = En jeu\n"
+                "menu_winner_summary = Recapitulatif du gagnant\n"
+                "menu_resume = Pause\n"
+                "menu_patch_notes = Patch notes\n"
+                "menu_credits = Credits\n"
+                "\n"
+                "choice_play = Jouer\n"
+                "choice_options = Options\n"
+                "choice_patch_notes = Patch notes\n"
+                "choice_credits = Credits\n"
+                "choice_leave = Quitter\n"
+                "choice_yes = Oui\n"
+                "choice_no = Non\n"
+                "choice_continue = Reprendre\n"
+                "choice_restart = Recommencer\n"
+                "choice_languages = Langages\n"
+                "choice_back = Retour\n"
+                "choice_solo = En solo\n"
+                "choice_local = En local\n"
+                "choice_online = En ligne\n"
+                "choice_join_server = Rejoindre un serveur\n"
+                "choice_create_server = Creer un serveur\n"
+                "\n"
+                "item_destructible_wall = Mur destructible\n"
+                "item_indestructible_wall = Mur indestructible\n"
+                "item_bomb_up = Bombe plus\n"
+                "item_bomb_down = Bomb moins\n"
+                "item_yellow_flame = Flemme jaune\n"
+                "item_blue_flame = Flemme bleue\n"
+                "item_red_flame = Flemme rouge\n"
+                "item_bomb = Bombe\n"
+                "item_bomb_destroy = Bombe destruction\n"
+                "item_bomb_kick = Bombe coup de pied\n"
+                "item_bomb_passes = Bombe passe\n"
+                "item_bomb_push = Bombe pousse\n"
+                "item_invincibility = Invicibilite\n"
+                "item_heart = Coeur\n"
+                "item_life = Vie"
+                , f);
+        fclose(f);
+    }
 
     config->loading = init_loading(config);
     //et le reste de la config
