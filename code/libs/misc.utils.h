@@ -309,7 +309,6 @@ typedef struct {
     unsigned short bomb_type;
 
     Item **items;
-    Bomb **bombs;
 
     unsigned short score;
     unsigned short is_bot;
@@ -348,4 +347,18 @@ const char *CREDITS_DIR = "../configs/credits/";
 
 const short COLOR_DEFAULT = color_light_gray;
 const short COLOR_BG_DEFAULT = color_black;
-
+char *PLAYER_NAMES[] = {
+        "Simon",
+        "Lola",
+        "Nicolas",
+        "Yasmine",
+        "haribo",
+        "Anais",
+        "Gabriel",
+        "Kessy",
+        "Emir",
+        "Elena",
+        "Julien",
+        "Melissa",
+        "Florian"
+};

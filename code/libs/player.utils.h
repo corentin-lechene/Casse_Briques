@@ -40,8 +40,10 @@ Player *_create_player(Board *board, int id, short is_bot) {
     if(!is_bot) {
         do {
             clear_console();
-            printf("Entrez le joueur %c pseudo (q pour quitter) : ", id + 48 + 1);
+            display_menu_header(board);
+            printf("Entrez le pseudo du joueur %d. (q pour quitter) : ", id  + 1);
             scanf("%s", name);
+            display_wait();
             if(strcmp(name, "q") == 0) {
                 break;
             }
@@ -53,25 +55,17 @@ Player *_create_player(Board *board, int id, short is_bot) {
     }
 
     player->id = id + 48;
-    player->name = set_value(name);
+    if(is_bot) {
+        player->name = set_value(PLAYER_NAMES[id]);
+    } else {
+        player->name = set_value(name);
+    }
     player->color = get_random_color_player(board, player->id);
     player->is_bot = is_bot;
     player->score = 0;
 
-    player->bombs = malloc(sizeof(Bomb *));
-    player->nb_bomb = 1;
-    for (int j = 0; j < player->nb_bomb; ++j) {
-        player->bombs[j] = malloc(sizeof(Bomb));
-        player->bombs[j]->data = malloc(sizeof(Data_item));
-    }
-
     player->items = malloc(sizeof(Item *));
-    player->nb_item = 1;
-    for (int i = 0; i < player->nb_item; ++i) {
-        player->items[i] = malloc(sizeof(Item));
-        player->items[i]->data = malloc(sizeof(Data_item));
-        player->items[i]->name = malloc(sizeof(char) * 1);
-    }
+    player->nb_item = 0;
     return player;
 }
 void add_bot_player(Board *board) {
@@ -95,19 +89,8 @@ void init_players(Board *board) {
         board->players[i]->bomb_range = 2;
         board->players[i]->bomb_type = item_bomb;
 
-        board->players[i]->bombs = malloc(sizeof(Bomb *));
-        for (int j = 0; j < board->players[i]->nb_bomb; ++j) {
-            board->players[i]->bombs[j] = malloc(sizeof(Bomb));
-            board->players[i]->bombs[j]->data = malloc(sizeof(Data_item));
-        }
-
         board->players[i]->items = malloc(sizeof(Item *));
-        board->players[i]->nb_item = 1;
-        for (int j = 0; j < board->players[i]->nb_item; ++j) {
-            board->players[i]->items[j] = malloc(sizeof(Item));
-            board->players[i]->items[j]->data = malloc(sizeof(Data_item));
-            board->players[i]->items[j]->name = NULL;
-        }
+        board->players[i]->nb_item = 0;
     }
 }
 void set_player_turn(Board *board) {

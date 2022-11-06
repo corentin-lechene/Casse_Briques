@@ -44,7 +44,7 @@ void menu_languages_case(Board *board) {
         }
 
         int i = 0;
-        display_menu_header(board->menus[menu_languages]->title);
+        display_menu_header(board);
         while(dir != NULL) {
             printf("[%c]\t%s\n", board->current_choice == i ? 'X' : ' ', dir->d_name);
 
@@ -70,6 +70,7 @@ void menu_languages_case(Board *board) {
 void menu_set_languages_case(Board *board) {
     file_set_value("language", board->config->language, CONFIG_DIR);
     infof("Le jeu doit redemarrer");
+    exit(0);
 }
 
 void menu_game_mode_case(Board *board) {
@@ -117,14 +118,16 @@ void menu_maps_case(Board *board) {
     for (int i = 0; i < board->nb_selected_map; ++i) {
         do {
             clear_console();
+            display_menu_header(board);
             printf("Map %d/%d : \n\n", i + 1, board->nb_selected_map);
 
             printf("Voulez vous jouer sur cette carte ? \n\t- Oui: y\n\t- Non: n\n\t- %s q\n\n", i == 0 ? "Quitter" : "Retour");
-            display_map(board->default_maps[board->selected_maps[i]], board->players);
+            display_default_map(board->default_maps[board->selected_maps[i]], board);
 
             printf("Votre choix : ");
             fflush(stdin);
             scanf("%c", &q);
+            display_wait();
         } while(q != 'y' && q != 'n' && q != 'q');
 
         if(q == 'q' && i == 0) {
@@ -167,7 +170,7 @@ void menu_maps_case(Board *board) {
 void menu_reset_game_case(Board *board) {
     free_map_dim_arr(&board->maps, board->nb_selected_map);
     free_player_dim_arr(&board->players, board->nb_player);
-    free_array((void **) &board->selected_maps, board->nb_selected_map);
+    free(board->selected_maps);
     board->current_map = board->nb_map;
     board->nb_selected_map = 0;
     board->player_turn = board->nb_player;
@@ -189,7 +192,8 @@ void menu_players_case(Board *board) {
     char q[3];
     do {
         clear_console();
-        printf("Le nombre de joueur max est de 9\n");
+        display_menu_header(board);
+        infof("Le nombre de joueur maximun est de 9");
         printf("Saisir le nombre de joueur (q pour quitter) : ");
         fflush(stdin);
         scanf("%s", q);

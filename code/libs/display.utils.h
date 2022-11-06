@@ -3,40 +3,24 @@ void clear_console();
 void display_opening_credits();
 void display_ending_credits();
 
-void display_menu_header(char *title);
-void display_menu(Board *board, choices_index *choices);
-
 void display_board(Board *board);
-void display_map(Map *map, Player **players);
+void display_menu(Board *board, choices_index *choices);
+void display_map(Board *board);
 
-void display_menu_carte(unsigned short *cursor,Board *board);
+void display_menu_header(Board *board);
+void display_player_turn(Board *board);
+void display_player_items(Board *board);
+
 void _display_border(Board *board);
-void _display_margin_y(Board *board);
-void _display_margin_x();
-void _display_content(Board *board);
-void _display_items(int *item_index, Board *board);
-int _get_char_ascii(char c);
+int _convert_item(char item, Board *board);
 
 
+/* -------------------------------------------- */
 
-/**
- * @features : display maps
- * */
-void display_menu_carte(unsigned short *cursor,Board *board){
-    clear_console();
-    display_menu_header("CARTES");
-    //printf("%d", board->selected_menu);
-    for(int i = 0; i<1; i++){
-        printf("\n");
-       //printf("[%c]\n\n", i == *cursor ? 'X' : ' ');
-        printf("[X]\n\n");
-        display_map(board->maps[i], board->players);
-    }
-}
 
-void display_menu_header(char *title) {
+void display_menu_header(Board *board) {
     printf("----------------------------------\n\n");
-    printf("\t%s\n", title);
+    printf("\t%s\n", board->menus[board->current_menu]->title);
     printf("\n----------------------------------\n\n");
 }
 
@@ -45,15 +29,6 @@ void display_choice_back(Board *board, int index) {
     printf("[%c]\t%s\n", index == board->current_choice ? 'X' : ' ', file_get_value(CHOICES_NAME[choice_back], board->config->lang_dir));
 }
 
-void display_choice_yes(Board *board, int index) {
-    board->menus[board->current_menu]->nb_choice += 1;
-    printf("[%c]\t%s\n", index == board->current_choice ? 'X' : ' ', file_get_value(CHOICES_NAME[choice_yes], board->config->lang_dir));
-}
-
-void display_choice_no(Board *board, int index) {
-    board->menus[board->current_menu]->nb_choice += 1;
-    printf("[%c]\t%s\n", index == board->current_choice ? 'X' : ' ', file_get_value(CHOICES_NAME[choice_no], board->config->lang_dir));
-}
 
 void display_next_menu(Board *board, menus_index next_menu, void (*pf)(Board *)) {
     clear_console();
@@ -62,169 +37,87 @@ void display_next_menu(Board *board, menus_index next_menu, void (*pf)(Board *))
 }
 
 void display_menu(Board *board, choices_index *choices) {
-    display_menu_header(board->menus[board->current_menu]->title);
+    display_menu_header(board);
     for (int i = 0; i < board->menus[board->current_menu]->nb_choice; ++i) {
         printf("[%c]\t%s\n", i == board->current_choice ? 'X' : ' ', file_get_value(CHOICES_NAME[choices[i]], board->config->lang_dir));
     }
 }
-
-char test[6][8] = {
-        "xxxxxxxx",
-        "xp xmmmx",
-        "x xmmx x",
-        "x xmmx x",
-        "xmmmx px",
-        "xxxxxxxx",
-};
-
-char test2[6][15] = {
-        "xxxxxxxxxxxxxxx",
-        "xp xmmmx m xxxx",
-        "x xmmx mm xxxxx",
-        "xmmmx pxmmmxxxx",
-        "x xmmx mm xxxxx",
-        "xxxxxxxxxxxxxxx",
-};
-
-char test3[12][20] = {
-        "xxxxxxxxxxxxxxxxxxxx",
-        "xp xmmmx m mm mmmxxx",
-        "x xmmx mm mmm  mmxxx",
-        "xmmmx pxmmmx     xxx",
-        "x xmmx mm xxxx  pxxx",
-        "xxxxxxxxxxxxxxxxxxxx",
-};
 
 
 
 
 void display_board(Board *board){
     clear_console();
-    text_color(board->players[board->player_turn]->color);
-    printf("%s(%d), a toi de jouer.\n", board->players[board->player_turn]->name, board->player_turn);
-    text_color_default();
-    display_map(board->maps[board->current_map], board->players);
-
+    display_menu_header(board);
+    display_player_turn(board);
+    display_player_items(board);
+    display_map(board);
 }
 
 
-int _get_char_ascii(char c) {
-    int res = 0;
-//    printf("[%c]", c);
-//    sleep(1);
-    switch (c) {
-        case 'x':
-            res = ITEM_MI;
-            break;
-        case 'm':
-            res = ITEM_MD;
-            break;
-        case ' ':
-            res = ITEM_SP;
-            break;
-        case 'p':
-            res = 49;
-            break;
-        default:
-            break;
-    }
-    return res;
-}
 
-void display_map(Map *map, Player **players) {
+void display_map(Board *board) {
+    _display_border(board);
+    Map *map = board->maps[board->current_map];
+
     for (int i = 0; i < map->rows; ++i) {
+        printf("\t");
         for (int j = 0; j < map->columns; ++j) {
-//            printf("%c", _get_char_ascii(test[i][j]));
             if(map->body[i][j] >= 48 && map->body[i][j] <= 57){
                 int nb = map->body[i][j] - 48;
-                text_color(players[nb]->color);
+                text_color(board->players[nb]->color);
                 printf("%c", map->body[i][j]);
                 text_color_default();
-            }else {
-                printf("%c", map->body[i][j]);
+            } else {
+                printf("%c", _convert_item(map->body[i][j], board));
             }
         }
         printf("\n");
     }
-    printf("\n");
+    _display_border(board);
 }
 
-void _display_content(Board *board) {
-    int item_index = 0;
-    for (int i = 0; i < board->maps[board->current_map]->rows; ++i) {
-        printf("|");
-        _display_margin_x();
-        for (int j = 0; j < board->maps[board->current_map]->columns; ++j) {
-//            printf("%c", _get_char_ascii(test[i][j]));
-            printf("%c", test[i][j]);
-        }
-        _display_margin_x();
-        printf("|");
-        _display_margin_x();
-        _display_items(&item_index, board);
-        _display_margin_x();
-        printf("|\n");
-    }
+void display_player_turn(Board *board) {
+    text_color(board->players[board->player_turn]->color);
+    printf("  %s(%d), a toi de jouer.\n", board->players[board->player_turn]->name, board->player_turn);
+    text_color_default();
 }
 
-void _display_items(int *item_index, Board *board) {
-    //todo récuperer l'objet le plus long
-    for (int j = 0; j < items_len / 5; ++j) {
-        if(*item_index < items_len) {
-//            printf("%s : %s", ITEMS_NAME[*item_index], ITEMS_STRING[*item_index]);
-            unsigned short offset = strlen(ITEMS_NAME[9]) - strlen(ITEMS_NAME[*item_index]);
-            if(*item_index + 1 >= items_len) {
-                offset += strlen(ITEMS_NAME[9]) + 4;
-            }
-            for (int i = 0; i < offset; ++i) {
-                printf(" ");
-            }
-            *item_index += 1;
-            if(j == items_len / 5 - 2) {
-                _display_margin_x();
-            }
-        }
+void display_player_items(Board *board) {
+    printf("\tVos objets : %d\n", board->players[board->player_turn]->nb_item);
+    for (int i = 0; i < board->players[board->player_turn]->nb_item; ++i) {
+        printf("\t  -> %s, %c", board->players[board->player_turn]->items[i]->name, board->players[board->player_turn]->items[i]->data->_int);
     }
-}
-
-void _display_margin_y(Board *board) {
-    unsigned short column_map = board->maps[board->current_map]->columns;
-    unsigned short len_board = MARGIN_X + column_map + MARGIN_X;
-    unsigned short len_items = MARGIN_X + strlen(ITEMS_NAME[9]) + 4 + MARGIN_X + strlen(ITEMS_NAME[9]) + 4 + MARGIN_X;
-    for (int j = 0; j < MARGIN_Y; ++j) {
-        printf("|");
-        for (int i = 0; i < len_board; ++i) {
-            printf(" ");
-        }
-        printf("|");
-        for (int i = 0; i < len_items; ++i) {
-            printf(" ");
-        }
-        printf("|\n");
-    }
-}
-
-void _display_margin_x() {
-    for (int i = 0; i < MARGIN_X; ++i) {
-        printf(" ");
-    }
+    printf("\n\n");
 }
 
 void _display_border(Board *board) {
-    unsigned short column_map = board->maps[board->current_map]->columns;
-    unsigned short len_board = 1 + MARGIN_X + column_map + MARGIN_X + 1;
-    unsigned short len_items = MARGIN_X + strlen(ITEMS_NAME[9]) + 4 + MARGIN_X + strlen(ITEMS_NAME[9]) + 4 + MARGIN_X + 1;
-
-    for (int i = 0; i < len_board + len_items; ++i) {
+    printf("\n\t\b\b");
+    for (int i = 0; i < board->maps[board->current_map]->columns + 4; ++i) {
         printf("%c", i % 2 ? '-' : '=');
     }
     printf("\n");
 }
 
 
+int _convert_item(char item, Board *board) {
+    for (int i = 0; i < items_len; ++i) {
+        if(item == '\n') {
+            return (int)' ';
+        }
+        if(item == 'p' || (item >= 48 && item <= 57) || item == ' ') {
+            return item;
+        }
+        if(item == board->items[i]->data->_char) {
+            return board->items[i]->data->_int;
+        }
+    }
+    errorf("Item char not found");
+}
+
 void display_opening_credits() {
     clear_console();
-    printf("Casse briques...");
+//    printf("Casse briques...");
 }
 
 void display_ending_credits() {
@@ -233,6 +126,10 @@ void display_ending_credits() {
 }
 
 
+void display_wait() {
+    clear_console();
+    printf("En chargement, veuillez patienter\n");
+}
 
 
 void display_loading(Loading *loading, int loading_index) {
@@ -240,5 +137,14 @@ void display_loading(Loading *loading, int loading_index) {
     clear_console();
     for (int i = 0; i < loading_len; ++i) {
         printf("[%s] %s\n", loading->loading_item[i]->item ? "OK" : "..", loading->loading_item[i]->name);
+    }
+}
+
+void display_default_map(Map *map, Board *board) {
+    for (int i = 0; i < map->rows; ++i) {
+        for (int j = 0; j < map->columns; ++j) {
+            printf("%c", _convert_item(map->body[i][j], board));
+        }
+        printf("\n");
     }
 }

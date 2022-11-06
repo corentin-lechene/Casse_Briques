@@ -288,11 +288,9 @@ void exit_error(char *desc) {
     exit(0);
 }
 void infof(char *err) {
-    text_color(color_blue);
-    printf("-> %s\n", err);
+    text_color(color_light_blue);
+    printf("[INFO] -> %s\n", err);
     text_color_default();
-    pause();
-    exit(0);
 }
 void errorf(char *err) {
     text_color(color_red);
