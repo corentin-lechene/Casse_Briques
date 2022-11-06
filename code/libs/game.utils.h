@@ -8,13 +8,66 @@ void display_menu_static(Board *board);
 void display_menu_custom(Board *board);
 
 char *get_event(int event);
-void put_item(Board *board);
-
+void put_item(Board *board, int x,int y);
+//#include <unistd.h>
 
 /* ---------------------------------------- */
+void init_bomb(Board *board){
+    Bomb **bomb = board->maps[board->current_map]->bombs;
+    printf("Nb bombe : %d\n", board->maps[board->current_map]->nb_bomb);
+    for (int i = 0; i < board->maps[board->current_map]->nb_bomb; ++i) {
+        printf("Id_player : %c\n", bomb[board->maps[board->current_map]->nb_bomb]->player_id);
+        printf("Nombre de tour : %d\n", bomb[board->maps[board->current_map]->nb_bomb]->nb_turn = 2);
+    }
+    pause();
+    exit(0);
+}
+void plant_bomb(Board *board){
+    Player *player = board->players[board->player_turn];
+    Map *map = board->maps[board->current_map];
+    //Init Bomb
+    Bomb *bomb = map->bombs[board->maps[board->current_map]->nb_bomb];
+    int nb_bomb = map->nb_bomb;
+    board->maps[board->current_map]->bombs[0] = malloc(sizeof (Bomb));
+
+    bomb->nb_turn = 2;
+    pause();
+    exit(0);
+    //bomb->player_id = board->players[board->player_turn]->id;
+
+    board->maps[board->current_map]->nb_bomb+=1;
+    init_bomb(board);
+    //Init Bomb
+    int x = player->x;
+    int y = player->y;
+
+    if(map->body[x][y+1] != 'x'){
+        //sleep(3);
+        map->body[x][y+1] = board->items[7]->data->_char;
+        put_item(board,x,y+1);
+
+    }
+    /*if(map->body[x-1][y] != 'x'){
+        map->body[x-1][y] = 'X';
+    }else if(map->body[x][y+1] != 'x'){
+        map->body[x][y+1] = 'X';
+    }else if(map->body[x][y-1] != 'x'){
+        map->body[x][y-1] = 'X';
+    }*/
+    //map->body[i][j] = ' ';
+    set_player_turn(board);
+
+}
+
+void is_explosed(){
+    printf("Hello");
+
+}
+
 
 void run_game(Board *board) {
     if (kbhit()) {
+
         int event = my_getch();
         const char *event_name = get_event(event);
 
@@ -27,7 +80,9 @@ void run_game(Board *board) {
             move_player(board);
             display_board(board);
         } else if (strcmp(event_name, "bomb") == 0) {
-            put_item(board);
+            plant_bomb(board);
+            display_board(board);
+
 //            if(plant_bomb(board)) {
 //                  display_board(board);
 //            }
@@ -36,6 +91,8 @@ void run_game(Board *board) {
             return;
         }
     }
+
+    //is_explosed();
 }
 void run_menu(Board *board) {
     int event = my_getch();
@@ -85,7 +142,8 @@ void init_game(Board *board) {
     add_bot_player(board);
     init_players(board);
     init_map(board);
-
+    board->maps[board->current_map]->bombs = malloc(sizeof (Bomb *));
+    board->maps[board->current_map]->nb_bomb = 0;
     display_board(board);
     board->current_menu = menu_game;
 }
@@ -167,7 +225,7 @@ char *get_event(int event) {
             return NULL;
     }
 }
-void put_item(Board *board){
+void put_item(Board *board, int x, int y){
     Map *map = board->maps[board->current_map];
     items_rarity items_rarity[] = {blue_flame, yellow_flame, bomb_up, bomb_down};
     items_rarity_epic items_rarity_epic[] = {bomb_passes, bomb_kick, invincibility, heart};
@@ -191,7 +249,7 @@ void put_item(Board *board){
             choice_item = random_between(0, items_len_leg-1);
             item = board->items[items_rarity_legendary[choice_item]]->data->_char;
         }
-        map->body[1][1] = item;
+        map->body[x][y] = item;
     }
 }
 

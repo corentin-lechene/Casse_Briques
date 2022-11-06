@@ -161,7 +161,7 @@ int move_player(Board *board) {
     return 1;
 }
 int can_move(Board *board, int x, int y, int rows, int columns) {
-    //TODO:bombe + id + next
+    //TODO:bloquer entre joueur
     switch (board->players[board->player_turn]->direction) {
         case 0 :
             if (x == 0 && board->maps[board->current_map]->body[rows][y] != ' ') {
