@@ -175,7 +175,6 @@ void free_player_dim_arr(Player ***tf, int len) {
 void _free_player_array(Player **tf, int len) {
     for (int i = 0; i < len; ++i) {
         if(tf[i] != NULL) {
-            _free_bomb_array(tf[i]->bombs, tf[i]->nb_bomb);
             _free_item_array(tf[i]->items, tf[i]->nb_item);
             _free((void **) &tf[i]->name);
             free(tf[i]);
