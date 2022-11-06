@@ -9,6 +9,7 @@ menu_leave = Leave
 menu_home = Main menu
 menu_options = Settings
 menu_languages = Languages
+menu_set_languages = Languages
 menu_game_mode = Game mode
 menu_solo = Solo
 menu_players = Players

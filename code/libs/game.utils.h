@@ -102,6 +102,8 @@ void display_menu_static(Board *board) {
         case menu_options:
             menu_options_case(board);
             break;
+        case menu_set_languages:
+            menu_set_languages_case(board);
         case menu_game_mode:
             menu_game_mode_case(board);
             break;

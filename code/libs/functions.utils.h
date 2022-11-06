@@ -8,7 +8,9 @@ char *str_get_right(char *line, char separator);
 
 char *file_get_value(const char *attribute, const char *dir);
 short file_display_content(const char *path);
+char *file_get_content(const char *filename, int start_of_file);
 short file_get_nb(const char *dir);
+short file_get_size(FILE *f);
 
 void text_color(int color);
 void text_color_default();
@@ -20,6 +22,7 @@ double random_between(double min, double max);
 
 void clear_console();
 void exit_error(char *desc);
+void infof(char *err);
 void errorf(char *err);
 void warningf(char *warn);
 
@@ -129,6 +132,72 @@ char *file_get_value(const char *attribute, const char *dir) {
     printf("-= FILE NOT FOUND =-\n");
     return NULL;
 }
+char *file_set_value(const char *attribute, void *value, const char *dir) {
+    FILE *f = fopen(dir, "rb+");
+
+    if(f != NULL) {
+        char *file_temp = calloc(0, sizeof(char) * file_get_size(f) + 1);
+        char *line = malloc(sizeof(char) * 255);
+        char *file_att, *file_val;
+
+        while (fgets(line, 255, f) != NULL) {
+            if(strcmp(line, "\n") == 0) {
+                continue;
+            }
+            file_att = str_get_left(line, '=');
+            file_val = str_get_right(line, '=');
+
+            if(strcmp(attribute, file_att) == 0) {
+                char *file_content = file_get_content(dir, ftell(f));
+
+                if(file_content == NULL) {
+                    printf("-= FILE CONTENT =-\n");
+                    return NULL;
+                }
+
+                fseek(f, -(strlen(file_val) + 1), SEEK_CUR);
+                printf("[%s%s = %s\n%s]", file_temp, file_att, value, file_content);
+                fclose(f);
+
+                f = fopen(dir, "wb");
+                fprintf(f, "%s%s = %s\n%s", file_temp, file_att, value, file_content);
+
+                fclose(f);
+                free(file_att);
+                free(file_val);
+                free(file_temp);
+                free(file_content);
+                return NULL;
+            }
+            strncat(file_temp, line, strlen(line));
+        }
+    }
+    printf("-= FILE NOT FOUND =-\n");
+    return NULL;
+}
+char *file_get_content(const char *filename, int start_of_file) {
+    FILE *f = fopen(filename, "rb");
+
+    if(f != NULL) {
+        fseek (f, 0, SEEK_END);
+        int len = ftell(f) - start_of_file;
+        char *content = malloc(sizeof(char) * (len + 1));
+
+        if(content != NULL) {
+            fseek (f, start_of_file, SEEK_SET);
+            fread(content, 1, len, f);
+            content[len] = '\0';
+
+            fseek(f, 0, SEEK_SET);
+            fclose(f);
+            return content;
+        }
+        fseek (f, 0, SEEK_SET);
+        fclose(f);
+        return NULL;
+    }
+    return NULL;
+}
 short file_display_content(const char *path) {
     FILE *f = fopen(path, "r");
 
@@ -157,6 +226,11 @@ short file_get_nb(const char *dir_name) {
     }
     warningf("Ouverture du dossier impossible");
     return 0;
+}
+short file_get_size(FILE *f) {
+    fseek (f, 0, SEEK_END);
+    int len = ftell(f);
+    fseek (f, 0, SEEK_SET);
 }
 
 void text_color(int color) {
@@ -209,6 +283,13 @@ void clear_console() {
 void exit_error(char *desc) {
     text_color(color_red);
     printf("Erreur-> %s\n", desc);
+    text_color_default();
+    pause();
+    exit(0);
+}
+void infof(char *err) {
+    text_color(color_blue);
+    printf("-> %s\n", err);
     text_color_default();
     pause();
     exit(0);

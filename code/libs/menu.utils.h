@@ -2,6 +2,7 @@
 void menu_home_case(Board *board);
 void menu_options_case(Board *board);
 void menu_languages_case(Board *board);
+void menu_set_languages_case(Board *board);
 void menu_game_mode_case(Board *board);
 void menu_solo_case(Board *board);
 void menu_patch_notes_case(Board *board);
@@ -38,23 +39,37 @@ void menu_languages_case(Board *board) {
 
     if(d != NULL) {
         dir = readdir(d);
-        while(!isalpha(dir->d_name[0])) {
+        while(dir->d_name[0] == '.') {
             dir = readdir(d);
         }
 
         int i = 0;
         display_menu_header(board->menus[menu_languages]->title);
         while(dir != NULL) {
-            printf("[%c]\t%s", board->current_choice == i++ ? 'X' : ' ', dir->d_name);
-            printf("\t%s\n", strcmp(board->config->language, dir->d_name) == 0 ? "<--" : "");
+            printf("[%c]\t%s\n", board->current_choice == i ? 'X' : ' ', dir->d_name);
+
+            if(board->current_choice == i) {
+                board->config->language = set_value(dir->d_name);
+                board->menus[board->current_menu]->next_menu = menu_set_languages;
+            }
+            i++;
             dir = readdir(d);
         }
         board->menus[board->current_menu]->nb_choice = i;
+        if(board->current_choice == i) {
+            board->menus[board->current_menu]->next_menu = menu_options;
+            board->config->language = file_get_value("language", CONFIG_DIR);
+        }
         display_choice_back(board, i);
         closedir(d);
         return;
     }
     board->current_menu = menu_options;
+}
+
+void menu_set_languages_case(Board *board) {
+    file_set_value("language", board->config->language, CONFIG_DIR);
+    infof("Le jeu doit redemarrer");
 }
 
 void menu_game_mode_case(Board *board) {
