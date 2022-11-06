@@ -118,7 +118,77 @@ void set_player_direction(char event, Board *board) {
             break;
     }
 }
+void explosion(Bomb *bomb, Map *map){
+    printf("EXPLOSION !!");
+    printf("Position x : %d, y : %d", bomb->x, bomb->y);
+    int x = bomb->x;
+    int y = bomb->y;
+    //TODO : faire ttes les verif + supprimer la bombe du tableau
+    if(map->body[x][y+1] == 'm'){
+        map->body[x][y+1] = ' ';
+    }
+    if(map->body[x][y-1] == 'm'){
+        map->body[x][y-1] = ' ';
 
+    }
+    if(map->body[x+1][y] == 'm'){
+        map->body[x+1][y-1] = ' ';
+
+    }
+    if(map->body[x-1][y] == 'm'){
+        map->body[x-1][y-1] = ' ';
+
+    }
+    map->body[x][y] = ' ';
+
+
+    pause();
+}
+void is_explosed(Board *board){
+    Map *map = board->maps[board->current_map];
+
+    for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
+        if(board->maps[board->current_map]->bombs[i]->nb_turn <= 0){
+            explosion(board->maps[board->current_map]->bombs[i], map);
+        }
+    }
+}
+
+void decrement_bomb(Board *board){
+    for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
+        if(board->maps[board->current_map]->bombs[i]->player_id == board->players[board->player_turn]->id){
+            board->maps[board->current_map]->bombs[i]->nb_turn-=1;
+        }
+    }
+}
+
+void init_bomb(Board *board, int x ,int y){
+
+    Map *map = board->maps[board->current_map];
+    int nb_bomb = map->nb_bomb;
+    board->maps[board->current_map]->bombs[nb_bomb] = malloc(sizeof (Bomb));
+    Bomb *bomb = map->bombs[board->maps[board->current_map]->nb_bomb];
+    bomb->nb_turn = 4;
+    bomb->x =x;
+    bomb->y = y;
+    bomb->player_id = board->players[board->player_turn]->id;
+    board->maps[board->current_map]->nb_bomb+=1;
+
+}
+
+void plant_bomb(Board *board){
+    Player *player = board->players[board->player_turn];
+    Map *map = board->maps[board->current_map];
+    int x = player->x;
+    int y = player->y;
+    init_bomb(board, x, y);
+    map->body[x][y] = 'P';
+    if(board->maps[board->current_map]->nb_bomb > 0){
+        decrement_bomb(board);
+        is_explosed(board);
+    }
+    set_player_turn(board);
+}
 int move_player(Board *board) {
     Player *player = board->players[board->player_turn];
     Map *map = board->maps[board->current_map];
@@ -144,9 +214,17 @@ int move_player(Board *board) {
             break;
     }
     map->body[player->x][player->y] = player->id;
+
+    if(board->maps[board->current_map]->nb_bomb > 0){
+        decrement_bomb(board);
+        is_explosed(board);
+        //pause();
+
+    }
     set_player_turn(board);
     return 1;
 }
+
 int can_move(Board *board, int x, int y, int rows, int columns) {
     //TODO:bloquer entre joueur
     switch (board->players[board->player_turn]->direction) {

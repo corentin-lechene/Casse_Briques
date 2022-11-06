@@ -13,53 +13,6 @@ void decrement_bomb(Board *board);
 //#include <unistd.h>
 
 /* ---------------------------------------- */
-void init_bomb(Board *board, int x ,int y){
-
-    Map *map = board->maps[board->current_map];
-    int nb_bomb = map->nb_bomb;
-    board->maps[board->current_map]->bombs[nb_bomb] = malloc(sizeof (Bomb));
-    Bomb *bomb = map->bombs[board->maps[board->current_map]->nb_bomb];
-    bomb->nb_turn = 4;
-    bomb->x =x;
-    bomb->y = y;
-    bomb->player_id = board->players[board->player_turn]->id;
-    board->maps[board->current_map]->nb_bomb+=1;
-
-}
-void plant_bomb(Board *board){
-    Player *player = board->players[board->player_turn];
-    Map *map = board->maps[board->current_map];
-    int x = player->x;
-    int y = player->y;
-    init_bomb(board, x, y);
-    map->body[x][y] = 'P';
-    set_player_turn(board);
-}
-
-void is_explosed(Board *board){
-    for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
-        if(board->maps[board->current_map]->bombs[i]->nb_turn == 0){
-            printf("EXPLOSION !!");
-            pause();
-        }
-        //board->maps[board->current_map]->bombs[i]->nb_turn-=1;
-        //printf("Nombre de tour : %d\n", board->maps[board->current_map]->bombs[i]->nb_turn);
-    }
-    /*
-
-    if(map->body[x][y+1] != 'x'){
-        map->body[x][y+1] = board->items[7]->data->_char;
-        put_item(board,x,y+1);
-
-    }*/
-
-}
-
-void decrement_bomb(Board *board){
-    for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
-        board->maps[board->current_map]->bombs[i]->nb_turn-=1;
-    }
-}
 
 void run_game(Board *board) {
     if (kbhit()) {
@@ -85,13 +38,6 @@ void run_game(Board *board) {
         } else if (strcmp(event_name, "resume") == 0) {
             display_next_menu(board, menu_resume, &menu_resume_case);
             return;
-        }
-
-        if(board->maps[board->current_map]->nb_bomb > 0){
-            decrement_bomb(board);
-            is_explosed(board);
-            //pause();
-
         }
     }
 
