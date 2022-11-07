@@ -60,6 +60,7 @@ Player *_create_player(Board *board, int id, short is_bot) {
     } else {
         player->name = set_value(name);
     }
+
     player->color = get_random_color_player(board, player->id);
     player->is_bot = is_bot;
     player->score = 0;
@@ -118,38 +119,42 @@ void set_player_direction(char event, Board *board) {
             break;
     }
 }
-void explosion(Bomb *bomb, Map *map){
-    printf("EXPLOSION !!");
-    printf("Position x : %d, y : %d", bomb->x, bomb->y);
+
+//TODO : faire ttes les verif + supprimer la bombe du tableau
+//TODO : le comportement de l'explosion est fonction du type de la bomb
+void explosion(Bomb *bomb, Map *map, Player *player){
+
     int x = bomb->x;
     int y = bomb->y;
-    //TODO : faire ttes les verif + supprimer la bombe du tableau
-    if(map->body[x][y+1] == 'm'){
-        map->body[x][y+1] = ' ';
-    }
-    if(map->body[x][y-1] == 'm'){
-        map->body[x][y-1] = ' ';
 
-    }
-    if(map->body[x+1][y] == 'm'){
-        map->body[x+1][y-1] = ' ';
+    for(int i = 1; i<=player->bomb_range ; i++){
+        if(map->body[x][y+i] == 'm'){
+            map->body[x][y+i] = ' ';
+        }
 
-    }
-    if(map->body[x-1][y] == 'm'){
-        map->body[x-1][y-1] = ' ';
+        if(map->body[x][y-i] == 'm'){
+            map->body[x][y-i] = ' ';
 
+        }
+        if(map->body[x+i][y] == 'm'){
+            map->body[x+i][y] = ' ';
+
+        }
+        if(map->body[x-i][y] == 'm'){
+            map->body[x-i][y] = ' ';
+
+        }
     }
+
     map->body[x][y] = ' ';
-
-
-    pause();
 }
 void is_explosed(Board *board){
     Map *map = board->maps[board->current_map];
+    Player *player = board->players[board->player_turn];
 
     for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
         if(board->maps[board->current_map]->bombs[i]->nb_turn <= 0){
-            explosion(board->maps[board->current_map]->bombs[i], map);
+            explosion(board->maps[board->current_map]->bombs[i], map, player);
         }
     }
 }
@@ -162,8 +167,9 @@ void decrement_bomb(Board *board){
     }
 }
 
+//TODO : gérer en fonction du type de la bombe
 void init_bomb(Board *board, int x ,int y){
-
+    Player *player = board->players[board->player_turn];
     Map *map = board->maps[board->current_map];
     int nb_bomb = map->nb_bomb;
     board->maps[board->current_map]->bombs[nb_bomb] = malloc(sizeof (Bomb));
@@ -173,6 +179,19 @@ void init_bomb(Board *board, int x ,int y){
     bomb->y = y;
     bomb->player_id = board->players[board->player_turn]->id;
     board->maps[board->current_map]->nb_bomb+=1;
+    char bombSymbol;
+
+    switch (player->bomb_type) {
+        //bomb normal
+        //recup le symbole
+        case 7 :
+            //board->player_turn->
+            break;
+
+        default :
+            printf("cc");
+            pause();
+    }
 
 }
 
@@ -182,6 +201,7 @@ void plant_bomb(Board *board){
     int x = player->x;
     int y = player->y;
     init_bomb(board, x, y);
+    //map->body[x][y] = 'P';
     map->body[x][y] = 'P';
     if(board->maps[board->current_map]->nb_bomb > 0){
         decrement_bomb(board);
