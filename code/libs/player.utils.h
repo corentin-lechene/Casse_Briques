@@ -121,12 +121,11 @@ void set_player_direction(char event, Board *board) {
     }
 }
 
-//TODO : faire ttes les verif
-//TODO : le comportement de l'explosion est fonction du type de la bomb
+//TODO : range
 void explosion(int index, Board *board){
     Map *map = board->maps[board->current_map];
     Player *player = board->players[board->player_turn];
-    Bomb *bomb = board->maps[board->current_map]->bombs[index];
+    Bomb *bomb = map->bombs[index];
     int x = bomb->x;
     int y = bomb->y;
     for(int i = 1; i<=player->bomb_range ; i++){
@@ -136,29 +135,24 @@ void explosion(int index, Board *board){
                 map->body[x][y-i] = ' ';
             }
         }
-
         if(x-i >= 0){
             if(map->body[x-i][y] == 'm'){
                 map->body[x-i][y] = ' ';
             }
         }
-
         if(y+i <= map->columns-1){
             if(map->body[x][y+i] == 'm'){
                 map->body[x][y+i] = ' ';
             }
         }
-
         if(x+i <= map->rows-1){
             if(map->body[x+i][y] == 'm'){
                 map->body[x+i][y] = ' ';
             }
         }
-
     }
     map->body[bomb->x][bomb->y] = ' ';
     player->nb_bomb += 1;
-
 }
 
 void remove_bomb(int index, Board *board){
@@ -169,11 +163,57 @@ void remove_bomb(int index, Board *board){
 }
 
 
+void recup_position(int x,int y, Board *board) {
+    for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
+        if(board->maps[board->current_map]->bombs[i]->x == x && board->maps[board->current_map]->bombs[i]->y == y){
+            explosion(i,board);
+        }
+    }
+
+}
+void is_bomb_arround(int index,Board *board){
+    Map *map = board->maps[board->current_map];
+    Player *player = board->players[board->player_turn];
+    Bomb *bomb = map->bombs[index];
+    int x = bomb->x;
+    int y = bomb->y;
+
+    for(int i = 1; i<=player->bomb_range ; i++){
+
+        if(y-i >= 0){
+            if(map->body[x][y-i] == board->items[item_bomb]->data->_char){
+                recup_position(x,y-i, board);
+            }
+        }
+
+        if(x-i >= 0){
+            if(map->body[x-i][y] == board->items[item_bomb]->data->_char){
+                recup_position(x-i,y, board);
+            }
+        }
+
+        if(y+i <= map->columns-1){
+            if(map->body[x][y+i] == board->items[item_bomb]->data->_char){
+                recup_position(x,y+i, board);
+            }
+        }
+
+        if(x+i <= map->rows-1){
+            if(map->body[x+i][y] == board->items[item_bomb]->data->_char){
+                recup_position(x+i,y, board);
+            }
+        }
+
+    }
+
+}
+
 void is_explosed(Board *board){
 
     for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
         if(board->maps[board->current_map]->bombs[i]->nb_turn <= 0){
             explosion(i,board);
+            is_bomb_arround(i,board);
             remove_bomb(i, board);
         }
     }
