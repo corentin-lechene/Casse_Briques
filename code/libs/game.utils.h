@@ -32,9 +32,6 @@ void run_game(Board *board) {
             plant_bomb(board);
             display_board(board);
 
-//            if(plant_bomb(board)) {
-//                  display_board(board);
-//            }
         } else if (strcmp(event_name, "resume") == 0) {
             display_next_menu(board, menu_resume, &menu_resume_case);
             return;

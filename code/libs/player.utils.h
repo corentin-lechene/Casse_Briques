@@ -156,6 +156,8 @@ void explosion(int index, Board *board){
 
     }
     map->body[bomb->x][bomb->y] = ' ';
+    player->nb_bomb += 1;
+
 }
 
 void remove_bomb(int index, Board *board){
@@ -186,6 +188,14 @@ void decrement_bomb(Board *board){
 
 void init_bomb(Board *board){
     Player *player = board->players[board->player_turn];
+    //printf("%d\n", player->nb_bomb);
+    printf("%d",board->maps[board->current_map]->bomb_default);
+    pause();
+    if(player->nb_bomb == 0){
+        printf("TOTO");
+        pause();
+    }
+
     Map *map = board->maps[board->current_map];
     int nb_bomb = map->nb_bomb;
     board->maps[board->current_map]->bombs[nb_bomb] = malloc(sizeof (Bomb));
@@ -195,6 +205,7 @@ void init_bomb(Board *board){
     bomb->y = player->y;
     bomb->player_id = board->players[board->player_turn]->id;
     board->maps[board->current_map]->nb_bomb+=1;
+    player->nb_bomb -=1;
     map->body[bomb->x][bomb->y] = board->items[player->bomb_type]->data->_char;
 }
 
@@ -211,6 +222,8 @@ int move_player(Board *board) {
     Map *map = board->maps[board->current_map];
 
     if (can_move(board, player->x, player->y, map->rows-1, map->columns-1) == 0) {
+        infof("Vous ne pouvez pas bouger dans cette direction !!!");
+        pause();
         return 0;
     }
     if(map->body[player->x][player->y] != board->items[player->bomb_type]->data->_char){
@@ -235,8 +248,6 @@ int move_player(Board *board) {
     if(board->maps[board->current_map]->nb_bomb > 0){
         decrement_bomb(board);
         is_explosed(board);
-        //pause();
-
     }
     set_player_turn(board);
     return 1;
