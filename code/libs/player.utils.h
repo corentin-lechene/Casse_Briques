@@ -84,7 +84,8 @@ void add_bot_player(Board *board) {
 void init_players(Board *board) {
     for (int i = 0; i < board->nb_player; ++i) {
         board->players[i]->heart = 1;
-        board->players[i]->nb_bomb = board->maps[board->current_map]->bomb_default;
+        //board->players[i]->nb_bomb = board->maps[board->current_map]->bomb_default;
+        board->players[i]->nb_bomb = 1;
         board->players[i]->x = get_pos_player(board, i, 'x');
         board->players[i]->y = get_pos_player(board, i, 'y');
         board->players[i]->bomb_range = 2;
@@ -188,14 +189,6 @@ void decrement_bomb(Board *board){
 
 void init_bomb(Board *board){
     Player *player = board->players[board->player_turn];
-    //printf("%d\n", player->nb_bomb);
-    printf("%d",board->maps[board->current_map]->bomb_default);
-    pause();
-    if(player->nb_bomb == 0){
-        printf("TOTO");
-        pause();
-    }
-
     Map *map = board->maps[board->current_map];
     int nb_bomb = map->nb_bomb;
     board->maps[board->current_map]->bombs[nb_bomb] = malloc(sizeof (Bomb));
@@ -205,11 +198,18 @@ void init_bomb(Board *board){
     bomb->y = player->y;
     bomb->player_id = board->players[board->player_turn]->id;
     board->maps[board->current_map]->nb_bomb+=1;
-    player->nb_bomb -=1;
+    if(player->nb_bomb - 1 >= 0){
+        player->nb_bomb -=1;
+    }
     map->body[bomb->x][bomb->y] = board->items[player->bomb_type]->data->_char;
 }
 
-void plant_bomb(Board *board){
+int plant_bomb(Board *board){
+    if(board->players[board->player_turn]->nb_bomb == 0){
+        infof("Vous n'avez plus de bombe en stock !!!");
+        pause();
+        return 0;
+    }
     init_bomb(board);
     if(board->maps[board->current_map]->nb_bomb > 0){
         decrement_bomb(board);
