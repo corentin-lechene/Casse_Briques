@@ -9,7 +9,6 @@ void display_menu_custom(Board *board);
 
 char *get_event(int event);
 void put_item(Board *board, int x,int y);
-void decrement_bomb(Board *board);
 //#include <unistd.h>
 
 /* ---------------------------------------- */
