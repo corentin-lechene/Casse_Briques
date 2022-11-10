@@ -1,4 +1,3 @@
-
 void run_game(Board *board);
 void run_menu(Board *board);
 void init_game(Board *board);
@@ -9,7 +8,7 @@ void display_menu_custom(Board *board);
 
 char *get_event(int event);
 void put_item(Board *board, int x,int y);
-//#include <unistd.h>
+
 
 /* ---------------------------------------- */
 

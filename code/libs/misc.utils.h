@@ -263,6 +263,7 @@ typedef struct {
     unsigned int x;
     unsigned int y;
     Data_item *data;
+    int range;
 } Bomb;
 
 typedef struct {
