@@ -47,10 +47,8 @@ void is_bomb_arround(int i,Board *board, int x,int y){
 }
 
 void recup_position(int x,int y, Board *board) {
-    //pause();
     for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
         if(board->maps[board->current_map]->bombs[i]->x == x && board->maps[board->current_map]->bombs[i]->y == y){
-            //TODO : mettre à 0 le nb_turn
             board->maps[board->current_map]->bombs[i]->nb_turn = 0;
         }
     }
@@ -92,7 +90,7 @@ void explosion(int index, Board *board){
     int tmp = 0;
     /*Explosion Bombe Normal*/
     //A gauche
-    for(int i = 1; i<= player->bomb_range; i++){
+    for(int i = 1; i<= bomb->range; i++){
         if(y-i < 0){
             tmp++;
             if(boom(x, map->columns - tmp, map) == 0){
@@ -105,7 +103,7 @@ void explosion(int index, Board *board){
     }
     tmp = 0;
     //Droite
-    for(int i = 1; i<= player->bomb_range; i++){
+    for(int i = 1; i<= bomb->range; i++){
         if(y+i > map->columns-1){
             tmp++;
             if(boom(x, -1 + tmp, map) == 0){
@@ -119,7 +117,7 @@ void explosion(int index, Board *board){
     tmp = 0;
 
     //Haut
-    for(int i = 1; i<= player->bomb_range; i++){
+    for(int i = 1; i<= bomb->range; i++){
         if(x-i < 0){
             tmp++;
             if(boom(map->rows - tmp, y, map) == 0){
@@ -132,7 +130,7 @@ void explosion(int index, Board *board){
     }
     tmp=0;
     //Bas
-    for(int i = 1; i<= player->bomb_range; i++){
+    for(int i = 1; i<= bomb->range; i++){
         if(x+i > map->rows-1){
             tmp++;
             if(boom(-1 + tmp, y, map) == 0){
