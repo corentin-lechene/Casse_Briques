@@ -27,7 +27,9 @@ void run_game(Board *board) {
             move_player(board);
             display_board(board);
         } else if (strcmp(event_name, "bomb") == 0) {
-            plant_bomb(board);
+            if(plant_bomb(board)!=0){
+                set_player_turn(board);
+            }
             display_board(board);
 
         } else if (strcmp(event_name, "resume") == 0) {

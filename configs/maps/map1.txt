@@ -2,8 +2,8 @@
 14 10
 xxxxmxxxxxxxxx
 mm          mm
-x  mmppmm  xxx
-x  mm  mm  xxx
+x  mmpp pmmmmx
+x          xxx
 x  m   mm  xxx
 x  m   m   xxx
 x  m   mm  xxx
