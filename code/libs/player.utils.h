@@ -172,7 +172,14 @@ int is_bomb(Board *board, int x,int y){
 
 int is_space(Board *board, int x, int y){
     if (board->maps[board->current_map]->body[x][y] != ' ') {
-        return 0;
+         int index_item = is_item(board,x,y);
+        if(index_item == -1) return 0;
+        else {
+            get_item(board,index_item);
+            return 1;
+        }
+
+
     } else if (board->maps[board->current_map]->body[x][y] == ' ') {
         return 1;
     }

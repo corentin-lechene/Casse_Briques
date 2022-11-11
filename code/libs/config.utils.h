@@ -181,6 +181,7 @@ Item **get_items(Config *config) {
         if(items[i] == NULL) {
             exit_error("items[i] = NULL");
         }
+        items[i]->is_used = 0;
     }
     display_loading(config->loading, loading_items);
     return items;

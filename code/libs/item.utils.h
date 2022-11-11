@@ -1,5 +1,7 @@
 void put_item(Board *board, int x,int y);
-
+int is_item(Board *board, int x, int y);
+void get_item(Board *board, int item);
+void init_item(Item *item, Player *player);
 
 void put_item(Board *board, int x, int y){
     Map *map = board->maps[board->current_map];
@@ -20,11 +22,75 @@ void put_item(Board *board, int x, int y){
             item = board->items[items_rarity[choice_item]]->data->_char;
         }else if(item_rarity >= 20 && item_rarity < 45){
             choice_item = random_between(0, items_len_epic-1);
-            item = board->items[items_rarity_epic[choice_item]]->data->_char;
+            if(board->items[items_rarity_epic[choice_item]]->is_used == 0){
+                item = board->items[items_rarity_epic[choice_item]]->data->_char;
+            }
+            if(choice_item == 3) board->items[heart]->is_used = 1;
+
         }else {
             choice_item = random_between(0, items_len_leg-1);
-            item = board->items[items_rarity_legendary[choice_item]]->data->_char;
+            if(board->items[items_rarity_epic[choice_item]]->is_used == 0){
+                item = board->items[items_rarity_legendary[choice_item]]->data->_char;
+            }
+            if(choice_item == 2) board->items[2]->is_used = 1;
         }
         map->body[x][y] = item;
     }
+}
+
+//void set_used()
+
+int is_item(Board *board, int x, int y){
+    Map *map = board->maps[board->current_map];
+
+    items_index items_index[] = {item_bomb_up, item_bomb_down,item_yellow_flame,item_blue_flame,item_red_flame,item_bomb_destroy,item_bomb_kick,
+                                 item_bomb_passes,item_invincibility,item_heart,item_life};
+
+    for(int i = 0; i<items_len-5;i++){
+        if(map->body[x][y] == board->items[items_index[i]]->data->_char){
+            //get_item(board,items_index[i]);
+            return items_index[i];
+        }
+    }
+    return -1;
+}
+
+void get_item(Board *board, int item){
+    Player *player = board->players[board->player_turn];
+    player->items[player->nb_item] = malloc(sizeof (Item));
+    player->items[player->nb_item]->data = malloc(sizeof (Data_item));
+    player->items[player->nb_item]->name = malloc(sizeof (char ));
+    player->items[player->nb_item]->name = board->items[item]->name;
+    player->items[player->nb_item]->data->_char = board->items[item]->data->_char;
+    player->items[player->nb_item]->data->_int = board->items[item]->data->_int;
+    init_item(player->items[player->nb_item], player);
+    player->nb_item +=1;
+}
+
+void init_item(Item *item, Player *player){
+    switch (item->data->_char) {
+        case '+' :
+            player->nb_bomb += 1;
+            break;
+        case '-' :
+            decrement_or_reset(&player->nb_bomb,0);
+            break;
+        case 'y' :
+            player->bomb_range +=1;
+            break;
+        case 'b' :
+            decrement_or_reset(&player->bomb_range, 0);
+            break;
+        case 'l' :
+            player->heart += 1;
+            break;
+        case 'Q' :
+            player->bomb_type = bomb_destroy;
+            break;
+        case '@' :
+            player->bomb_type = bomb_kick;
+            break;
+
+    }
+
 }

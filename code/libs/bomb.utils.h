@@ -147,7 +147,9 @@ int boom_destroy(Board *board,int x, int y){
         map->body[x][y]=' ';
         return 0;
     }
-    map->body[x][y]=' ';
+    if(is_item(board,x,y) == -1){
+        map->body[x][y]=' ';
+    }
     return 1;
 }
 
@@ -314,7 +316,9 @@ int boom(int x, int y, Board *board){
         put_item(board,x,y);
         return 0;
     }else if(map->body[x][y] == 'x') return -1;
-    map->body[x][y] = ' ';
+    if(is_item(board,x,y) == -1){
+        map->body[x][y] = ' ';
+    }
 }
 
 void remove_bomb(int index, Board *board){
