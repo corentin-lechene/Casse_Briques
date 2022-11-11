@@ -256,9 +256,9 @@ Map *_get_map(const char *filename) {
         while(!isalnum(fgetc(f)));
         fseek(f, -1, SEEK_CUR);
 
-        //get nb_bomb
+        //get bomb_default
         fgets(t, 255, f);
-        if(sscanf(t, "%hu %d", &map->nb_bomb, &temp) != 1 || map->nb_bomb == 0) {
+        if(sscanf(t, "%hu %d", &map->bomb_default, &temp) != 1 || map->bomb_default == 0) {
             fclose(f);
             errorf("Map unrecognized (first line)");
         }
