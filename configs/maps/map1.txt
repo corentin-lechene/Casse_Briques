@@ -1,12 +1,12 @@
 2
 14 10
-xxxxmxxxxxxxxx
-mm          mm
-x  mmpp pmmmmx
-x          xxx
-x  m   mm  xxx
-x  m   m   xxx
-x  m   mm  xxx
+x xxxxxxxxxxxx
+xp mm  mm  xxx
 x  mm  mm  xxx
 x  mm  mm  xxx
-xxxxmxxmxxxxxx
+x  mm  mm  xxx
+x  mm  mm  xxx
+x  mm  mm  xxx
+x  mm  mm  xxx
+x  mm  mm  xxx
+x xxxxxxxxxxxx

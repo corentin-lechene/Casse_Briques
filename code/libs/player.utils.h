@@ -11,6 +11,8 @@ void set_player_direction(char event, Board *board);
 
 int can_move(Board *board, int x, int y, int rows, int columns);
 int move_player(Board *board);
+int is_space(Board *board, int x, int y);
+int is_bomb(Board *board, int x,int y);
 
 short get_pos_player(Board *board, int index, char pos);
 enum colors_index get_random_color_player(Board *board, int index);
@@ -155,52 +157,58 @@ int move_player(Board *board) {
     return 1;
 }
 
+
+int is_bomb(Board *board, int x,int y){
+    Map *map = board->maps[board->current_map];
+    int items_bomb[] = {item_bomb, item_bomb_destroy, item_bomb_kick, item_bomb_push};
+
+    for(int i =0; i<4;i++){
+        if(map->body[x][y] == board->items[items_bomb[i]]->data->_char ){
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int is_space(Board *board, int x, int y){
+    if (board->maps[board->current_map]->body[x][y] != ' ') {
+        return 0;
+    } else if (board->maps[board->current_map]->body[x][y] == ' ') {
+        return 1;
+    }
+}
+
+
 int can_move(Board *board, int x, int y, int rows, int columns) {
     switch (board->players[board->player_turn]->direction) {
         case 0 :
-            if (x == 0 && board->maps[board->current_map]->body[rows][y] != ' ') {
-                return 0;
-            } else if (x == 0 && board->maps[board->current_map]->body[rows][y] == ' ') {
-                return 1;
+            if(x==0){
+                if(is_space(board,rows,y) == 0) return 0;
+                else return 1;
             }
-            if (board->maps[board->current_map]->body[x - 1][y] == 'x' || board->maps[board->current_map]->body[x - 1][y] == 'm' ||
-                    (board->maps[board->current_map]->body[x - 1][y] >= 48 && board->maps[board->current_map]->body[x - 1][y] <= 57)) {
-                return 0;
-            }
-            break;
+            if(is_space(board,x-1,y) == 0) return 0;
+            else return 1;
         case 1 :
-            if (y == columns && board->maps[board->current_map]->body[x][0] != ' ') {
-                return 0;
-            } else if (y == columns && board->maps[board->current_map]->body[x][0] == ' ') {
-                return 1;
+            if(y==columns){
+                if(is_space(board,x,0) == 0) return 0;
+                else return 1;
             }
-            if (board->maps[board->current_map]->body[x][y + 1] == 'x' || board->maps[board->current_map]->body[x][y + 1] == 'm' ||
-                    (board->maps[board->current_map]->body[x][y+ 1] >= 48 && board->maps[board->current_map]->body[x][y+1] <= 57)) {
-                return 0;
-            }
-            break;
+            if(is_space(board,x,y+1) == 0) return 0;
+            else return 1;
         case 2 :
-            if (x == rows && board->maps[board->current_map]->body[0][y] != ' ') {
-                return 0;
-            } else if (x == rows && board->maps[board->current_map]->body[0][y] == ' ') {
-                return 1;
+            if(x==rows){
+                if(is_space(board,0,y) == 0) return 0;
+                else return 1;
             }
-            if (board->maps[board->current_map]->body[x + 1][y] == 'x' || board->maps[board->current_map]->body[x + 1][y] == 'm' ||
-                    (board->maps[board->current_map]->body[x + 1][y] >= 48 && board->maps[board->current_map]->body[x + 1][y] <= 57)) {
-                return 0;
-            }
-            break;
+            if(is_space(board,x+1,y) == 0) return 0;
+            else return 1;
         case 3:
-            if (y == 0 && board->maps[board->current_map]->body[x][columns] != ' ') {
-                return 0;
-            } else if (y == 0 && board->maps[board->current_map]->body[x][columns] == ' ') {
-                return 1;
+            if(y==0){
+                if(is_space(board,x,columns) == 0) return 0;
+                else return 1;
             }
-            if (board->maps[board->current_map]->body[x][y - 1] == 'x' || board->maps[board->current_map]->body[x][y - 1] == 'm' ||
-                    (board->maps[board->current_map]->body[x][y- 1] >= 48 && board->maps[board->current_map]->body[x][y- 1] <= 57)) {
-                return 0;
-            }
-            break;
+            if(is_space(board,x,y-1) == 0) return 0;
+            else return 1;
     }
     return 1;
 }
