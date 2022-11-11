@@ -27,16 +27,26 @@ void init_bomb(Board *board){
     int nb_bomb = map->nb_bomb;
     board->maps[board->current_map]->bombs[nb_bomb] = malloc(sizeof (Bomb));
     Bomb *bomb = map->bombs[board->maps[board->current_map]->nb_bomb];
-    bomb->nb_turn = 4;
+    bomb->data = malloc(sizeof (Data_item));
+    player->bomb_type = bomb_destroy;
+    if(player->bomb_type == bomb_destroy){
+        bomb->nb_turn = 1;
+        bomb->data->_char = board->items[player->bomb_type]->data->_char;
+    }else {
+        bomb->nb_turn = 4;
+        bomb->range = player->bomb_range;
+    }
     bomb->x = player->x;
     bomb->y = player->y;
-    bomb->range = player->bomb_range;
     bomb->player_id = board->players[board->player_turn]->id;
     board->maps[board->current_map]->nb_bomb+=1;
     if(player->nb_bomb - 1 >= 0){
         player->nb_bomb -=1;
     }
-    map->body[bomb->x][bomb->y] = board->items[player->bomb_type]->data->_char;
+
+    if (bomb->nb_turn != 1){
+        map->body[bomb->x][bomb->y] = board->items[player->bomb_type]->data->_char;
+    }
 }
 
 void is_bomb_arround(int i,Board *board, int x,int y){
@@ -62,11 +72,60 @@ void decrement_bomb(Board *board){
     }
 }
 
+/**
+ *
+ *
+ * */
+void explosion_bomb_destroy(int index, Board *board){
+
+    Map *map = board->maps[board->current_map];
+    Player *player = board->players[board->player_turn];
+    Bomb *bomb = map->bombs[index];
+    int x = bomb->x;
+    int y = bomb->y;
+
+    int i = 1;
+    if (player->direction == 3) {
+        while (map->body[x][y - i] != 'x') {
+            map->body[x][y - i] = ' ';
+            i++;
+        }
+        map -> body[x][y - i] = ' ';
+    }
+    if (player -> direction == 1) {
+        while (map -> body[x][y + i] != 'x') {
+            map -> body[x][y + i] = ' ';
+            i++;
+        }
+        map -> body[x][y + i] = ' ';
+    }
+    if (player -> direction == 2) {
+        while (map -> body[x + i][y] != 'x') {
+            map -> body[x + i][y] = ' ';
+            i++;
+        }
+        map -> body[x + i][y] = ' ';
+    }
+    if (player -> direction == 0) {
+        while (map -> body[x - i][y] != 'x') {
+            map -> body[x - i][y] = ' ';
+            i++;
+        }
+        map -> body[x - i][y] = ' ';
+    }
+}
+
+
 void is_explosed(Board *board){
     //Vérfication explosion des bombes
     for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
         if(board->maps[board->current_map]->bombs[i]->nb_turn <= 0){
-            explosion(i,board);
+            //verif si c'est une bomb_destroy
+            if(board->maps[board->current_map]->bombs[i]->data->_char == board->items[bomb_destroy]->data->_char){
+                explosion_bomb_destroy(i,board);
+            }else {
+                explosion(i,board);//en focntion du type de la bombe(destroy)
+            }
         }
     }
 
@@ -78,7 +137,6 @@ void is_explosed(Board *board){
     }
 }
 
-//TODO : range
 //TODO : verfif si un joueur n'est pas à cote d'une bombe
 //TODO : put item
 void explosion(int index, Board *board){
