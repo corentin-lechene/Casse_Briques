@@ -1,12 +1,18 @@
 int plant_bomb(Board *board);
 void init_bomb(Board *board);
+void init_bomb_kick(Board *board);
+void init_bomb_destroy(Board *board);
+
 void decrement_bomb(Board *board);
 void is_explosed(Board *board);
-void is_bomb_arround(int index,Board *board, int x,int y);
-void recup_position(int x,int y, Board *board);
+
 void remove_bomb(int index, Board *board);
 void explosion(int index, Board *board);
 int boom(int x, int y, Map *map);
+
+void is_bomb_arround(Board *board, int x, int y);
+void recup_position(int x,int y, Board *board);
+
 
 int plant_bomb(Board *board){
     if(board->players[board->player_turn]->nb_bomb == 0){
@@ -19,8 +25,65 @@ int plant_bomb(Board *board){
         decrement_bomb(board);
         is_explosed(board);
     }
+    return 1;
 }
 
+void init_bomb_kick(Board *board){
+    Map *map = board->maps[board->current_map];
+
+    Player *player = board->players[board->player_turn];
+    Bomb *bomb = map->bombs[board->maps[board->current_map]->nb_bomb];
+
+    if(player->bomb_type == bomb_kick){
+        bomb->nb_turn = 4;
+        int x = player->x;
+        int y = player->y;
+        int i = 1;
+        if (player->direction == 3) {
+            while (map->body[x][y+i] != 'm') {
+                i++;
+            }
+            bomb->x = x;
+            bomb->y = (y+i)-1;
+            map->body[x][(y+i)-1] = board->items[player->bomb_type]->data->_char;
+        }
+        if (player->direction == 1) {
+            while (map->body[x][y-i] != 'm') {
+                i++;
+            }
+            bomb->x = x;
+            bomb->y = (y-i)+1;
+            map->body[x][(y-i)+1] = board->items[player->bomb_type]->data->_char;
+        }
+        if (player->direction == 2) {
+            while (map->body[x-i][y] != 'm') {
+                i++;
+            }
+            bomb->x = (x-i)+1;
+            bomb->y = y;
+            map->body[(x-i)+1][y] = board->items[player->bomb_type]->data->_char;
+        }
+        if (player->direction == 0) {
+            while (map->body[x+i][y] != 'm') {
+                i++;
+            }
+            bomb->x = (x+i)-1;
+            bomb->y = y;
+            map->body[(x+i)-1][y] = board->items[player->bomb_type]->data->_char;
+        }
+    }
+}
+
+void init_bomb_destroy(Board *board){
+    Map *map = board->maps[board->current_map];
+    Bomb *bomb = map->bombs[board->maps[board->current_map]->nb_bomb];
+    Player *player = board->players[board->player_turn];
+
+    bomb->nb_turn = 1;
+    bomb->data->_char = board->items[player->bomb_type]->data->_char;
+    bomb->x = player->x;
+    bomb->y = player->y;
+}
 void init_bomb(Board *board){
     Player *player = board->players[board->player_turn];
     Map *map = board->maps[board->current_map];
@@ -28,16 +91,18 @@ void init_bomb(Board *board){
     board->maps[board->current_map]->bombs[nb_bomb] = malloc(sizeof (Bomb));
     Bomb *bomb = map->bombs[board->maps[board->current_map]->nb_bomb];
     bomb->data = malloc(sizeof (Data_item));
-    player->bomb_type = bomb_destroy;
+    //player->bomb_type = bomb_destroy;
+    //player->bomb_type = bomb_kick;
+
     if(player->bomb_type == bomb_destroy){
-        bomb->nb_turn = 1;
-        bomb->data->_char = board->items[player->bomb_type]->data->_char;
-    }else {
+        init_bomb_destroy(board);
+    }else if (player->bomb_type == bomb_kick){
+        init_bomb_kick(board);
+    } else {
         bomb->nb_turn = 4;
         bomb->range = player->bomb_range;
     }
-    bomb->x = player->x;
-    bomb->y = player->y;
+
     bomb->player_id = board->players[board->player_turn]->id;
     board->maps[board->current_map]->nb_bomb+=1;
     if(player->nb_bomb - 1 >= 0){
@@ -49,7 +114,7 @@ void init_bomb(Board *board){
     }
 }
 
-void is_bomb_arround(int i,Board *board, int x,int y){
+void is_bomb_arround(Board *board, int x, int y) {
     Map *map = board->maps[board->current_map];
     if(map->body[x][y] == board->items[item_bomb]->data->_char){
         recup_position(x,y, board);
@@ -77,7 +142,6 @@ void decrement_bomb(Board *board){
  *
  * */
 void explosion_bomb_destroy(int index, Board *board){
-
     Map *map = board->maps[board->current_map];
     Player *player = board->players[board->player_turn];
     Bomb *bomb = map->bombs[index];
@@ -87,6 +151,7 @@ void explosion_bomb_destroy(int index, Board *board){
     int i = 1;
     if (player->direction == 3) {
         while (map->body[x][y - i] != 'x') {
+            is_bomb_arround(board,x,y-i);
             map->body[x][y - i] = ' ';
             i++;
         }
@@ -94,6 +159,7 @@ void explosion_bomb_destroy(int index, Board *board){
     }
     if (player -> direction == 1) {
         while (map -> body[x][y + i] != 'x') {
+            is_bomb_arround(board,x,y+i);
             map -> body[x][y + i] = ' ';
             i++;
         }
@@ -101,6 +167,7 @@ void explosion_bomb_destroy(int index, Board *board){
     }
     if (player -> direction == 2) {
         while (map -> body[x + i][y] != 'x') {
+            is_bomb_arround(board,x+i,y);
             map -> body[x + i][y] = ' ';
             i++;
         }
@@ -108,11 +175,14 @@ void explosion_bomb_destroy(int index, Board *board){
     }
     if (player -> direction == 0) {
         while (map -> body[x - i][y] != 'x') {
+            is_bomb_arround(board,x-i,y);
             map -> body[x - i][y] = ' ';
             i++;
         }
         map -> body[x - i][y] = ' ';
     }
+
+    player->nb_bomb += 1;
 }
 
 
@@ -155,7 +225,7 @@ void explosion(int index, Board *board){
                 break;
             }
         }else {
-            is_bomb_arround(i,board,x,y-i);
+            is_bomb_arround(board, x, y - i);
             if(boom(x, y - i, map) == 0 || boom(x, y - i, map) == -1) break;
         }
     }
@@ -168,7 +238,7 @@ void explosion(int index, Board *board){
                 break;
             }
         }else{
-            is_bomb_arround(i,board,x,y+i);
+            is_bomb_arround(board, x, y + i);
             if(boom(x, y + i, map) == 0 || boom(x, y + i, map) == -1) break;
         }
     }
@@ -182,7 +252,7 @@ void explosion(int index, Board *board){
                 break;
             }
         }else {
-            is_bomb_arround(i,board,x,x-i);
+            is_bomb_arround(board, x, x - i);
             if(boom(x - i, y, map) == 0 || boom(x - i, y, map) == -1) break;
         }
     }
@@ -195,7 +265,7 @@ void explosion(int index, Board *board){
                 break;
             }
         }else {
-            is_bomb_arround(i,board,x,x+i);
+            is_bomb_arround(board, x, x + i);
             if(boom(x + i, y, map) == 0 || boom(x + i, y, map) == -1) break;
         }
     }
