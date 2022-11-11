@@ -35,6 +35,10 @@ void run_game(Board *board) {
         } else if (strcmp(event_name, "resume") == 0) {
             display_next_menu(board, menu_resume, &menu_resume_case);
             return;
+        }else if (strcmp(event_name, "pass") == 0) {
+            set_player_turn(board);
+            display_board(board);
+            return;
         }
     }
 
@@ -161,8 +165,10 @@ char *get_event(int event) {
             return "move";
 
         case KEY_ENTER:
-        case KEY_SPACE:
             return "bomb";
+
+        case KEY_SPACE:
+            return "pass";
 
         case KEY_ESCAPE:
             return "resume";
