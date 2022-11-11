@@ -160,9 +160,9 @@ int move_player(Board *board) {
 
 int is_bomb(Board *board, int x,int y){
     Map *map = board->maps[board->current_map];
-    int items_bomb[] = {item_bomb, item_bomb_destroy, item_bomb_kick, item_bomb_push};
+    int items_bomb[] = {item_bomb, item_bomb_destroy, item_bomb_kick};
 
-    for(int i =0; i<4;i++){
+    for(int i =0; i<3;i++){
         if(map->body[x][y] == board->items[items_bomb[i]]->data->_char ){
             return 0;
         }
