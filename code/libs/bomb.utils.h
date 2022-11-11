@@ -242,7 +242,6 @@ void is_explosed(Board *board){
 }
 
 //TODO : verfif si un joueur n'est pas à cote d'une bombe
-//TODO : put item
 void explosion(int index, Board *board){
     Map *map = board->maps[board->current_map];
     Player *player = board->players[board->player_turn];
@@ -286,7 +285,7 @@ void explosion(int index, Board *board){
                 break;
             }
         }else {
-            is_bomb_around(board, x, x - i);
+            is_bomb_around(board, x-i, y);
             if(boom(x - i, y, board) == 0 || boom(x - i, y, board) == -1) break;
         }
     }
@@ -299,7 +298,7 @@ void explosion(int index, Board *board){
                 break;
             }
         }else {
-            is_bomb_around(board, x, x + i);
+            is_bomb_around(board, x+i, y);
             if(boom(x + i, y, board) == 0 || boom(x + i, y, board) == -1) break;
         }
     }
@@ -310,7 +309,7 @@ void explosion(int index, Board *board){
 
 int boom(int x, int y, Board *board){
     Map *map = board->maps[board->current_map];
-
+    if(x == - 1 || y == -1)return 0;
     if(map->body[x][y] == 'm'){
         map->body[x][y] = ' ';
         put_item(board,x,y);

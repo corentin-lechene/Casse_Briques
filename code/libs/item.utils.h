@@ -1,7 +1,7 @@
 void put_item(Board *board, int x,int y);
 int is_item(Board *board, int x, int y);
 void get_item(Board *board, int item);
-void init_item(Item *item, Player *player);
+void init_item(Item *item, Board *board);
 
 void put_item(Board *board, int x, int y){
     Map *map = board->maps[board->current_map];
@@ -38,17 +38,12 @@ void put_item(Board *board, int x, int y){
     }
 }
 
-//void set_used()
-
 int is_item(Board *board, int x, int y){
     Map *map = board->maps[board->current_map];
-
     items_index items_index[] = {item_bomb_up, item_bomb_down,item_yellow_flame,item_blue_flame,item_red_flame,item_bomb_destroy,item_bomb_kick,
                                  item_bomb_passes,item_invincibility,item_heart,item_life};
-
-    for(int i = 0; i<items_len-5;i++){
+    for(int i = 0; i<items_len-4;i++){
         if(map->body[x][y] == board->items[items_index[i]]->data->_char){
-            //get_item(board,items_index[i]);
             return items_index[i];
         }
     }
@@ -63,11 +58,13 @@ void get_item(Board *board, int item){
     player->items[player->nb_item]->name = board->items[item]->name;
     player->items[player->nb_item]->data->_char = board->items[item]->data->_char;
     player->items[player->nb_item]->data->_int = board->items[item]->data->_int;
-    init_item(player->items[player->nb_item], player);
+    init_item(player->items[player->nb_item], board);
     player->nb_item +=1;
 }
 
-void init_item(Item *item, Player *player){
+void init_item(Item *item, Board *board){
+    Player *player = board->players[board->player_turn];
+    Map *map = board->maps[board->current_map];
     switch (item->data->_char) {
         case '+' :
             player->nb_bomb += 1;
@@ -90,6 +87,10 @@ void init_item(Item *item, Player *player){
         case '@' :
             player->bomb_type = bomb_kick;
             break;
+        case 'r' :
+            player->bomb_range = map->columns > map->rows ?  map->columns : map->rows;
+            break;
+
 
     }
 
