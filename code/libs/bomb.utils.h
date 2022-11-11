@@ -309,7 +309,7 @@ void explosion(int index, Board *board){
 
 int boom(int x, int y, Board *board){
     Map *map = board->maps[board->current_map];
-    if(x == - 1 || y == -1)return 0;
+    if(x == - 1 || y == -1 || x==map->rows || y == map->columns)return 0;
     if(map->body[x][y] == 'm'){
         map->body[x][y] = ' ';
         put_item(board,x,y);
