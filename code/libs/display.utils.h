@@ -50,7 +50,7 @@ void display_board(Board *board){
     clear_console();
     display_menu_header(board);
     display_player_turn(board);
-    display_player_items(board);
+    //display_player_items(board);
     display_map(board);
 }
 

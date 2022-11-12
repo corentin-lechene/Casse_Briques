@@ -328,7 +328,6 @@ int my_getch()  {
             case 75:
             case 77:
             case 13:
-            case 32:
             case 27:
                 return ch2;
 
@@ -342,6 +341,7 @@ int my_getch()  {
             case 'q':
             case 'd':
             case 'p':
+            case 32:
             case 13:
             case 27:
                 return ch;

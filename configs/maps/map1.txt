@@ -1,6 +1,6 @@
 2
 14 10
-xxxxxxxxxxxxxx
+x xxxxxxxxxxxx
 xp mm  mO p mx
 x  mm  m   xxx
 x  mm  mm mxxx
@@ -9,4 +9,4 @@ x  mm  mm  xxx
 x  mm  mm  xxx
 x  mm  mm  xxx
 x  mm  mm  xxx
-xxxxxxxxxxxxxx
+x xxxxxxxxxxxx

@@ -11,8 +11,9 @@
 #include "libs/free.utils.h"
 #include "libs/functions.utils.h"
 #include "libs/display.utils.h"
-#include "libs/map.utils.h"
+#include "libs/bomb.utils.h"
 #include "libs/player.utils.h"
+#include "libs/map.utils.h"
 #include "libs/menu.utils.h"
 #include "libs/game.utils.h"
 #include "libs/config.utils.h"
@@ -33,7 +34,6 @@ void run_program(Board *board) {
 int main() {
     text_color_default();
     Board *board = generate_board();
-
     display_opening_credits();
     display_menus(board);
     while (board->current_menu >= 1) {
