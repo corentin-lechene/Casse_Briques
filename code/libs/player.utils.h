@@ -125,8 +125,8 @@ int move_player(Board *board) {
     Map *map = board->maps[board->current_map];
 
     if (can_move(board, player->x, player->y, map->rows-1, map->columns-1) == 0) {
-        infof("Vous ne pouvez pas bouger dans cette direction !!!");
-        pause();
+//        infof("Vous ne pouvez pas bouger dans cette direction !!!");
+//        pause();
         return 0;
     }
     if(map->body[player->x][player->y] != board->items[player->bomb_type]->data->_char){

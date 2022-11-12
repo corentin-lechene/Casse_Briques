@@ -6,12 +6,14 @@
 #include <dirent.h>
 #include <conio.h>
 #include <ctype.h>
+#include <math.h>
 #include <windows.h>
 #include "libs/misc.utils.h"
 #include "libs/free.utils.h"
 #include "libs/functions.utils.h"
 #include "libs/display.utils.h"
 #include "libs/bomb.utils.h"
+#include "libs/item.utils.h"
 #include "libs/player.utils.h"
 #include "libs/map.utils.h"
 #include "libs/menu.utils.h"

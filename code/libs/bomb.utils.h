@@ -1,3 +1,6 @@
+void put_item(Board *board, int x,int y);
+int is_item(Board *board, int x, int y);
+
 int plant_bomb(Board *board);
 void init_bomb(Board *board);
 void init_bomb_kick(Board *board);
@@ -19,8 +22,8 @@ void recup_position(int x,int y, Board *board);
  * */
 int plant_bomb(Board *board){
     if(board->players[board->player_turn]->nb_bomb == 0){
-        infof("Vous n'avez plus de bombe en stock !!!");
-        pause();
+//        infof("Vous n'avez plus de bombe en stock !!!");
+//        pause();
         return 0;
     }
     init_bomb(board);
