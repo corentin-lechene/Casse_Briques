@@ -3,6 +3,9 @@ int is_item(Board *board, int x, int y);
 void get_item(Board *board, int item);
 void init_item(Item *item, Board *board);
 
+/**
+ * @features : genere un objet avec les probabilités
+ * */
 void put_item(Board *board, int x, int y){
     Map *map = board->maps[board->current_map];
     items_rarity items_rarity[] = {blue_flame, yellow_flame, bomb_up, bomb_down};
@@ -38,6 +41,9 @@ void put_item(Board *board, int x, int y){
     }
 }
 
+/**
+ * @features : verifie si il y a un item
+ * */
 int is_item(Board *board, int x, int y){
     Map *map = board->maps[board->current_map];
     items_index items_index[] = {item_bomb_up, item_bomb_down,item_yellow_flame,item_blue_flame,item_red_flame,item_bomb_destroy,item_bomb_kick,
@@ -50,6 +56,9 @@ int is_item(Board *board, int x, int y){
     return -1;
 }
 
+/**
+ * @features : ajoute l'item au tab Item lié au joueur
+ * */
 void get_item(Board *board, int item){
     Player *player = board->players[board->player_turn];
     player->items[player->nb_item] = malloc(sizeof (Item));
@@ -62,6 +71,9 @@ void get_item(Board *board, int item){
     player->nb_item +=1;
 }
 
+/**
+ * @features : définit le comportement de l'item en fonction de son type
+ * */
 void init_item(Item *item, Board *board){
     Player *player = board->players[board->player_turn];
     Map *map = board->maps[board->current_map];

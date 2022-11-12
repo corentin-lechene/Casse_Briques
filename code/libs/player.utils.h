@@ -251,6 +251,3 @@ enum colors_index get_random_color_player(Board *board, int index) {
     } while(!unique);
     return color;
 }
-
-
-
