@@ -11,9 +11,361 @@ char *get_event(int event);
 void put_item(Board *board);
 
 
+Coord *is_something_proxy_verti(Player *player, Map *map, char search, int include_walls) {
+    for (int i = 1; i <= player->bomb_range; ++i) {
+//        printf("[%d] x: %d, y: %d -> [%c][%c]\n", include_walls, player->x - i, player->y, search, map->body[player->x - i][player->y]);
+        if(player->x - i >= 0) {
+            if(include_walls && (map->body[player->x - i][player->y] == 'x' || map->body[player->x - i][player->y] == 'm')) {
+                break;
+            }
+            if(map->body[player->x - i][player->y] == search) {
+                Coord *coord = malloc(sizeof(Coord));
+                coord->x = player->x - i;
+                coord->y = player->y;
+                return coord;
+            }
+        }
+    }
+
+    for (int i = 1; i <= player->bomb_range; ++i) {
+        if(player->x + i < map->rows) {
+            if(include_walls && (map->body[player->x + i][player->y] == 'x' || map->body[player->x + i][player->y] == 'm')) {
+                break;
+            }
+            if(map->body[player->x + i][player->y] == search) {
+                Coord *coord = malloc(sizeof(Coord));
+                coord->x = player->x + i;
+                coord->y = player->y;
+                return coord;
+            }
+        }
+    }
+    return NULL;
+}
+Coord *is_something_proxy_hori(Player *player, Map *map, char search, int include_walls) {
+    for (int i = 1; i <= player->bomb_range; ++i) {
+        if(player->y - i >= 0) {
+            if(include_walls && (map->body[player->x][player->y - i] == 'x' || map->body[player->x][player->y - i] == 'm')) {
+                break;
+            }
+            if(map->body[player->x][player->y - i] == search) {
+                Coord *coord = malloc(sizeof(Coord));
+                coord->x = player->x;
+                coord->y = player->y - i;
+                return coord;
+            }
+        }
+    }
+
+    for (int i = 1; i <= player->bomb_range; ++i) {
+        if(player->y + i < map->columns) {
+            if(include_walls && (map->body[player->x][player->y + i] == 'x' || map->body[player->x][player->y + i] == 'm')) {
+                break;
+            }
+            if(map->body[player->x][player->y + i] == search) {
+                Coord *coord = malloc(sizeof(Coord));
+                coord->x = player->x;
+                coord->y = player->y + i;
+                return coord;
+            }
+        }
+    }
+    return NULL;
+}
+Coord *is_something_proxy_diag_top(Player *player, Map *map, char search, int include_walls) {
+    for (int i = 1; i <= player->bomb_range; ++i) {
+//        printf("[%d] x: %d, y: %d -> [%c][%c]\n", include_walls, player->x - i, player->y, search, map->body[player->x - i][player->y]);
+        if(player->x - i >= 0 && player->y + i < map->columns) {
+            if(include_walls && (map->body[player->x - i][player->y + i] == 'x' || map->body[player->x - i][player->y + i] == 'm')) {
+                break;
+            }
+            if(map->body[player->x - i][player->y + i] == search) {
+                Coord *coord = malloc(sizeof(Coord));
+                coord->x = player->x - i;
+                coord->y = player->y + i;
+                return coord;
+            }
+        }
+    }
+
+    for (int i = 1; i <= player->bomb_range; ++i) {
+        if(player->x - i >= 0 && player->y - i >= 0) {
+            if(include_walls && (map->body[player->x - i][player->y - i] == 'x' || map->body[player->x - i][player->y - i] == 'm')) {
+                break;
+            }
+            if(map->body[player->x - i][player->y - i] == search) {
+                Coord *coord = malloc(sizeof(Coord));
+                coord->x = player->x - i;
+                coord->y = player->y - i;
+                return coord;
+            }
+        }
+    }
+    return NULL;
+}
+Coord *is_something_proxy_diag_bottom(Player *player, Map *map, char search, int include_walls) {
+    for (int i = 1; i <= player->bomb_range; ++i) {
+//        printf("[%d] x: %d, y: %d -> [%c][%c]\n", include_walls, player->x - i, player->y, search, map->body[player->x - i][player->y]);
+        if(player->x + i >= 0 && player->y - i >= 0) {
+            if(include_walls && (map->body[player->x + i][player->y - i] == 'x' || map->body[player->x + i][player->y - i] == 'm')) {
+                break;
+            }
+            if(map->body[player->x + i][player->y - i] == search) {
+                Coord *coord = malloc(sizeof(Coord));
+                coord->x = player->x + i;
+                coord->y = player->y - i;
+                return coord;
+            }
+        }
+    }
+
+    for (int i = 1; i <= player->bomb_range; ++i) {
+        if(player->x + i < map->rows && player->y + i < map->columns) {
+            if(include_walls && (map->body[player->x + i][player->y + i] == 'x' || map->body[player->x + i][player->y + i] == 'm')) {
+                break;
+            }
+            if(map->body[player->x + i][player->y + i] == search) {
+                Coord *coord = malloc(sizeof(Coord));
+                coord->x = player->x + i;
+                coord->y = player->y + i;
+                return coord;
+            }
+        }
+    }
+    return NULL;
+}
+
+
+int is_bomb_proxi_hori(Board *board) {
+    Map *map = board->maps[board->current_map];
+    Player *player = board->players[board->player_turn];
+    int bombs[3] = {item_bomb,item_bomb_destroy,item_bomb_kick};
+
+    for (int i = 0; i < 3; ++i) {
+        if(is_something_proxy_hori(player, map, board->items[bombs[i]]->data->_char, 1) != NULL) {
+            return 1;
+        }
+    }
+    return 0;
+}
+int is_bomb_proxi_verti(Board *board) {
+    Map *map = board->maps[board->current_map];
+    Player *player = board->players[board->player_turn];
+    int bombs[3] = {item_bomb,item_bomb_destroy,item_bomb_kick};
+
+    for (int i = 0; i < 3; ++i) {
+        if(is_something_proxy_verti(player, map, board->items[bombs[i]]->data->_char, 1) != NULL) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int is_bomb_on_player(Board *board) {
+    
+}
+
+int is_bomb_proximity(Board *board) {
+    return is_bomb_proxi_hori(board) || is_bomb_proxi_verti(board);
+}
+int is_player_proximity(Board *board) {
+    Map *map = board->maps[board->current_map];
+    Player *player = board->players[board->player_turn];
+    for (int i = 0; i < board->nb_player; ++i) {
+        if(is_something_proxy_verti(player, map, board->players[i]->id, 0) != NULL || 
+            is_something_proxy_hori(player, map, board->players[i]->id, 0) != NULL ||
+            is_something_proxy_diag_top(player, map, board->players[i]->id, 0) != NULL ||
+            is_something_proxy_diag_bottom(player, map, board->players[i]->id, 0) != NULL) {
+            return 1;
+        }
+    }
+    return 0;
+}
+int is_item_proximity(Board *board) {
+    Map *map = board->maps[board->current_map];
+    Player *player = board->players[board->player_turn];
+    int items[] = {item_bomb_up,
+                   item_yellow_flame,
+                   item_red_flame,
+                   item_bomb_passes,
+                   item_bomb_kick,
+                   item_bomb_push,
+                   item_invincibility,
+                   item_heart,
+                   item_life
+    };
+
+    for (int i = 0; i < 8; ++i) {
+        if(is_something_proxy_hori(player, map, board->items[items[i]]->data->_char, 0) != NULL ||
+            is_something_proxy_verti(player, map, board->items[items[i]]->data->_char, 0) != NULL ||
+            is_something_proxy_diag_top(player, map, board->items[items[i]]->data->_char, 0) != NULL ||
+            is_something_proxy_diag_bottom(player, map, board->items[items[i]]->data->_char, 0) != NULL) {
+            return 1;
+        }
+    }
+    return 0;
+}
+int is_desc_wall_proximity(Board *board) {
+    Map *map = board->maps[board->current_map];
+    Player *player = board->players[board->player_turn];
+    return is_something_proxy_verti(player, map, 'm', 0) != NULL ||
+           is_something_proxy_hori(player, map, 'm', 0) != NULL;
+}
+
+int try_to_move(int direction, Board *board) {
+    board->players[board->player_turn]->direction = direction;
+    printf("Try to move %d\n", direction);
+    return move_player(board);
+}
+void move_bot_by_coord(Coord *coord, Board *board) {
+    int row = coord->y - board->players[board->player_turn]->y;
+    int column = coord->x - board->players[board->player_turn]->x;
+    if(row > 0) {
+        //go bas
+        if(!try_to_move(1, board)) {
+            if(!try_to_move(0, board)) {
+                try_to_move(2, board);
+            }
+        }
+    } else if(row < 0) {
+        //go up
+        if(!try_to_move(3, board)) {
+            if(!try_to_move(0, board)) {
+                try_to_move(2, board);
+            }
+        }
+    } else if(column > 0) {
+        //go droite
+        if(!try_to_move(2, board)) {
+            if(!try_to_move(1, board)) {
+                try_to_move(3, board);
+            }
+        }
+    } else if(column < 0) {
+        //go gauche
+        if(!try_to_move(0, board)) {
+            if(!try_to_move(1, board)) {
+                try_to_move(3, board);
+            }
+        }
+    }
+}
+void move_bot_unsafe(Board *board) {
+    int row = is_bomb_proxi_hori(board);
+    int column = is_bomb_proxi_verti(board);
+
+    if(row && column) {
+        if(!try_to_move(0, board)) {
+            if(!try_to_move(1, board)) {
+                if(!try_to_move(2, board)) {
+                    try_to_move(3, board);
+                };
+            };
+        };
+    } else if(row) {
+        if(!try_to_move(0, board)) {
+            try_to_move(2, board);
+        };
+    } else {
+        if(!try_to_move(1, board)) {
+            try_to_move(3, board);
+        };
+    }
+}
+void move_bot_to_item(Board *board) {
+    Coord *coord = malloc(sizeof(Coord));
+    Map *map = board->maps[board->current_map];
+    Player *player = board->players[board->player_turn];
+    int items[] = {item_bomb_up, item_yellow_flame, item_red_flame,
+                   item_bomb_passes, item_bomb_kick, item_bomb_push,
+                   item_invincibility, item_heart, item_life
+    };
+
+    //Récup coord
+    for (int i = 0; i < 8; ++i) {
+        coord = is_something_proxy_verti(player, map, board->items[items[i]]->data->_char, 0);
+        if(coord != NULL) {
+            break;
+        }
+        coord = is_something_proxy_hori(player, map, board->items[items[i]]->data->_char, 0);
+        if(coord != NULL) {
+            break;
+        }
+        coord = is_something_proxy_diag_top(player, map, board->items[items[i]]->data->_char, 0);
+        if(coord != NULL) {
+            break;
+        }
+        coord = is_something_proxy_diag_bottom(player, map, board->items[items[i]]->data->_char, 0);
+        if(coord != NULL) {
+            break;
+        }
+    }
+    
+    if(coord == NULL) {
+        return;
+    }
+
+    printf("x: %d, y: %d <-> %d, %d\n", player->x, player->y, coord->x, coord->y);
+    move_bot_by_coord(coord, board);
+    free(coord);
+}
+void move_bot_to_wall(Board *board) {
+    Coord *coord = malloc(sizeof(Coord));
+    Map *map = board->maps[board->current_map];
+    Player *player = board->players[board->player_turn];
+
+    coord = is_something_proxy_verti(player, map, 'm', 0);
+    if(coord == NULL) {
+        coord = is_something_proxy_hori(player, map, 'm', 0);
+        if(coord == NULL) {
+            return;
+        }
+    }
+
+    int row = coord->y - player->y;
+    int column = coord->x - player->x;
+    printf("x: %d, y: %d <-> %d, %d\n", player->x, player->y, coord->x, coord->y);
+    
+    if(row == 0 && (column == -1 || column == 1)) {
+        printf("Plant bomb 1");
+        pause();
+    } else if(column == 0 && (row == -1 || row == 1)) {
+        printf("Plant bomb 2");
+        pause();
+    } else {
+        printf("move");
+        pause();
+        move_bot_by_coord(coord, board);
+    }
+    free(coord);
+}
+
+void move_bot(Board *board) {
+    //not safe
+    if(is_bomb_proximity(board)) {
+        move_bot_unsafe(board);
+        return;
+    }
+    //safe
+    if(is_player_proximity(board)) {
+//        plant_bomb(board)
+    } else if(is_item_proximity(board)) {
+        move_bot_to_item(board);
+    } else if(is_desc_wall_proximity(board)) {
+        move_bot_to_wall(board);
+    }
+}
+
 /* ---------------------------------------- */
 
 void run_game(Board *board) {
+    if(board->players[board->player_turn]->is_bot) {
+        move_bot(board);
+        display_board(board);
+        return;
+    }
+
+
     if (kbhit()) {
         int event = my_getch();
         const char *event_name = get_event(event);

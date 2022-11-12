@@ -1,10 +1,10 @@
 2
 14 10
 xxxxxxxxxxxxxx
-xp mm  mm pxxx
-x  mm  mm  xxx
-x  mm  mm  xxx
-x  mm  mm  xxx
+xp mm  mO p mx
+x  mm  m   xxx
+x  mm  mm mxxx
+x  mm  mm yxxx
 x  mm  mm  xxx
 x  mm  mm  xxx
 x  mm  mm  xxx

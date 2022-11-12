@@ -231,6 +231,11 @@ static char *ITEMS_NAME[] = {
 };
 
 
+typedef struct {
+    unsigned short x;
+    unsigned short y;
+} Coord;
+
 
 typedef struct {
     char *str;
