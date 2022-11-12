@@ -31,53 +31,102 @@ int plant_bomb(Board *board){
     return 1;
 }
 
+int find_space(int x, int y, Board *board){
+    Map *map = board->maps[board->current_map];
+    if(map->body[x][y] != ' ') return 0;
+    else {
+        return 1;
+    }
+
+}
+
+int place_bomb_kick(int x, int y , Board *board) {
+    Map *map = board->maps[board->current_map];
+    Bomb *bomb = map->bombs[board->maps[board->current_map]->nb_bomb];
+
+    if(map->body[x][y] != 'x' && map->body[x][y] != 'm') return 0;
+    else {
+        bomb->x =x;
+        bomb->y = y;
+        return 1;
+    }
+}
+
 /**
  * @features : initialisation de la bomb_kick
  * */
 void init_bomb_kick(Board *board){
     Map *map = board->maps[board->current_map];
-
     Player *player = board->players[board->player_turn];
     Bomb *bomb = map->bombs[board->maps[board->current_map]->nb_bomb];
-
-    if(player->bomb_type == bomb_kick){
-        bomb->nb_turn = 4;
-        int x = player->x;
-        int y = player->y;
-        int i = 1;
-        if (player->direction == 3) {
-            while (map->body[x][y+i] != 'm') {
-                i++;
+    bomb->nb_turn = 4;
+    int x = player->x;
+    int y = player->y;
+    bomb->range = player->bomb_range;
+    int i = 1;
+    int tmp = 0;
+    int cpt = 0;
+    if (player->direction == 3) {
+        while(tmp != 1){
+            if(y+i >= map->columns-1){
+                i = 1;
+                y = -1;
             }
-            bomb->x = x;
-            bomb->y = (y+i)-1;
-            map->body[x][(y+i)-1] = board->items[player->bomb_type]->data->_char;
-        }
-        if (player->direction == 1) {
-            while (map->body[x][y-i] != 'm') {
+                tmp = place_bomb_kick(x,y+i, board);
                 i++;
-            }
-            bomb->x = x;
-            bomb->y = (y-i)+1;
-            map->body[x][(y-i)+1] = board->items[player->bomb_type]->data->_char;
         }
-        if (player->direction == 2) {
-            while (map->body[x-i][y] != 'm') {
-                i++;
+        i = 1;
+        while(cpt == 0) {
+            if(bomb->y-i < 0){
+                i = 1;
+                bomb->y = map->columns;
             }
-            bomb->x = (x-i)+1;
-            bomb->y = y;
-            map->body[(x-i)+1][y] = board->items[player->bomb_type]->data->_char;
+            cpt = find_space(bomb->x,bomb->y-i,board);
+            i++;
         }
-        if (player->direction == 0) {
-            while (map->body[x+i][y] != 'm') {
-                i++;
-            }
-            bomb->x = (x+i)-1;
-            bomb->y = y;
-            map->body[(x+i)-1][y] = board->items[player->bomb_type]->data->_char;
-        }
+        bomb->y -= i-1;
+        return;
     }
+        if (player->direction == 1) {
+            while(tmp != 1){
+                if(y-i <= 0){
+                    i = 1;
+                    y = map->columns;
+                }
+                tmp = place_bomb_kick(x,y-i, board);
+                i++;
+            }
+            i = 1;
+            while(cpt == 0) {
+                if(bomb->y+i > map->columns){
+                    i = 1;
+                    bomb->y = -1;
+                }
+                cpt = find_space(bomb->x,bomb->y+i,board);
+                i++;
+            }
+            bomb->y += i-1;
+            return;
+        }
+
+
+//        if (player->direction == 2) {
+//            while (map->body[x-i][y] != 'm') {
+//                i++;
+//            }
+//            bomb->x = (x-i)+1;
+//            bomb->y = y;
+//            map->body[(x-i)+1][y] = board->items[player->bomb_type]->data->_char;
+//        }
+//        if (player->direction == 0) {
+//            while (map->body[x+i][y] != 'm') {
+//                i++;
+//            }
+//            bomb->x = (x+i)-1;
+//            bomb->y = y;
+//            map->body[(x+i)-1][y] = board->items[player->bomb_type]->data->_char;
+//        }
+
 }
 
 /**
@@ -104,7 +153,6 @@ void init_bomb(Board *board){
     board->maps[board->current_map]->bombs[nb_bomb] = malloc(sizeof (Bomb));
     Bomb *bomb = map->bombs[board->maps[board->current_map]->nb_bomb];
     bomb->data = malloc(sizeof (Data_item));
-
     if(player->bomb_type == bomb_destroy){
         init_bomb_destroy(board);
     }else if (player->bomb_type == bomb_kick){
