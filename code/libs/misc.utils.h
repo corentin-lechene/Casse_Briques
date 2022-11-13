@@ -227,7 +227,6 @@ static char *ITEMS_NAME[] = {
         "item_invincibility",
         "item_heart",
         "item_life",
-        "items_len"
 };
 
 

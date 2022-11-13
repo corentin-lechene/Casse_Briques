@@ -88,7 +88,7 @@ void init_players(Board *board) {
         board->players[i]->x = get_pos_player(board, i, 'x');
         board->players[i]->y = get_pos_player(board, i, 'y');
         board->players[i]->bomb_range = 2;
-        board->players[i]->bomb_type = item_bomb;
+        board->players[i]->bomb_type = item_bomb_destroy;
 
         board->players[i]->items = malloc(sizeof(Item *));
         board->players[i]->nb_item = 0;

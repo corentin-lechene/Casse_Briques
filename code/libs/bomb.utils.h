@@ -7,9 +7,9 @@ void decrement_bomb(Board *board);
 void explose_bombs(Board *board);
 
 void remove_bomb(Bomb *bomb, Board *board);
-//void explosion(Bomb *bomb, Board *board);
+void explosion(Bomb *bomb, Board *board);
+void explose_bomb_destroy(Board *board);
 int _boom(int x, int y, Board *board);
-int boom_destroy(Board *board,int x, int y);
 
 void is_bomb_around(Board *board, int x, int y);
 void recup_position(int x,int y, Board *board);
@@ -23,6 +23,14 @@ int plant_bomb(Board *board){
 //        infof("Vous n'avez plus de bombe en stock !!!");
 //        pause();
         return 0;
+    }
+    switch (player->bomb_type) {
+        case item_bomb_destroy:
+            explose_bomb_destroy(board);
+            break;
+        default:
+            init_bomb(board);
+            break;
     }
     init_bomb(board);
     board->maps[board->current_map]->body[player->x][player->y] = board->items[player->bomb_type]->data->_char;
@@ -190,86 +198,6 @@ void decrement_bomb(Board *board){
     }
 }
 
-/**
- * @features : comportement d'une explosion d'une bomb_destroy
- * @param : x,y = position
- * */
-int boom_destroy(Board *board,int x, int y){
-    Map *map = board->maps[board->current_map];
-    if(map->body[x][y] == 'x') {
-        map->body[x][y]=' ';
-        return 0;
-    }
-    if(is_item(board,x,y) == -1){
-        map->body[x][y]=' ';
-    }
-    return 1;
-}
-
-/**
- * @features : boucle pour exploser une bomb_destroy
- * */
-void explosion_bomb_destroy(int index, Board *board){
-    Map *map = board->maps[board->current_map];
-    Player *player = board->players[board->player_turn];
-    Bomb *bomb = map->bombs[index];
-    int x = bomb->x;
-    int y = bomb->y;
-    int tmp = 1;
-    int j =0;
-    int i = 0;
-    if (player->direction == 3) {
-        while(tmp != 0){
-            i++;
-            if(y-i < 0){
-                j++;
-                tmp = boom_destroy(board,x,(map->columns)-j);
-            }else {
-                tmp = boom_destroy(board,x,y-i);
-            }
-        }
-    }
-    j=0;
-    if (player->direction == 1) {
-        i = 0;
-        while(tmp != 0){
-            i++;
-            if(y+i > map->columns-1){
-                j++;
-                tmp = boom_destroy(board,x,-1+j);
-            }else {
-                tmp = boom_destroy(board,x,y+i);
-            }
-        }
-    }
-    j = 0;
-    if (player -> direction == 2) {
-        i = 0;
-        while(tmp != 0){
-            i++;
-            if(x+i > map->rows-1){
-                j++;
-                tmp = boom_destroy(board,-1+j,y);
-            }else {
-                tmp = boom_destroy(board,x+i,y);
-            }
-        }
-    }
-    if (player -> direction == 0) {
-        i = 0;
-        while(tmp != 0){
-            i++;
-            if(x-i < 0){
-                j++;
-                tmp = boom_destroy(board,map->rows-j,y);
-            }else {
-                tmp = boom_destroy(board,x-i,y);
-            }
-        }
-    }
-
-    player->nb_bomb += 1;
-}
 
 
 Bomb *_get_bomb_at(int x, int y, Board *board) {
@@ -279,6 +207,31 @@ Bomb *_get_bomb_at(int x, int y, Board *board) {
         }
     }
     return NULL;
+}
+
+void explose_bomb_destroy(Board *board) {
+    Map *map = board->maps[board->current_map];
+    Player *player = board->players[board->player_turn];
+
+    int i = 0;
+    while (map->body[i][player->y] == board->items[item_indestructible_wall]->data->_char) {
+        map->body[i++][player->y] = ' ';
+    }
+
+    int y = 1;
+    while (map->body[map->rows - y][player->y] == board->items[item_indestructible_wall]->data->_char) {
+        map->body[map->rows - y++][player->y] = ' ';
+    }
+
+    i = 0;
+    while (map->body[player->x][i] == board->items[item_indestructible_wall]->data->_char) {
+        map->body[player->x][i++] = ' ';
+    }
+
+    y = 1;
+    while (map->body[player->x][map->columns - y] == board->items[item_indestructible_wall]->data->_char) {
+        map->body[player->x][map->columns - y++] = ' ';
+    }
 }
 
 //TODO : verfif si un joueur n'est pas à cote d'une bombe
