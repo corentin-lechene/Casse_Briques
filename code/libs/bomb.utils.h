@@ -419,9 +419,7 @@ void remove_player(Player *player, Board *board) {
 }
 
 void players_are_dead(Board *board) {
-    int nb_player = board->nb_player;
-    
-    for (int i = 0; i < nb_player; ++i) {
+    for (int i = 0; i < board->nb_player; ++i) {
         if(board->players[i]->heart == 0) {
             remove_player(board->players[i], board);
         }

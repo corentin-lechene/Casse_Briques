@@ -338,6 +338,10 @@ Map *_get_map(const char *filename) {
             }
         }
 
+        if(map->player_max <= 1) {
+            fclose(f);
+            errorf("No enough player");
+        }
         fclose(f);
         return map;
     }

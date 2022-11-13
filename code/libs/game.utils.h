@@ -11,7 +11,6 @@ char *get_event(int event);
 
 int try_to_move(int direction, Board *board) {
     board->players[board->player_turn]->direction = direction;
-    printf("Try to move %d\n", direction);
     return move_player(board);
 }
 void try_to_move_anywhere(Board *board) {
@@ -78,7 +77,6 @@ void move_bot_unsafe(Board *board) {
     Coord *coord = get_proximity_bombs(board);
 
     if(player->x - coord->x == 0) {
-        printf("go droite au gauche");
         if(!try_to_move(0, board)) {
             if(!try_to_move(2, board)) {
                 if(!try_to_move(1, board)) {
@@ -89,7 +87,6 @@ void move_bot_unsafe(Board *board) {
             };
         };
     } else if(player->y - coord->y == 0) {
-        printf("go haut ou bas");
         if(!try_to_move(1, board)) {
             if(!try_to_move(3, board)) {
                 if(!try_to_move(0, board)) {
@@ -131,6 +128,8 @@ void move_bot(Board *board) {
         } else {
             move_bot_by_coord(get_proximity_walls_desc(board), board);
         }
+    } else {
+        set_player_turn(board);
     }
     decrement_bomb(board);
     explose_bombs(board);
@@ -179,6 +178,8 @@ void run_game(Board *board) {
             return;
         }else if (strcmp(event_name, "pass") == 0) {
             set_player_turn(board);
+            decrement_bomb(board);
+            explose_bombs(board);
             display_board(board);
             return;
         }
@@ -319,12 +320,3 @@ char *get_event(int event) {
             return NULL;
     }
 }
-
-//Player *create_bot(Player *bot, int *index) {
-//    char *bot_name[10] = {"Bob", "Fox", "Mewtwo", "Ritcher", "Rob", "Joker", "Bot", "Ricky", "Toto", "Test"};
-//    int size = 10;
-//    tab_mix(bot_name, size);
-//    bot->name = bot_name[*index];
-//    bot->is_bot = 1;
-//    return bot;
-//}

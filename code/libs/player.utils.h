@@ -84,11 +84,11 @@ void init_players(Board *board) {
     for (int i = 0; i < board->nb_player; ++i) {
         board->players[i]->heart = 1;
         //board->players[i]->nb_bomb = board->maps[board->current_map]->bomb_default;
-        board->players[i]->nb_bomb = 3; //todo not 1
+        board->players[i]->nb_bomb = 1; //todo not 1
         board->players[i]->x = get_pos_player(board, i, 'x');
         board->players[i]->y = get_pos_player(board, i, 'y');
         board->players[i]->bomb_range = 2;
-        board->players[i]->bomb_type = item_bomb;
+        board->players[i]->bomb_type = item_bomb_destroy;
 
         board->players[i]->items = malloc(sizeof(Item *));
         board->players[i]->nb_item = 0;

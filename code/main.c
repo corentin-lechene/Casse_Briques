@@ -34,11 +34,6 @@ void run_program(Board *board) {
 
 
 int main() {
-//    Bomb *bomb = malloc(sizeof(Bomb));
-//    bomb->y = 1;
-//    int i = 2;
-//    printf("[%u][%d][%d][%d]", bomb->y - i, (bomb->y - i) >= 0,  bomb->y < 7, (bomb->y - i) >= 0 && bomb->y < 7);
-//    die();
     text_color_default();
     Board *board = generate_board();
     display_opening_credits();
