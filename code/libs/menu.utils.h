@@ -10,6 +10,7 @@ void menu_credits_case(Board *board);
 void menu_maps_case(Board *board);
 void menu_resume_case(Board *board);
 void menu_players_case(Board *board);
+void menu_winner_summary_case(Board *board);
 
 
 void menu_home_case(Board *board) {
@@ -210,4 +211,12 @@ void menu_players_case(Board *board) {
         display_next_menu(board, menu_maps, &menu_maps_case);
     }
 }
+
+void menu_winner_summary_case(Board *board) {
+    display_menu_header(board);
+    printf("Bravo %s, vous avez gagne !\n", board->players[0]->name);
+    display_choice_continue(board);
+    board->current_menu = menu_init_game;
+}
+
 
