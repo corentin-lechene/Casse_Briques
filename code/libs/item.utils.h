@@ -95,10 +95,10 @@ void get_item(Board *board, int item){
 
         player->items[player->nb_item - 1] = malloc(sizeof (Item));
         player->items[player->nb_item - 1]->data = malloc(sizeof (Data_item));
-        player->items[player->nb_item - 1]->name = malloc(sizeof (char ));
-        strcpy(player->items[player->nb_item]->name, board->items[item]->name);
+        player->items[player->nb_item - 1]->name = malloc(sizeof (char) * (strlen(board->items[item]->name) + 1));
+        
         strcpy(player->items[player->nb_item - 1]->name, board->items[item]->name);
-        player->items[player->nb_item]->type = board->items[item]->type;
+        player->items[player->nb_item - 1]->type = board->items[item]->type;
         player->items[player->nb_item - 1]->data->_char = board->items[item]->data->_char;
         player->items[player->nb_item - 1]->data->_int = board->items[item]->data->_int;
     }

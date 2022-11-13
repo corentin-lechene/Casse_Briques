@@ -134,7 +134,7 @@ int move_player(Board *board) {
     switch (player->direction) {
         case 0:
             if(check == 2){
-                unsigned short pos = player->x-i;
+                int pos = (int) player->x - i;
                 while(is_space(board,pos,player->y) != 1){
                     if(map->body[pos][player->y] == 'm' || map->body[pos][player->y] == 'x' ||(map->body[pos][player->y] >= 48 && map->body[pos][player->y] <= 57)) return 0;
                     decrement_or_reset(&pos,map->rows-1);
@@ -170,7 +170,7 @@ int move_player(Board *board) {
             break;
         case 3 :
             if(check == 2){
-                unsigned short pos = player->y-i;
+                int pos = (int) player->y - i;
                 while(is_space(board,player->x,pos) != 1){
                     if(map->body[player->x][pos] == 'm' || map->body[player->x][pos] == 'x' ||(map->body[player->x][pos] >= 48 && map->body[player->x][pos] <= 57)) return 0;
                     decrement_or_reset(&pos,map->columns-1);

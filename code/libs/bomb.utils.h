@@ -28,6 +28,9 @@ int plant_bomb(Board *board){
             break;
         case item_bomb_destroy:
             init_bomb_destroy(board);
+            init_bomb(player->x, player->y, board);
+            player->bomb_type = item_bomb;
+            break;
         default:
             map->body[player->x][player->y] = board->items[player->bomb_type]->data->_char;
             init_bomb(player->x, player->y, board);
@@ -382,6 +385,10 @@ void explose_bombs(Board *board){
  * @features : suppression d'une bombe dans le tableau de bombe
  * */
 void remove_bomb(Bomb *bomb, Board *board) {
+    if(bomb == NULL) {
+        return;
+    }
+    
     Map *map = board->maps[board->current_map];
     int index;
     
@@ -416,43 +423,23 @@ void remove_player(Player *player, Board *board) {
         for (int i = 0; i < board->nb_player; ++i) {
             if(player->id == board->players[i]->id) {
                 index = i;
+                break;
             }
         }
 
         for (int i = index; i < board->nb_player - 1; ++i) {
-            Player *new_player = board->players[i];
-            Player *old_player = board->players[i + 1];
-            new_player->y = old_player->y;
-            new_player->x = old_player->x;
-            new_player->bomb_type = old_player->bomb_type;
-            new_player->id = old_player->id;
-            new_player->nb_bomb = old_player->nb_bomb;
-            new_player->heart = old_player->heart;
-            new_player->nb_item = old_player->nb_item;
-            new_player->direction = old_player->direction;
-            new_player->is_bot = old_player->is_bot;
-            new_player->color = old_player->color;
-            new_player->score = old_player->score;
-            new_player->bomb_range = old_player->bomb_range;
-
-            new_player->items = realloc(new_player->items, sizeof(Item *) * new_player->nb_bomb);
-            for (int j = 0; j < new_player->nb_item; ++j) {
-                new_player->items[j]->rarity = old_player->items[j]->rarity;
-                new_player->items[j]->duration = old_player->items[j]->duration;
-                new_player->items[j]->is_used = old_player->items[j]->is_used;
-                new_player->items[j]->data->_char = old_player->items[j]->data->_char;
-                new_player->items[j]->data->_int = old_player->items[j]->data->_int;
-                strcpy(new_player->items[j]->name, old_player->items[j]->name);
-            }
+//            Player *temp = NULL;
+//            memcpy(temp, board->players[i], sizeof(Player));
+//
+//            memcpy(board->players[i], board->players[i + 1], sizeof(Player));
+//            memcpy(board->players[i + 1], temp, sizeof(Player));
+            Player *temp = board->players[i];
+            board->players[i] = board->players[i + 1];
+            board->players[i + 1] = temp;
         }
     }
 
-    Player *player_to_del = board->players[board->nb_player - 1];
-    free(player_to_del->name);
-    free_item_dim_arr(&player_to_del->items, player_to_del->nb_item);
-    free(player_to_del);
     board->nb_player -= 1;
-    board->players = realloc(board->players, sizeof(Player *) * board->nb_player);
 }
 
 void players_are_dead(Board *board) {

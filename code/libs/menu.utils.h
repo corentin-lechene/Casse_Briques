@@ -186,6 +186,9 @@ void menu_resume_case(Board *board) {
     board->menus[board->current_menu]->nb_choice = 2;
     board->menus[board->current_menu]->next_menu = next_menu[board->current_choice];
 
+    free_map_dim_arr(&board->maps, board->nb_selected_map);
+    free_player_dim_arr(&board->players, board->nb_player);
+
     display_menu(board, choices_menu);
 }
 
@@ -215,7 +218,11 @@ void menu_players_case(Board *board) {
 void menu_winner_summary_case(Board *board) {
     display_menu_header(board);
     printf("Bravo %s, vous avez gagne !\n", board->players[0]->name);
+    for (int i = 1; i < board->maps[board->current_map]->player_max; ++i) {
+        printf("Dommage a %s qui fini %d eme.\n", board->players[i]->name, i + 1);
+    }
     display_choice_continue(board);
+    board->nb_player = board->maps[board->current_map]->player_max;
     board->current_menu = menu_init_game;
 }
 

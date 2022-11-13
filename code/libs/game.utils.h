@@ -81,7 +81,9 @@ void move_bot_unsafe(Board *board) {
             if(!try_to_move(2, board)) {
                 if(!try_to_move(1, board)) {
                     if(!try_to_move(3, board)) {
-                        set_player_turn(board);
+                        if(!plant_bomb(board)) { 
+                            set_player_turn(board); 
+                        }
                     }
                 };
             };
@@ -91,13 +93,22 @@ void move_bot_unsafe(Board *board) {
             if(!try_to_move(3, board)) {
                 if(!try_to_move(0, board)) {
                     if(!try_to_move(2, board)) {
-                        set_player_turn(board);
+                        if(!plant_bomb(board)) {
+                            set_player_turn(board);
+                        }
                     }
                 };
             };
         };
     } else {
-        try_to_move_anywhere(board);
+        int choice = random_between(0, 4);
+        if(choice == 1) {
+            plant_bomb(board);
+        } else if(choice == 2) {
+            try_to_move_anywhere(board);
+            return;
+        }
+        set_player_turn(board);
     }
 }
 
@@ -145,13 +156,17 @@ void run_game(Board *board) {
         return;
     }
 
+    for (int i = 0; i < board->nb_player; ++i) {
+        if(board->players[i]->is_bot == 0) {
+            
+        }
+    }
+    
     if(board->players[board->player_turn]->is_bot) {
         move_bot(board);
         display_board(board);
         return;
     }
-
-
     if (kbhit()) {
 
         int event = my_getch();
