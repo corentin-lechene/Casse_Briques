@@ -34,6 +34,7 @@ void run_program(Board *board) {
 
 
 int main() {
+    srand( time( NULL ) );
     text_color_default();
     Board *board = generate_board();
     display_opening_credits();

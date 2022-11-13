@@ -228,6 +228,8 @@ void run_menu(Board *board) {
     }
 }
 void init_game(Board *board) {
+    clear_console();
+    display_wait();
     set_next_map(board);
     set_player_turn(board);
 

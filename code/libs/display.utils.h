@@ -68,11 +68,15 @@ void display_map(Board *board) {
     for (int i = 0; i < map->rows; ++i) {
         printf("\t");
         for (int j = 0; j < map->columns; ++j) {
-            if(map->body[i][j] >= 48 && map->body[i][j] <= 57){
-                int nb = map->body[i][j] - 48;
-                text_color(board->players[nb]->color);
-                printf("%c", map->body[i][j]);
-                text_color_default();
+            if(map->body[i][j] >= 48 && map->body[i][j] <= 57) {
+                for (int k = 0; k < board->nb_player; ++k) {
+                    if (map->body[i][j] == board->players[k]->id) {
+                        text_color(board->players[k]->color);
+                        printf("%c", map->body[i][j]);
+                        text_color_default();
+                        break;
+                    }
+                }
             } else {
                 printf("%c", _convert_item(map->body[i][j], board));
             }
@@ -91,7 +95,7 @@ void display_player_turn(Board *board) {
 void display_player_infos(Board *board) {
     printf("\tVos objets : %d | Bombe restante : %d | Coeurs : %d\n", board->players[board->player_turn]->nb_item, board->players[board->player_turn]->nb_bomb, board->players[board->player_turn]->heart);
     for (int i = 0; i < board->players[board->player_turn]->nb_item; ++i) {
-        printf("\t  -> %s, %c", board->players[board->player_turn]->items[i]->name, board->players[board->player_turn]->items[i]->data->_int);
+        printf("\t  -> %s, %c\n", board->players[board->player_turn]->items[i]->name, board->players[board->player_turn]->items[i]->data->_int);
     }
     printf("\n\n");
 }

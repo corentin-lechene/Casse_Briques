@@ -212,7 +212,13 @@ void explosion(Bomb *bomb, Board *board){
     
     //remove bomb
     map->body[bomb->x][bomb->y] = ' ';
-    board->players[player_turn]->nb_bomb += 1;
+    //add +1 bomb
+    for (int i = 0; i < board->nb_player; ++i) {
+        if(bomb->player_id == board->players[i]->id) {
+            board->players[i]->nb_bomb += 1;
+            break;
+        }
+    }
 
     //droite
     for (int i = 1; i <= bomb->range; ++i) {
@@ -227,6 +233,7 @@ void explosion(Bomb *bomb, Board *board){
             //s'arrete si mur destructible
             if(map->body[bomb->x][bomb->y + i] == item_dest_wall) {
                 map->body[bomb->x][bomb->y + i] = ' ';
+                put_item(board, bomb->x, bomb->y + i);
                 break;
             }
             //ne fait rien si il y a un item
@@ -253,8 +260,16 @@ void explosion(Bomb *bomb, Board *board){
     for (int i = 1; i <= bomb->range; ++i) {
         if((int) bomb->y - i >= 0) {
             int can_explose = 1;
+            //vérif joueur
+            for (int j = 0; j < board->nb_player; ++j) {
+                if(map->body[bomb->x][bomb->y - i] == board->players[j]->id) {
+                    board->players[j]->heart -= 1;
+                }
+            }
+            //s'arrete si mur destructible
             if(map->body[bomb->x][bomb->y - i] == item_dest_wall) {
                 map->body[bomb->x][bomb->y - i] = ' ';
+                put_item(board, bomb->x, bomb->y - i);
                 break;
             }
             for (int j = 0; j < 13; ++j) {
@@ -279,8 +294,16 @@ void explosion(Bomb *bomb, Board *board){
     for (int i = 1; i <= bomb->range; ++i) {
         if((int)bomb->x - i >= 0) {
             int can_explose = 1;
+            //vérif joueur
+            for (int j = 0; j < board->nb_player; ++j) {
+                if(map->body[bomb->x - i][bomb->y] == board->players[j]->id) {
+                    board->players[j]->heart -= 1;
+                }
+            }
+            //s'arrete si mur destructible
             if(map->body[bomb->x - i][bomb->y] == item_dest_wall) {
                 map->body[bomb->x - i][bomb->y] = ' ';
+                put_item(board, bomb->x - i, bomb->y);
                 break;
             }
             for (int j = 0; j < 13; ++j) {
@@ -305,8 +328,16 @@ void explosion(Bomb *bomb, Board *board){
     for (int i = 1; i <= bomb->range; ++i) {
         if((int) bomb->x + i < map->rows) {
             int can_explose = 1;
+            //vérif joueur
+            for (int j = 0; j < board->nb_player; ++j) {
+                if(map->body[bomb->x + i][bomb->y] == board->players[j]->id) {
+                    board->players[j]->heart -= 1;
+                }
+            }
+            //s'arrete si mur destructible
             if(map->body[bomb->x + i][bomb->y] == item_dest_wall) {
                 map->body[bomb->x + i][bomb->y] = ' ';
+                put_item(board, bomb->x + i, bomb->y);
                 break;
             }
             for (int j = 0; j < 13; ++j) {
@@ -338,6 +369,9 @@ void explose_bombs(Board *board){
         if(board->maps[board->current_map]->bombs[i]->nb_turn <= 0){
             explosion(board->maps[board->current_map]->bombs[i], board);
             remove_bomb(board->maps[board->current_map]->bombs[i], board);
+            if(board->player_turn == board->nb_player || board->player_turn + 1 == board->nb_player) {
+                board->player_turn = 0;
+            }
         }
     }
 }
@@ -386,26 +420,29 @@ void remove_player(Player *player, Board *board) {
         }
 
         for (int i = index; i < board->nb_player - 1; ++i) {
-            board->players[i]->y = board->players[i + 1]->y;
-            board->players[i]->x = board->players[i + 1]->x;
-            board->players[i]->bomb_type = board->players[i + 1]->bomb_type;
-            board->players[i]->id = board->players[i + 1]->id;
-            board->players[i]->nb_bomb = board->players[i + 1]->nb_bomb;
-            board->players[i]->heart = board->players[i + 1]->heart;
-            board->players[i]->nb_item = board->players[i + 1]->nb_item;
-            board->players[i]->direction = board->players[i + 1]->direction;
-            board->players[i]->is_bot = board->players[i + 1]->is_bot;
-            board->players[i]->color = board->players[i + 1]->color;
-            board->players[i]->score = board->players[i + 1]->score;
-            board->players[i]->bomb_range = board->players[i + 1]->bomb_range;
+            Player *new_player = board->players[i];
+            Player *old_player = board->players[i + 1];
+            new_player->y = old_player->y;
+            new_player->x = old_player->x;
+            new_player->bomb_type = old_player->bomb_type;
+            new_player->id = old_player->id;
+            new_player->nb_bomb = old_player->nb_bomb;
+            new_player->heart = old_player->heart;
+            new_player->nb_item = old_player->nb_item;
+            new_player->direction = old_player->direction;
+            new_player->is_bot = old_player->is_bot;
+            new_player->color = old_player->color;
+            new_player->score = old_player->score;
+            new_player->bomb_range = old_player->bomb_range;
 
-            for (int j = 0; j < board->players[i]->nb_item; ++j) {
-                board->players[i]->items[j]->rarity = board->players[i + 1]->items[j]->rarity;
-                board->players[i]->items[j]->duration = board->players[i + 1]->items[j]->duration;
-                board->players[i]->items[j]->is_used = board->players[i + 1]->items[j]->is_used;
-                board->players[i]->items[j]->data->_char = board->players[i + 1]->items[j]->data->_char;
-                board->players[i]->items[j]->data->_int = board->players[i + 1]->items[j]->data->_int;
-                strcpy(board->players[i]->items[j]->name, board->players[i + 1]->items[j]->name);
+            new_player->items = realloc(new_player->items, sizeof(Item *) * new_player->nb_bomb);
+            for (int j = 0; j < new_player->nb_item; ++j) {
+                new_player->items[j]->rarity = old_player->items[j]->rarity;
+                new_player->items[j]->duration = old_player->items[j]->duration;
+                new_player->items[j]->is_used = old_player->items[j]->is_used;
+                new_player->items[j]->data->_char = old_player->items[j]->data->_char;
+                new_player->items[j]->data->_int = old_player->items[j]->data->_int;
+                strcpy(new_player->items[j]->name, old_player->items[j]->name);
             }
         }
     }
