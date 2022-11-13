@@ -8,10 +8,7 @@ void remove_bomb(Bomb *bomb, Board *board);
 void explosion(Bomb *bomb, Board *board);
 void init_bomb_destroy(Board *board);
 void init_bomb_kick(Board *board);
-int _boom(int x, int y, Board *board);
 
-void is_bomb_around(Board *board, int x, int y);
-void recup_position(int x,int y, Board *board);
 
 /**
  * @features : planter une bombe + verifier si explosion des bombes
@@ -39,26 +36,6 @@ int plant_bomb(Board *board){
     return 1;
 }
 
-int find_space(int x, int y, Board *board){
-    Map *map = board->maps[board->current_map];
-    if(map->body[x][y] != ' ') return 0;
-    else {
-        return 1;
-    }
-
-}
-
-int place_bomb_kick(int x, int y , Board *board) {
-    Map *map = board->maps[board->current_map];
-    Bomb *bomb = map->bombs[board->maps[board->current_map]->nb_bomb];
-
-    if(map->body[x][y] != 'x' && map->body[x][y] != 'm') return 0;
-    else {
-        bomb->x =x;
-        bomb->y = y;
-        return 1;
-    }
-}
 
 
 /**
@@ -128,61 +105,52 @@ void init_bomb_kick(Board *board) {
                        item_life,
     };
 
-    int bomb_planted = 0;
     int i = 1;
     switch (player->direction) {
         case 0:
-            while (!bomb_planted) {
+            while (1) {
                 for (int j = 0; j < 15; ++j) {
                     if(map->body[player->x - i][player->y] == board->items[all_items[j]]->data->_char) {
                         map->body[player->x - i + 1][player->y] = board->items[player->bomb_type]->data->_char;
-                        bomb_planted = 1;
                         init_bomb(player->x - i + 1, player->y, board);
                         return;
                     }
                 }
                 i++;
             }
-            break;
         case 1:
-            while (!bomb_planted) {
+            while (1) {
                 for (int j = 0; j < 15; ++j) {
                     if(map->body[player->x][player->y + i] == board->items[all_items[j]]->data->_char) {
                         map->body[player->x][player->y + i - 1] = board->items[player->bomb_type]->data->_char;
-                        bomb_planted = 1;
                         init_bomb(player->x, player->y + i - 1, board);
                         return;
                     }
                 }
                 i++;
             }
-            break;
         case 2:
-            while (!bomb_planted) {
+            while (1) {
                 for (int j = 0; j < 15; ++j) {
                     if(map->body[player->x + i][player->y] == board->items[all_items[j]]->data->_char) {
                         map->body[player->x + i - 1][player->y] = board->items[player->bomb_type]->data->_char;
-                        bomb_planted = 1;
                         init_bomb(player->x + i - 1, player->y, board);
                         return;
                     }
                 }
                 i++;
             }
-            break;
         case 3:
-            while (!bomb_planted) {
+            while (1) {
                 for (int j = 0; j < 15; ++j) {
                     if(map->body[player->x][player->y - i] == board->items[all_items[j]]->data->_char) {
                         map->body[player->x][player->y - i + 1] = board->items[player->bomb_type]->data->_char;
-                        bomb_planted = 1;
                         init_bomb(player->x, player->y - i + 1, board);
                         return;
                     }
                 }
                 i++;
             }
-            break;
         default:
             break;
     }

@@ -2,7 +2,7 @@
 14 10
 x xxxxxxxxxxxx
 x pmm m    pxx
-x  mm  my  xxx
+x  mm  mm  xxx
 x  mm  mm mxxx
 x  mm  mm  xxx
 x  mm  mm  xxx
