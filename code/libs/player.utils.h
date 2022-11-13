@@ -87,7 +87,7 @@ void init_players(Board *board) {
         board->players[i]->x = get_pos_player(board, i, 'x');
         board->players[i]->y = get_pos_player(board, i, 'y');
         board->players[i]->bomb_range = 2;
-        board->players[i]->bomb_type = item_bomb;
+        board->players[i]->bomb_type = item_bomb_destroy;
 
         board->players[i]->items = malloc(sizeof(Item *));
         board->players[i]->nb_item = 0;
@@ -128,55 +128,63 @@ int move_player(Board *board) {
 //        pause();
         return 0;
     }
-    if (map->body[player->x][player->y] != board->items[player->bomb_type]->data->_char) {
+    if(get_bomb_at(player->x, player->y, board) == NULL) {
         map->body[player->x][player->y] = ' ';
     }
     switch (player->direction) {
         case 0:
             if(check == 2){
                 int pos = (int) player->x - i;
-                while(is_space(board,pos,player->y) != 1){
-                    if(map->body[pos][player->y] == 'm' || map->body[pos][player->y] == 'x' ||(map->body[pos][player->y] >= 48 && map->body[pos][player->y] <= 57)) return 0;
-                    decrement_or_reset((unsigned short *) &pos, map->rows - 1);
-                    if(pos == player->x) return 0;
+                if(pos >= 0) {
+                    while(is_space(board,pos,player->y) != 1){
+                        if(map->body[pos][player->y] == 'm' || map->body[pos][player->y] == 'x' ||(map->body[pos][player->y] >= 48 && map->body[pos][player->y] <= 57)) return 0;
+                        decrement_or_reset((unsigned short *) &pos, map->rows - 1);
+                        if(pos == player->x) return 0;
+                    }
+                    player->x = pos+1;
                 }
-                player->x = pos+1;
             }
             decrement_or_reset(&player->x, map->rows-1);
             break;
         case 2:
             if(check == 2){
-                unsigned short pos = player->x+i;
-                while(is_space(board,pos,player->y) != 1){
-                    if(map->body[pos][player->y] == 'm' || map->body[pos][player->y] == 'x' ||(map->body[pos][player->y] >= 48 && map->body[pos][player->y] <= 57)) return 0;
-                    increment_or_reset(&pos,map->rows-1);
-                    if(pos == player->x) return 0;
+                unsigned short pos = player->x + i;
+                if(pos < map->rows) {
+                    while(is_space(board,pos,player->y) != 1){
+                        if(map->body[pos][player->y] == 'm' || map->body[pos][player->y] == 'x' ||(map->body[pos][player->y] >= 48 && map->body[pos][player->y] <= 57)) return 0;
+                        increment_or_reset(&pos,map->rows-1);
+                        if(pos == player->x) return 0;
+                    }
+                    player->x = pos-1;
                 }
-                player->x = pos-1;
             }
             increment_or_reset(&player->x, map->rows-1);
             break;
         case 1:
             if(check == 2){
-                unsigned short pos = player->y+i;
-                while(is_space(board,player->x,pos) != 1){
-                    if(map->body[player->x][pos] == 'm' || map->body[player->x][pos] == 'x' ||(map->body[player->x][pos] >= 48 && map->body[player->x][pos] <= 57)) return 0;
-                    increment_or_reset(&pos,map->columns-1);
-                    if(pos == player->y) return 0;
+                unsigned short pos = player->y + i;
+                if(pos < map->columns) {
+                    while(is_space(board,player->x,pos) != 1){
+                        if(map->body[player->x][pos] == 'm' || map->body[player->x][pos] == 'x' ||(map->body[player->x][pos] >= 48 && map->body[player->x][pos] <= 57)) return 0;
+                        increment_or_reset(&pos,map->columns-1);
+                        if(pos == player->y) return 0;
+                    }
+                    player->y = pos-1;
                 }
-                player->y = pos-1;
             }
             increment_or_reset(&player->y, map->columns-1);
             break;
         case 3 :
             if(check == 2){
                 int pos = (int) player->y - i;
-                while(is_space(board,player->x,pos) != 1){
-                    if(map->body[player->x][pos] == 'm' || map->body[player->x][pos] == 'x' ||(map->body[player->x][pos] >= 48 && map->body[player->x][pos] <= 57)) return 0;
-                    decrement_or_reset((unsigned short *) &pos, map->columns - 1);
-                    if(pos == player->y) return 0;
+                if(pos >= 0) {
+                    while(is_space(board,player->x,pos) != 1){
+                        if(map->body[player->x][pos] == 'm' || map->body[player->x][pos] == 'x' ||(map->body[player->x][pos] >= 48 && map->body[player->x][pos] <= 57)) return 0;
+                        decrement_or_reset((unsigned short *) &pos, map->columns - 1);
+                        if(pos == player->y) return 0;
+                    }
+                    player->y = pos+1;   
                 }
-                player->y = pos+1;
             }
             decrement_or_reset(&player->y, map->columns-1);
             break;

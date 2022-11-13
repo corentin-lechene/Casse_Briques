@@ -121,6 +121,7 @@ int _convert_item(char item, Board *board) {
             return board->items[i]->data->_int;
         }
     }
+    printf("[%c] <- ", item);
     errorf("Item char not found");
 }
 

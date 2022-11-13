@@ -29,6 +29,7 @@ int plant_bomb(Board *board){
         case item_bomb_destroy:
             init_bomb_destroy(board);
             init_bomb(player->x, player->y, board);
+            map->body[player->x][player->y] = board->items[player->bomb_type]->data->_char;
             player->bomb_type = item_bomb;
             break;
         default:
