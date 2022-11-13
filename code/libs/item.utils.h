@@ -4,7 +4,6 @@ void get_item(Board *board, int item);
 int init_item(Item *item, Board *board);
 int has_item(Board *board, int item);
 int is_bomb(Board *board, int x,int y);
-void remove_item(Item *item, Board *board);
 /**
  * @features : genere un objet avec les probabilités
  * */
@@ -62,10 +61,6 @@ int is_item(Board *board, int x, int y){
     items_index items_index[] = {item_bomb_up, item_bomb_down,item_yellow_flame,item_blue_flame,item_red_flame,item_bomb_destroy,item_bomb_kick,
                                  item_bomb_passes,item_invincibility,item_heart,item_life};
 
-    char item_dest_wall = board->items[item_destructible_wall]->data->_char;
-    char item_indest_wall = board->items[item_indestructible_wall]->data->_char;
-    if(map->body[x][y] == item_dest_wall || map->body[x][y] == item_indest_wall) return -2;
-
     if(is_bomb(board,x,y)== 1) return -1;
 
     for(int i = 0; i<items_len-4;i++){
@@ -85,6 +80,9 @@ int has_item(Board *board, int item){
     return 0;
 }
 
+
+
+
 /**
  * @features : ajoute l'item au tab Item lié au joueur
  * */
@@ -92,25 +90,18 @@ void get_item(Board *board, int item){
     Player *player = board->players[board->player_turn];
     int is_storage = init_item(board->items[item], board);
     if(is_storage==1){
-        if(item == bomb_kick && has_item(board,bomb_passes)){
-            pause();
-        }
-
         player->nb_item +=1;
         player->items = realloc(player->items, sizeof(Item *) * player->nb_item);
+
         player->items[player->nb_item - 1] = malloc(sizeof (Item));
         player->items[player->nb_item - 1]->data = malloc(sizeof (Data_item));
-        player->items[player->nb_item - 1]->name = malloc(sizeof (char ));
+        player->items[player->nb_item - 1]->name = malloc(sizeof (char) * (strlen(board->items[item]->name) + 1));
+
         strcpy(player->items[player->nb_item - 1]->name, board->items[item]->name);
-        //TODO : initialiser les types
-        //player->items[player->nb_item]->type = board->items[item]->type;
+        player->items[player->nb_item - 1]->type = board->items[item]->type;
         player->items[player->nb_item - 1]->data->_char = board->items[item]->data->_char;
         player->items[player->nb_item - 1]->data->_int = board->items[item]->data->_int;
-        //Bomb kick ou bomb passe les remplacer mutuellement
-
-
     }
-
 }
 
 /**
