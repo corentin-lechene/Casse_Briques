@@ -182,6 +182,7 @@ Item **get_items(Config *config) {
             exit_error("items[i] = NULL");
         }
         items[i]->is_used = 0;
+        items[i]->type = i;
     }
     display_loading(config->loading, loading_items);
     return items;
