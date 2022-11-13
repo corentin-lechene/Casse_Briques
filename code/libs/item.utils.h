@@ -80,9 +80,6 @@ int has_item(Board *board, int item){
     return 0;
 }
 
-
-
-
 /**
  * @features : ajoute l'item au tab Item lié au joueur
  * */
@@ -90,18 +87,27 @@ void get_item(Board *board, int item){
     Player *player = board->players[board->player_turn];
     int is_storage = init_item(board->items[item], board);
     if(is_storage==1){
+        if(item == bomb_kick && has_item(board,bomb_passes)){
+            pause();
+        }
+
+
+
         player->nb_item +=1;
         player->items = realloc(player->items, sizeof(Item *) * player->nb_item);
-
         player->items[player->nb_item - 1] = malloc(sizeof (Item));
         player->items[player->nb_item - 1]->data = malloc(sizeof (Data_item));
-        player->items[player->nb_item - 1]->name = malloc(sizeof (char) * (strlen(board->items[item]->name) + 1));
-        
+        player->items[player->nb_item - 1]->name = malloc(sizeof (char ));
         strcpy(player->items[player->nb_item - 1]->name, board->items[item]->name);
-        player->items[player->nb_item - 1]->type = board->items[item]->type;
+        //TODO : initialiser les types
+        //player->items[player->nb_item]->type = board->items[item]->type;
         player->items[player->nb_item - 1]->data->_char = board->items[item]->data->_char;
         player->items[player->nb_item - 1]->data->_int = board->items[item]->data->_int;
+        //Bomb kick ou bomb passe les remplacer mutuellement
+
+
     }
+
 }
 
 /**
