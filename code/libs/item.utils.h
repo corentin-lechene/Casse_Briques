@@ -1,7 +1,7 @@
 void put_item(Board *board, int x,int y);
 int is_item(Board *board, int x, int y);
 void get_item(Board *board, int item);
-void init_item(Item *item, Board *board);
+int init_item(Item *item, Board *board);
 
 /**
  * @features : genere un objet avec les probabilités
@@ -61,20 +61,24 @@ int is_item(Board *board, int x, int y){
  * */
 void get_item(Board *board, int item){
     Player *player = board->players[board->player_turn];
-    player->items[player->nb_item] = malloc(sizeof (Item));
-    player->items[player->nb_item]->data = malloc(sizeof (Data_item));
-    player->items[player->nb_item]->name = malloc(sizeof (char ));
-    player->items[player->nb_item]->name = board->items[item]->name;
-    player->items[player->nb_item]->data->_char = board->items[item]->data->_char;
-    player->items[player->nb_item]->data->_int = board->items[item]->data->_int;
-    init_item(player->items[player->nb_item], board);
-    player->nb_item +=1;
+    int is_storage = init_item(board->items[item], board);
+    if(is_storage==1){
+        player->nb_item +=1;
+        player->items = realloc(player->items, sizeof(Bomb *) * player->nb_item);
+        player->items[player->nb_item] = malloc(sizeof (Item));
+        player->items[player->nb_item]->data = malloc(sizeof (Data_item));
+        player->items[player->nb_item]->name = malloc(sizeof (char ));
+        player->items[player->nb_item]->name = board->items[item]->name;
+        player->items[player->nb_item]->data->_char = board->items[item]->data->_char;
+        player->items[player->nb_item]->data->_int = board->items[item]->data->_int;
+    }
+
 }
 
 /**
  * @features : définit le comportement de l'item en fonction de son type
  * */
-void init_item(Item *item, Board *board){
+int init_item(Item *item, Board *board){
     Player *player = board->players[board->player_turn];
     Map *map = board->maps[board->current_map];
     switch (item->data->_char) {
@@ -96,14 +100,17 @@ void init_item(Item *item, Board *board){
         case 'Q' :
             player->bomb_type = bomb_destroy;
             break;
-        case '@' :
-            player->bomb_type = bomb_kick;
-            break;
         case 'r' :
             player->bomb_range = map->columns > map->rows ?  map->columns : map->rows;
             break;
-
-
+        case '@' :
+            player->bomb_type = bomb_kick;
+            return 1;
+        case '$':
+        case '[':
+        case 'i':
+        case 'h':
+            return 1;
     }
 
 }
