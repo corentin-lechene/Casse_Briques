@@ -2,7 +2,8 @@ void put_item(Board *board, int x,int y);
 int is_item(Board *board, int x, int y);
 void get_item(Board *board, int item);
 int init_item(Item *item, Board *board);
-
+int has_item(Board *board, int item);
+int is_bomb(Board *board, int x,int y);
 /**
  * @features : genere un objet avec les probabilités
  * */
@@ -41,6 +42,17 @@ void put_item(Board *board, int x, int y){
     }
 }
 
+int is_bomb(Board *board, int x, int y){
+    Map *map = board->maps[board->current_map];
+
+    for(int i =0; i<map->nb_bomb; i++){
+        if(map->bombs[i]->x == x && map->bombs[i]->y == y){
+            return 1;
+        }
+    }
+    return 0;
+}
+
 /**
  * @features : verifie si il y a un item
  * */
@@ -48,6 +60,9 @@ int is_item(Board *board, int x, int y){
     Map *map = board->maps[board->current_map];
     items_index items_index[] = {item_bomb_up, item_bomb_down,item_yellow_flame,item_blue_flame,item_red_flame,item_bomb_destroy,item_bomb_kick,
                                  item_bomb_passes,item_invincibility,item_heart,item_life};
+
+    if(is_bomb(board,x,y)== 1) return -1;
+
     for(int i = 0; i<items_len-4;i++){
         if(map->body[x][y] == board->items[items_index[i]]->data->_char){
             return items_index[i];
@@ -55,6 +70,18 @@ int is_item(Board *board, int x, int y){
     }
     return -1;
 }
+int has_item(Board *board, int item){
+    Player *player = board->players[board->player_turn];
+    for(int i = 0; i<player->nb_item; i++){
+        if(player->items[i]->data->_int == board->items[item]->data->_int){
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
+
 
 /**
  * @features : ajoute l'item au tab Item lié au joueur
@@ -64,13 +91,19 @@ void get_item(Board *board, int item){
     int is_storage = init_item(board->items[item], board);
     if(is_storage==1){
         player->nb_item +=1;
-        player->items = realloc(player->items, sizeof(Bomb *) * player->nb_item);
-        player->items[player->nb_item] = malloc(sizeof (Item));
-        player->items[player->nb_item]->data = malloc(sizeof (Data_item));
-        player->items[player->nb_item]->name = malloc(sizeof (char ));
-        player->items[player->nb_item]->name = board->items[item]->name;
-        player->items[player->nb_item]->data->_char = board->items[item]->data->_char;
-        player->items[player->nb_item]->data->_int = board->items[item]->data->_int;
+        player->items = realloc(player->items, sizeof(Item *) * player->nb_item);
+
+        player->items[player->nb_item - 1] = malloc(sizeof (Item));
+        player->items[player->nb_item - 1]->data = malloc(sizeof (Data_item));
+        player->items[player->nb_item - 1]->name = malloc(sizeof (char ));
+        //player->items[player->nb_item]->name = board->items[item]->name;
+        strcpy(player->items[player->nb_item - 1]->name, board->items[item]->name);
+        //TODO : initialiser les types
+        //player->items[player->nb_item]->type = board->items[item]->type;
+        player->items[player->nb_item - 1]->data->_char = board->items[item]->data->_char;
+        player->items[player->nb_item - 1]->data->_int = board->items[item]->data->_int;
+
+
     }
 
 }
@@ -81,8 +114,9 @@ void get_item(Board *board, int item){
 int init_item(Item *item, Board *board){
     Player *player = board->players[board->player_turn];
     Map *map = board->maps[board->current_map];
+    //TODO : change char
     switch (item->data->_char) {
-        case '+' :
+        case item_bomb_up :
             player->nb_bomb += 1;
             break;
         case '-' :

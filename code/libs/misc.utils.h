@@ -291,6 +291,7 @@ typedef struct {
     int duration;
     short rarity;
     short is_used;
+    unsigned int type;
 
     Data_item *data;
 } Item;

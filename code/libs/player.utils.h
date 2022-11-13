@@ -12,7 +12,6 @@ void set_player_direction(char event, Board *board);
 int can_move(Board *board, int x, int y, int rows, int columns);
 int move_player(Board *board);
 int is_space(Board *board, int x, int y);
-int is_bomb(Board *board, int x,int y);
 
 short get_pos_player(Board *board, int index, char pos);
 enum colors_index get_random_color_player(Board *board, int index);
@@ -88,7 +87,7 @@ void init_players(Board *board) {
         board->players[i]->x = get_pos_player(board, i, 'x');
         board->players[i]->y = get_pos_player(board, i, 'y');
         board->players[i]->bomb_range = 2;
-        board->players[i]->bomb_type = item_bomb_destroy;
+        board->players[i]->bomb_type = item_bomb;
 
         board->players[i]->items = malloc(sizeof(Item *));
         board->players[i]->nb_item = 0;
@@ -122,26 +121,63 @@ void set_player_direction(char event, Board *board) {
 int move_player(Board *board) {
     Player *player = board->players[board->player_turn];
     Map *map = board->maps[board->current_map];
-
-    if (can_move(board, player->x, player->y, map->rows-1, map->columns-1) == 0) {
+    int i = 2;
+    int check = can_move(board, player->x, player->y, map->rows-1, map->columns-1);
+    if (check == 0) {
 //        infof("Vous ne pouvez pas bouger dans cette direction !!!");
 //        pause();
         return 0;
     }
-    if(map->body[player->x][player->y] != board->items[player->bomb_type]->data->_char){
+    if (map->body[player->x][player->y] != board->items[player->bomb_type]->data->_char) {
         map->body[player->x][player->y] = ' ';
     }
     switch (player->direction) {
         case 0:
+            if(check == 2){
+                unsigned short pos = player->x-i;
+                while(is_space(board,pos,player->y) != 1){
+                    if(map->body[pos][player->y] == 'm' || map->body[pos][player->y] == 'x' ||(map->body[pos][player->y] >= 48 && map->body[pos][player->y] <= 57)) return 0;
+                    decrement_or_reset(&pos,map->rows-1);
+                    if(pos == player->x) return 0;
+                }
+                player->x = pos+1;
+            }
             decrement_or_reset(&player->x, map->rows-1);
             break;
         case 2:
+            if(check == 2){
+                unsigned short pos = player->x+i;
+                while(is_space(board,pos,player->y) != 1){
+                    if(map->body[pos][player->y] == 'm' || map->body[pos][player->y] == 'x' ||(map->body[pos][player->y] >= 48 && map->body[pos][player->y] <= 57)) return 0;
+                    increment_or_reset(&pos,map->rows-1);
+                    if(pos == player->x) return 0;
+                }
+                player->x = pos-1;
+            }
             increment_or_reset(&player->x, map->rows-1);
             break;
         case 1:
+            if(check == 2){
+                unsigned short pos = player->y+i;
+                while(is_space(board,player->x,pos) != 1){
+                    if(map->body[player->x][pos] == 'm' || map->body[player->x][pos] == 'x' ||(map->body[player->x][pos] >= 48 && map->body[player->x][pos] <= 57)) return 0;
+                    increment_or_reset(&pos,map->columns-1);
+                    if(pos == player->y) return 0;
+                }
+                player->y = pos-1;
+            }
             increment_or_reset(&player->y, map->columns-1);
             break;
         case 3 :
+            if(check == 2){
+                unsigned short pos = player->y-i;
+                while(is_space(board,player->x,pos) != 1){
+                    if(map->body[player->x][pos] == 'm' || map->body[player->x][pos] == 'x' ||(map->body[player->x][pos] >= 48 && map->body[player->x][pos] <= 57)) return 0;
+                    decrement_or_reset(&pos,map->columns-1);
+                    if(pos == player->y) return 0;
+                }
+                player->y = pos+1;
+            }
             decrement_or_reset(&player->y, map->columns-1);
             break;
     }
@@ -152,27 +188,18 @@ int move_player(Board *board) {
 }
 
 
-int is_bomb(Board *board, int x,int y){
-    Map *map = board->maps[board->current_map];
-    int items_bomb[] = {item_bomb, item_bomb_destroy, item_bomb_kick};
-
-    for(int i =0; i<3;i++){
-        if(map->body[x][y] == board->items[items_bomb[i]]->data->_char ){
-            return 0;
-        }
-    }
-    return 1;
-}
-
 int is_space(Board *board, int x, int y){
     if (board->maps[board->current_map]->body[x][y] != ' ') {
-         int index_item = is_item(board,x,y);
-        if(index_item == -1) return 0;
-        else {
+        int index_item = is_item(board,x,y);
+        if(index_item != -1) {
             get_item(board,index_item);
             return 1;
         }
 
+        if(has_item(board, bomb_passes) == 1){
+            return 2;
+        }
+        return 0;
 
     } else if (board->maps[board->current_map]->body[x][y] == ' ') {
         return 1;
@@ -181,37 +208,48 @@ int is_space(Board *board, int x, int y){
 
 
 int can_move(Board *board, int x, int y, int rows, int columns) {
+    int check = 0;
     switch (board->players[board->player_turn]->direction) {
         case 0 :
             if(x==0){
                 if(is_space(board,rows,y) == 0) return 0;
                 else return 1;
             }
-            if(is_space(board,x-1,y) == 0) return 0;
+            check = is_space(board,x-1,y);
+            if(check == 0) return 0;
+            else if(check == 2) return 2;
             else return 1;
+
         case 1 :
             if(y==columns){
                 if(is_space(board,x,0) == 0) return 0;
                 else return 1;
             }
-            if(is_space(board,x,y+1) == 0) return 0;
+            check = is_space(board,x,y+1);
+            if(check == 0) return 0;
+            else if(check == 2) return 2;
             else return 1;
         case 2 :
             if(x==rows){
                 if(is_space(board,0,y) == 0) return 0;
                 else return 1;
             }
-            if(is_space(board,x+1,y) == 0) return 0;
+            check = is_space(board,x+1,y);
+            if(check == 0) return 0;
+            else if(check == 2) return 2;
             else return 1;
+
         case 3:
             if(y==0){
                 if(is_space(board,x,columns) == 0) return 0;
                 else return 1;
             }
-            if(is_space(board,x,y-1) == 0) return 0;
+            check = is_space(board,x,y-1);
+            if(check == 0) return 0;
+            else if(check == 2) return 2;
             else return 1;
+
     }
-    return 1;
 }
 
 short get_pos_player(Board *board, int index, char pos) {
