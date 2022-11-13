@@ -12,6 +12,11 @@ char *get_event(int event);
 /* ---------------------------------------- */
 
 void run_game(Board *board) {
+    if(board->players[board->player_turn]->is_bot) {
+        set_player_turn(board);
+        return;
+    }
+    
     if (kbhit()) {
 
         int event = my_getch();
@@ -23,14 +28,16 @@ void run_game(Board *board) {
 
         if (strcmp(event_name, "move") == 0) {
             set_player_direction(event, board);
-            move_player(board);
-            display_board(board);
-        } else if (strcmp(event_name, "bomb") == 0) {
-            if(plant_bomb(board)!=0){
-                set_player_turn(board);
+            if(move_player(board)) {
+                decrement_bomb(board);
+                explose_bombs(board);
+                display_board(board);
             }
-            display_board(board);
-
+        } else if (strcmp(event_name, "bomb") == 0) {
+            if(plant_bomb(board)){
+                set_player_turn(board);
+                display_board(board);
+            }
         } else if (strcmp(event_name, "resume") == 0) {
             display_next_menu(board, menu_resume, &menu_resume_case);
             return;

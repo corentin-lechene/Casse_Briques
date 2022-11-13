@@ -84,7 +84,7 @@ void init_players(Board *board) {
     for (int i = 0; i < board->nb_player; ++i) {
         board->players[i]->heart = 1;
         //board->players[i]->nb_bomb = board->maps[board->current_map]->bomb_default;
-        board->players[i]->nb_bomb = 1;
+        board->players[i]->nb_bomb = 3; //todo not 1
         board->players[i]->x = get_pos_player(board, i, 'x');
         board->players[i]->y = get_pos_player(board, i, 'y');
         board->players[i]->bomb_range = 2;
@@ -97,7 +97,6 @@ void init_players(Board *board) {
 
 void set_player_turn(Board *board) {
     board->player_turn = board->player_turn + 1 >= board->nb_player ? 0 : board->player_turn + 1;
-
 }
 void set_player_direction(char event, Board *board) {
     switch (event) {
@@ -125,8 +124,8 @@ int move_player(Board *board) {
     Map *map = board->maps[board->current_map];
 
     if (can_move(board, player->x, player->y, map->rows-1, map->columns-1) == 0) {
-        infof("Vous ne pouvez pas bouger dans cette direction !!!");
-        pause();
+//        infof("Vous ne pouvez pas bouger dans cette direction !!!");
+//        pause();
         return 0;
     }
     if(map->body[player->x][player->y] != board->items[player->bomb_type]->data->_char){
@@ -147,12 +146,7 @@ int move_player(Board *board) {
             break;
     }
     map->body[player->x][player->y] = player->id;
-
-    if(board->maps[board->current_map]->nb_bomb > 0){
-        decrement_bomb(board);
-        is_explosed(board);
-
-    }
+    
     set_player_turn(board);
     return 1;
 }

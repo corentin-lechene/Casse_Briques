@@ -4,11 +4,11 @@ void init_bomb_kick(Board *board);
 void init_bomb_destroy(Board *board);
 
 void decrement_bomb(Board *board);
-void is_explosed(Board *board);
+void explose_bombs(Board *board);
 
-void remove_bomb(int index, Board *board);
-void explosion(int index, Board *board);
-int boom(int x, int y, Board *board);
+void remove_bomb(Bomb *bomb, Board *board);
+//void explosion(Bomb *bomb, Board *board);
+int _boom(int x, int y, Board *board);
 int boom_destroy(Board *board,int x, int y);
 
 void is_bomb_around(Board *board, int x, int y);
@@ -18,16 +18,15 @@ void recup_position(int x,int y, Board *board);
  * @features : planter une bombe + verifier si explosion des bombes
  * */
 int plant_bomb(Board *board){
-    if(board->players[board->player_turn]->nb_bomb == 0){
-        infof("Vous n'avez plus de bombe en stock !!!");
-        pause();
+    Player *player = board->players[board->player_turn];
+    if(player->nb_bomb == 0){
+//        infof("Vous n'avez plus de bombe en stock !!!");
+//        pause();
         return 0;
     }
     init_bomb(board);
-    if(board->maps[board->current_map]->nb_bomb > 0){
-        decrement_bomb(board);
-        is_explosed(board);
-    }
+    board->maps[board->current_map]->body[player->x][player->y] = board->items[player->bomb_type]->data->_char;
+    player->nb_bomb -= 1;
     return 1;
 }
 
@@ -147,45 +146,25 @@ void init_bomb_destroy(Board *board){
  * @features : initialisation d'une bombe
  * */
 void init_bomb(Board *board){
+    Map *map = board->maps[board->current_map];
     Player *player = board->players[board->player_turn];
-    Map *map = board->maps[board->current_map];
+    Item *item = board->items[player->bomb_type];
+    map->nb_bomb += 1;
     int nb_bomb = map->nb_bomb;
-    board->maps[board->current_map]->bombs[nb_bomb] = malloc(sizeof (Bomb));
-    Bomb *bomb = map->bombs[board->maps[board->current_map]->nb_bomb];
-    bomb->data = malloc(sizeof (Data_item));
-    if(player->bomb_type == bomb_destroy){
-        init_bomb_destroy(board);
-    }else if (player->bomb_type == bomb_kick){
-        init_bomb_kick(board);
-    } else {
-        bomb->nb_turn = 4;
-        bomb->range = player->bomb_range;
-        bomb->x = player->x;
-        bomb->y = player->y;
-    }
 
-    bomb->player_id = board->players[board->player_turn]->id;
-    board->maps[board->current_map]->nb_bomb+=1;
-    decrement_or_reset(&player->nb_bomb,0);
+    map->bombs = realloc(map->bombs, sizeof(Bomb *) * nb_bomb);
+    map->bombs[nb_bomb - 1] = malloc(sizeof(Bomb));
+    map->bombs[nb_bomb - 1]->data = malloc(sizeof(Data_item));
 
-    if (bomb->nb_turn != 1){
-        map->body[bomb->x][bomb->y] = board->items[player->bomb_type]->data->_char;
-    }
+    map->bombs[nb_bomb - 1]->player_id = player->id;
+    map->bombs[nb_bomb - 1]->range = player->bomb_range;
+    map->bombs[nb_bomb - 1]->x = player->x;
+    map->bombs[nb_bomb - 1]->y = player->y;
+    map->bombs[nb_bomb - 1]->nb_turn = 3;
+    map->bombs[nb_bomb - 1]->data->_char = item->data->_char;
+    map->bombs[nb_bomb - 1]->data->_int = item->data->_int;
 }
 
-/**
- * @features : Verifie la présence d'une bombe
- * @param : x,y = position
- * */
-void is_bomb_around(Board *board, int x, int y) {
-    Map *map = board->maps[board->current_map];
-    int bomb[2] = {item_bomb,item_bomb_kick};
-    for(int i = 0; i<2; i++){
-        if(map->body[x][y] == board->items[bomb[i]]->data->_char){
-            recup_position(x,y, board);
-        }
-    }
-}
 
 /**
  * @features : met le nb de tour à 0 d'une bombe
@@ -203,9 +182,10 @@ void recup_position(int x,int y, Board *board) {
  * @features : decremente tout le nb de tour de 1 pour chaque bombe
  * */
 void decrement_bomb(Board *board){
+    int player_turn = (int)board->player_turn - 1 < 0 ? board->nb_player : board->player_turn - 1;
     for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
-        if(board->maps[board->current_map]->bombs[i]->player_id == board->players[board->player_turn]->id){
-            board->maps[board->current_map]->bombs[i]->nb_turn-=1;
+        if(board->maps[board->current_map]->bombs[i]->player_id == board->players[player_turn]->id){
+            board->maps[board->current_map]->bombs[i]->nb_turn -= 1;
         }
     }
 }
@@ -291,119 +271,195 @@ void explosion_bomb_destroy(int index, Board *board){
     player->nb_bomb += 1;
 }
 
-/**
- * @features : verifie dans le tab de bombe si une bombe doit exploser
- * */
-void is_explosed(Board *board){
-    for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
-        if(board->maps[board->current_map]->bombs[i]->nb_turn <= 0){
-            if(board->maps[board->current_map]->bombs[i]->data->_char == board->items[bomb_destroy]->data->_char){
-                explosion_bomb_destroy(i,board);
-            }else {
-                explosion(i,board);
-            }
-        }
-    }
 
-    //Suppression des bombes du tableau
-    for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
-        if(board->maps[board->current_map]->bombs[i]->nb_turn <= 0){
-            remove_bomb(i, board);
+Bomb *_get_bomb_at(int x, int y, Board *board) {
+    for (int i = 0; i < board->maps[board->current_map]->nb_bomb; ++i) {
+        if(board->maps[board->current_map]->bombs[i]->x == x && board->maps[board->current_map]->bombs[i]->y == y) {
+            return board->maps[board->current_map]->bombs[i];
         }
     }
+    return NULL;
 }
 
 //TODO : verfif si un joueur n'est pas à cote d'une bombe
 /**
  * @features : boucle pour exploser une bombe normal
  * */
-void explosion(int index, Board *board){
+void explosion(Bomb *bomb, Board *board){
+    if(bomb == NULL) {
+        return;
+    }
+    
     Map *map = board->maps[board->current_map];
-    Player *player = board->players[board->player_turn];
-    Bomb *bomb = map->bombs[index];
-    int x = bomb->x;
-    int y = bomb->y;
-    int tmp = 0;
-    //A gauche
-    for(int i = 1; i<= bomb->range; i++){
-        if(y-i < 0){
-            tmp++;
-            if(boom(x, map->columns - tmp, board) == 0){
-                break;
-            }
-        }else {
-            is_bomb_around(board, x, y - i);
-            if(boom(x, y - i, board) == 0 || boom(x, y - i, board) == -1) break;
-        }
-    }
-    tmp = 0;
-    //Droite
-    for(int i = 1; i<= bomb->range; i++){
-        if(y+i > map->columns-1){
-            tmp++;
-            if(boom(x, -1 + tmp, board) == 0){
-                break;
-            }
-        }else{
-            is_bomb_around(board, x, y + i);
-            if(boom(x, y + i, board) == 0 || boom(x, y + i, board) == -1) break;
-        }
-    }
-    tmp = 0;
-
-    //Haut
-    for(int i = 1; i<= bomb->range; i++){
-        if(x-i < 0){
-            tmp++;
-            if(boom(map->rows - tmp, y, board) == 0){
-                break;
-            }
-        }else {
-            is_bomb_around(board, x-i, y);
-            if(boom(x - i, y, board) == 0 || boom(x - i, y, board) == -1) break;
-        }
-    }
-    tmp=0;
-    //Bas
-    for(int i = 1; i<= bomb->range; i++){
-        if(x+i > map->rows-1){
-            tmp++;
-            if(boom(-1 + tmp, y, board) == 0){
-                break;
-            }
-        }else {
-            is_bomb_around(board, x+i, y);
-            if(boom(x + i, y, board) == 0 || boom(x + i, y, board) == -1) break;
-        }
-    }
-
+    char item_dest_wall = board->items[item_destructible_wall]->data->_char;
+    int all_items[] = {item_bomb_up,
+                       item_bomb_down,
+                       item_yellow_flame,
+                       item_blue_flame,
+                       item_red_flame,
+                       item_bomb,
+                       item_bomb_destroy,
+                       item_bomb_kick,
+                       item_bomb_passes,
+                       item_bomb_push,
+                       item_invincibility,
+                       item_heart,
+                       item_life,
+    };
+    
+    //remove bomb
     map->body[bomb->x][bomb->y] = ' ';
-    player->nb_bomb += 1;
+    
+    //droite
+    for (int i = 1; i <= bomb->range; ++i) {
+        if(bomb->y + i < map->columns) {
+            int can_explose = 1;
+            if(map->body[bomb->x][bomb->y + i] == item_dest_wall) {
+                map->body[bomb->x][bomb->y + i] = ' ';
+                break;
+            }
+            for (int j = 0; j < 13; ++j) {
+                char _char = map->body[bomb->x][bomb->y + i];
+                if(_char == board->items[item_bomb]->data->_char ||
+                   _char == board->items[item_bomb_destroy]->data->_char ||
+                   _char == board->items[item_bomb_kick]->data->_char) {
+                    Bomb *next_bomb = _get_bomb_at(bomb->x, bomb->y + i, board);
+                    explosion(next_bomb, board);
+                    remove_bomb(next_bomb, board);
+                }
+                if(map->body[bomb->x][bomb->y + i] == board->items[all_items[j]]->data->_char) {
+                    can_explose = 0;
+                }
+            }
+            if(can_explose && map->body[bomb->x][bomb->y + i] != board->items[item_indestructible_wall]->data->_char) {
+                map->body[bomb->x][bomb->y + i] = ' ';
+            }
+        }
+    }
+    //gauche
+    for (int i = 1; i <= bomb->range; ++i) {
+        if((int) bomb->y - i >= 0) {
+            int can_explose = 1;
+            if(map->body[bomb->x][bomb->y - i] == item_dest_wall) {
+                map->body[bomb->x][bomb->y - i] = ' ';
+                break;
+            }
+            for (int j = 0; j < 13; ++j) {
+                char _char = map->body[bomb->x][bomb->y - i];
+                if(_char == board->items[item_bomb]->data->_char || 
+                    _char == board->items[item_bomb_destroy]->data->_char || 
+                    _char == board->items[item_bomb_kick]->data->_char) {
+                    Bomb *next_bomb = _get_bomb_at(bomb->x, bomb->y - i, board);
+                    explosion(next_bomb, board);
+                    remove_bomb(next_bomb, board);
+                }
+                if(map->body[bomb->x][bomb->y - i] == board->items[all_items[j]]->data->_char) {
+                    can_explose = 0;
+                }
+            }
+            if(can_explose && map->body[bomb->x][bomb->y - i] != board->items[item_indestructible_wall]->data->_char) {
+                map->body[bomb->x][bomb->y - i] = ' ';
+            }
+        }
+    }
+    //top
+    for (int i = 1; i <= bomb->range; ++i) {
+        if((int)bomb->x - i >= 0) {
+            int can_explose = 1;
+            if(map->body[bomb->x - i][bomb->y] == item_dest_wall) {
+                map->body[bomb->x - i][bomb->y] = ' ';
+                break;
+            }
+            for (int j = 0; j < 13; ++j) {
+                char _char = map->body[bomb->x - i][bomb->y];
+                if(_char == board->items[item_bomb]->data->_char ||
+                   _char == board->items[item_bomb_destroy]->data->_char ||
+                   _char == board->items[item_bomb_kick]->data->_char) {
+                    Bomb *next_bomb = _get_bomb_at(bomb->x - i, bomb->y, board);
+                    explosion(next_bomb, board);
+                    remove_bomb(next_bomb, board);
+                }
+                if(map->body[bomb->x - i][bomb->y] == board->items[all_items[j]]->data->_char) {
+                    can_explose = 0;
+                }
+            }
+            if(can_explose && map->body[bomb->x - i][bomb->y] != board->items[item_indestructible_wall]->data->_char) {
+                map->body[bomb->x - i][bomb->y] = ' ';
+            }
+        }
+    }
+    //bottom
+    for (int i = 1; i <= bomb->range; ++i) {
+        if((int) bomb->x + i < map->rows) {
+            int can_explose = 1;
+            if(map->body[bomb->x + i][bomb->y] == item_dest_wall) {
+                map->body[bomb->x + i][bomb->y] = ' ';
+                break;
+            }
+            for (int j = 0; j < 13; ++j) {
+                char _char = map->body[bomb->x + i][bomb->y];
+                if(_char == board->items[item_bomb]->data->_char ||
+                   _char == board->items[item_bomb_destroy]->data->_char ||
+                   _char == board->items[item_bomb_kick]->data->_char) {
+                    Bomb *next_bomb = _get_bomb_at(bomb->x + i, bomb->y, board);
+                    explosion(next_bomb, board);
+                    remove_bomb(next_bomb, board);
+                }
+                if(map->body[bomb->x + i][bomb->y] == board->items[all_items[j]]->data->_char) {
+                    can_explose = 0;
+                }
+            }
+            if(can_explose && map->body[bomb->x + i][bomb->y] != board->items[item_indestructible_wall]->data->_char) {
+                map->body[bomb->x + i][bomb->y] = ' ';
+            }
+        }
+    }
 }
+    
 
 /**
- * @features : comportement d'une explosion d'une bombe
- * @param : x,y = position
+ * @features : verifie dans le tab de bombe si une bombe doit exploser
  * */
-int boom(int x, int y, Board *board){
-    Map *map = board->maps[board->current_map];
-    if(x == - 1 || y == -1 || x==map->rows || y == map->columns)return 0;
-    if(map->body[x][y] == 'm'){
-        map->body[x][y] = ' ';
-        put_item(board,x,y);
-        return 0;
-    }else if(map->body[x][y] == 'x') return -1;
-    if(is_item(board,x,y) == -1){
-        map->body[x][y] = ' ';
+void explose_bombs(Board *board){
+    int player_turn = (int)board->player_turn - 1 < 0 ? board->nb_player : board->player_turn - 1;
+    for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
+        if(board->maps[board->current_map]->bombs[i]->nb_turn <= 0){
+            explosion(board->maps[board->current_map]->bombs[i], board);
+            remove_bomb(board->maps[board->current_map]->bombs[i], board);
+            board->players[player_turn]->nb_bomb += 1;
+        }
     }
 }
+
+
 
 /**
  * @features : suppression d'une bombe dans le tableau de bombe
  * */
-void remove_bomb(int index, Board *board){
-    for (int i = index; i < board->maps[board->current_map]->nb_bomb; i++) {
-        board->maps[board->current_map]->bombs[i] = board->maps[board->current_map]->bombs[i+1];
+void remove_bomb(Bomb *bomb, Board *board) {
+    Map *map = board->maps[board->current_map];
+    int index;
+    
+    if(map->nb_bomb > 1) {
+        for (int i = 0; i < map->nb_bomb; ++i) {
+            if(map->bombs[i]->x == bomb->x && map->bombs[i]->y == bomb->y) {
+                index = i;
+                break;
+            }
+        }
+        for (int i = index; i < map->nb_bomb - 1; ++i) {
+            map->bombs[i]->x = map->bombs[i + 1]->x;
+            map->bombs[i]->y = map->bombs[i + 1]->y;
+            map->bombs[i]->nb_turn = map->bombs[i + 1]->nb_turn;
+            map->bombs[i]->range = map->bombs[i + 1]->range;
+            map->bombs[i]->player_id = map->bombs[i + 1]->player_id;
+            map->bombs[i]->data->_char = map->bombs[i + 1]->data->_char;
+            map->bombs[i]->data->_int = map->bombs[i + 1]->data->_int;
+        }
     }
-    board->maps[board->current_map]->nb_bomb-=1;
+    
+    free(map->bombs[map->nb_bomb - 1]->data);
+    free(map->bombs[map->nb_bomb - 1]);
+    map->nb_bomb -= 1;
+    map->bombs = realloc(map->bombs, sizeof(Bomb *) * map->nb_bomb);
 }
