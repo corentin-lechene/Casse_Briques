@@ -86,18 +86,6 @@ void init_bomb(int x, int y, Board *board){
 
 
 /**
- * @features : met le nb de tour à 0 d'une bombe
- * @param : x,y = position
- * */
-void recup_position(int x,int y, Board *board) {
-    for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
-        if(board->maps[board->current_map]->bombs[i]->x == x && board->maps[board->current_map]->bombs[i]->y == y){
-            board->maps[board->current_map]->bombs[i]->nb_turn = 0;
-        }
-    }
-}
-
-/**
  * @features : decremente tout le nb de tour de 1 pour chaque bombe
  * */
 void decrement_bomb(Board *board){

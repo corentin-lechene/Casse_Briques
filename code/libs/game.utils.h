@@ -9,14 +9,123 @@ void display_menu_custom(Board *board);
 char *get_event(int event);
 
 
+int try_to_move(int direction, Board *board) {
+    board->players[board->player_turn]->direction = direction;
+    printf("Try to move %d\n", direction);
+    return move_player(board);
+}
+void try_to_move_anywhere(Board *board) {
+    if(!try_to_move(0, board)) {
+        if(!try_to_move(1, board)) {
+            if(!try_to_move(2, board)) {
+                if(!try_to_move(3, board)) {
+                    set_player_turn(board);
+                }
+            }
+        }
+    }
+}
+void move_bot_by_coord(Coord *coord, Board *board) {
+    int row = coord->y - board->players[board->player_turn]->y;
+    int column = coord->x - board->players[board->player_turn]->x;
+
+    if(row > 0) {
+        //go bas
+        if(!try_to_move(1, board)) {
+            if(!try_to_move(0, board)) {
+                try_to_move(2, board);
+            }
+        }
+    } else if(row < 0) {
+        //go up
+        if(!try_to_move(3, board)) {
+            if(!try_to_move(0, board)) {
+                try_to_move(2, board);
+            }
+        }
+    } else if(column > 0) {
+        //go droite
+        if(!try_to_move(2, board)) {
+            if(!try_to_move(1, board)) {
+                try_to_move(3, board);
+            }
+        }
+    } else if(column < 0) {
+        //go gauche
+        if(!try_to_move(0, board)) {
+            if(!try_to_move(1, board)) {
+                try_to_move(3, board);
+            }
+        }
+    }
+}
+void move_bot_unsafe(Board *board) {
+    Player *player = board->players[board->player_turn];
+    Coord *coord = get_proximity_bombs(board);
+
+    if(player->x - coord->x == 0) {
+        printf("go droite au gauche");
+        if(!try_to_move(0, board)) {
+            if(!try_to_move(2, board)) {
+                if(!try_to_move(1, board)) {
+                    if(!try_to_move(3, board)) {
+                        set_player_turn(board);
+                    }
+                };
+            };
+        };
+    } else if(player->y - coord->y == 0) {
+        printf("go haut ou bas");
+        if(!try_to_move(1, board)) {
+            if(!try_to_move(3, board)) {
+                if(!try_to_move(0, board)) {
+                    if(!try_to_move(2, board)) {
+                        set_player_turn(board);
+                    }
+                };
+            };
+        };
+    } else {
+        try_to_move_anywhere(board);
+    }
+}
+
+void move_bot(Board *board) {
+    //not safe
+    if(is_close_to("bombs", board)) {
+        move_bot_unsafe(board);
+        return;
+    }
+    //safe
+    if(is_close_to("players", board)) {
+        if (plant_bomb(board)) {
+            set_player_turn(board);
+        } else {
+            try_to_move_anywhere(board);
+        }
+    } else if(is_close_to("items", board)) {
+        move_bot_by_coord(get_proximity_items(board), board);
+    } else if(is_close_to("walls", board)) {
+        if (plant_bomb(board)) {
+            set_player_turn(board);
+        } else {
+            try_to_move_anywhere(board);
+        }
+    } else {
+        try_to_move_anywhere(board);
+    }
+}
+
 /* ---------------------------------------- */
 
 void run_game(Board *board) {
     if(board->players[board->player_turn]->is_bot) {
-        set_player_turn(board);
+        move_bot(board);
+        display_board(board);
         return;
     }
-    
+
+
     if (kbhit()) {
 
         int event = my_getch();
