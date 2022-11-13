@@ -12,9 +12,9 @@ Coord *get_coord_of(char search, int range, int diago, Board *board) {
     Player *player = board->players[board->player_turn];
     Coord *coord = NULL;
 
-    for (int i = player->x - range; i <= player->x + range; ++i) {
-        for (int j = player->y - range; j <= player->y + range; ++j) {
-            if(i >= 0 && i <= map->rows && j >= 0 && j <= map->columns) {
+    for (int i = (int) player->x - range; i <= player->x + range; ++i) {
+        for (int j = (int) player->y - range; j <= player->y + range; ++j) {
+            if(i >= 0 && i < map->rows && j >= 0 && j < map->columns) {
 //                printf("[%c][%c] -> %d %d\n", map->body[i][j], search, i, j);
                 if (map->body[i][j] == search) {
                     if(coord == NULL) {
@@ -22,7 +22,6 @@ Coord *get_coord_of(char search, int range, int diago, Board *board) {
                         coord->x = i;
                         coord->y = j;
                         coord->distance = sqrt( pow(player->x - i, 2) + pow(player->y - j, 2) );
-                        printf("joueur: %d %d, coord: %d %d %lf\n", player->x, player->y, i, j, coord->distance);
                         continue;
                     }
                     
@@ -36,7 +35,6 @@ Coord *get_coord_of(char search, int range, int diago, Board *board) {
                         coord->distance = distance;
                     }
 
-                    printf("joueur: %d %d, coord: %d %d %lf\n", player->x, player->y, i, j, (int )distance );
                 }
             }
         }
@@ -125,7 +123,7 @@ void init_map(Board *board) {
     }
 }
 void set_next_map(Board *board) {
-    board->current_map = board->current_map + 1 > board->nb_selected_map ? 0 : board->current_map + 1;
+    board->current_map = board->current_map + 1 >= board->nb_selected_map ? 0 : board->current_map + 1;
 }
 
 Coord *is_bomb_on_player(Board *board) {
@@ -156,12 +154,11 @@ Coord *get_proximity_bombs(Board *board) {
     }
 
     for (int i = 0; i < 3; ++i) {
-        coord = get_coord_of(board->items[bombs[i]]->data->_char, player->bomb_range, 0, board);
+        coord = get_coord_of(board->items[bombs[i]]->data->_char, player->bomb_range, 1, board);
         if(coord != NULL) {
             return coord;
         }
     }
-    printf("jsute avant null");
     return NULL;
 }
 Coord *get_proximity_players(Board *board) {
@@ -199,23 +196,18 @@ Coord *get_proximity_items(Board *board) {
     return NULL;
 }
 Coord *get_proximity_walls_desc(Board *board) {
-    return get_coord_of('m', board->players[board->player_turn]->bomb_range, 1, board);
+    return get_coord_of('m', board->players[board->player_turn]->bomb_range + 2, 1, board);
 }
 
 int is_close_to(char *search, Board *board) {
-    printf("is_close_to: %s ? ->", search);
 //    pause();
     if(strcmp(search, "bombs") == 0) {
-        printf("is_close_to: %s\n", search);
         return get_proximity_bombs(board) != NULL;
     } else if(strcmp(search, "players") == 0) {
-        printf("is_close_to: %s\n", search);
         return get_proximity_players(board) != NULL;
     } else if(strcmp(search, "items") == 0) {
-        printf("is_close_to: %s\n", search);
         return get_proximity_items(board) != NULL;
     } else if(strcmp(search, "walls") == 0) {
-        printf("is_close_to: %s\n", search);
         return get_proximity_walls_desc(board) != NULL;
     }
 }

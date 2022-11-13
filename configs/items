@@ -1,4 +1,4 @@
-item_destructible_wall = 109 m
+item_destructible_wall = 177 m
 item_indestructible_wall = 219 x
 item_bomb_up = 43 +
 item_bomb_down = 45 -
