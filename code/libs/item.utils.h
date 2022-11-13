@@ -4,6 +4,7 @@ void get_item(Board *board, int item);
 int init_item(Item *item, Board *board);
 int has_item(Board *board, int item);
 int is_bomb(Board *board, int x,int y);
+void remove_item(Item *item, Board *board);
 /**
  * @features : genere un objet avec les probabilités
  * */
@@ -61,6 +62,10 @@ int is_item(Board *board, int x, int y){
     items_index items_index[] = {item_bomb_up, item_bomb_down,item_yellow_flame,item_blue_flame,item_red_flame,item_bomb_destroy,item_bomb_kick,
                                  item_bomb_passes,item_invincibility,item_heart,item_life};
 
+    char item_dest_wall = board->items[item_destructible_wall]->data->_char;
+    char item_indest_wall = board->items[item_indestructible_wall]->data->_char;
+    if(map->body[x][y] == item_dest_wall || map->body[x][y] == item_indest_wall) return -2;
+
     if(is_bomb(board,x,y)== 1) return -1;
 
     for(int i = 0; i<items_len-4;i++){
@@ -90,8 +95,6 @@ void get_item(Board *board, int item){
         if(item == bomb_kick && has_item(board,bomb_passes)){
             pause();
         }
-
-
 
         player->nb_item +=1;
         player->items = realloc(player->items, sizeof(Item *) * player->nb_item);

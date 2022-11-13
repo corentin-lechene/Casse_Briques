@@ -134,7 +134,7 @@ int move_player(Board *board) {
     switch (player->direction) {
         case 0:
             if(check == 2){
-                int pos = (int) player->x - i;
+                unsigned short pos = player->x - i;
                 while(is_space(board,pos,player->y) != 1){
                     if(map->body[pos][player->y] == 'm' || map->body[pos][player->y] == 'x' ||(map->body[pos][player->y] >= 48 && map->body[pos][player->y] <= 57)) return 0;
                     decrement_or_reset(&pos,map->rows-1);
@@ -191,11 +191,11 @@ int move_player(Board *board) {
 int is_space(Board *board, int x, int y){
     if (board->maps[board->current_map]->body[x][y] != ' ') {
         int index_item = is_item(board,x,y);
+        if(index_item == -2) return 0;
         if(index_item != -1) {
             get_item(board,index_item);
             return 1;
         }
-
         if(has_item(board, bomb_passes) == 1){
             return 2;
         }
