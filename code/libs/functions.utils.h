@@ -371,3 +371,22 @@ int my_getch()  {
         }
     }
 }
+
+int gt_zero(int num) {
+    return num >= 0;
+}
+int lt_row(unsigned short x, Map *map) {
+    return x < map->rows;
+}
+int lt_column(unsigned short y, Map *map) {
+    return y < map->columns;
+}
+int is_in_rows(int x, Map *map) {
+    return gt_zero(x) && lt_row(x, map);
+}
+int is_in_column(int y, Map *map) {
+    return gt_zero(y) && lt_column(y, map);
+}
+int is_in_map(int x, int y, Map *map) {
+    return is_in_rows(x, map) && is_in_column(y, map);
+}

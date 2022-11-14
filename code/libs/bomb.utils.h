@@ -73,7 +73,6 @@ void init_bomb(int x, int y, Board *board){
 void decrement_bomb(Board *board){
     int player_turn = (int)board->player_turn - 1 < 0 ? board->nb_player - 1 : board->player_turn - 1;
     for (int i = 0; i < board->maps[board->current_map]->nb_bomb; i++) {
-        printf("%c %c\n", board->maps[board->current_map]->bombs[i]->player_id, board->players[player_turn]->id);
         if(board->maps[board->current_map]->bombs[i]->player_id == board->players[player_turn]->id){
             board->maps[board->current_map]->bombs[i]->nb_turn -= 1;
         }
@@ -116,6 +115,11 @@ void init_bomb_kick(Board *board) {
         case 0:
             while (1) {
                 for (int j = 0; j < 15; ++j) {
+                    if(!is_in_map(player->x - i, player->y, map)) {
+                        init_bomb(player->x - i, player->y, board);
+                        map->body[player->x - i + 1][player->y] = board->items[player->bomb_type]->data->_char;
+                        return;
+                    }
                     if(map->body[player->x - i][player->y] == board->items[all_items[j]]->data->_char) {
                         map->body[player->x - i + 1][player->y] = board->items[player->bomb_type]->data->_char;
                         init_bomb(player->x - i + 1, player->y, board);
@@ -127,6 +131,11 @@ void init_bomb_kick(Board *board) {
         case 1:
             while (1) {
                 for (int j = 0; j < 15; ++j) {
+                    if(!is_in_map(player->x, player->y + i, map)) {
+                        init_bomb(player->x, player->y + i - 1, board);
+                        map->body[player->x][player->y + i - 1] = board->items[player->bomb_type]->data->_char;
+                        return;
+                    }
                     if(map->body[player->x][player->y + i] == board->items[all_items[j]]->data->_char) {
                         map->body[player->x][player->y + i - 1] = board->items[player->bomb_type]->data->_char;
                         init_bomb(player->x, player->y + i - 1, board);
@@ -138,6 +147,11 @@ void init_bomb_kick(Board *board) {
         case 2:
             while (1) {
                 for (int j = 0; j < 15; ++j) {
+                    if(!is_in_map(player->x + i, player->y, map)) {
+                        init_bomb(player->x + i - 1, player->y, board);
+                        map->body[player->x + i - 1][player->y] = board->items[player->bomb_type]->data->_char;
+                        return;
+                    }
                     if(map->body[player->x + i][player->y] == board->items[all_items[j]]->data->_char) {
                         map->body[player->x + i - 1][player->y] = board->items[player->bomb_type]->data->_char;
                         init_bomb(player->x + i - 1, player->y, board);
@@ -149,6 +163,11 @@ void init_bomb_kick(Board *board) {
         case 3:
             while (1) {
                 for (int j = 0; j < 15; ++j) {
+                    if(!is_in_map(player->x, player->y - i, map)) {
+                        init_bomb(player->x, player->y - i, board);
+                        map->body[player->x][player->y - i + 1] = board->items[player->bomb_type]->data->_char;
+                        return;
+                    }
                     if(map->body[player->x][player->y - i] == board->items[all_items[j]]->data->_char) {
                         map->body[player->x][player->y - i + 1] = board->items[player->bomb_type]->data->_char;
                         init_bomb(player->x, player->y - i + 1, board);

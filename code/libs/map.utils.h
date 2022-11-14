@@ -42,11 +42,6 @@ Coord *get_coord_of(char search, int range, int diago, Board *board) {
 //    pause();
     return coord;
 }
-//coord->distance = i;
-//coord->x = player->x + i;
-//coord->y = player->y;
-
-
 
 
 /* ----------------------------------- */
