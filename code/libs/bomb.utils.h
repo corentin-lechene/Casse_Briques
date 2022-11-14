@@ -32,7 +32,7 @@ int plant_bomb(Board *board){
             init_bomb_destroy(board);
             init_bomb(player->x, player->y, board);
             map->body[player->x][player->y] = board->items[player->bomb_type]->data->_char;
-            player->bomb_type = item_bomb;
+            player->bomb_type = item_bomb_kick;
             break;
         default:
             map->body[player->x][player->y] = board->items[player->bomb_type]->data->_char;
@@ -208,7 +208,6 @@ void init_bomb_destroy(Board *board) {
     }
 }
 
-//TODO : verfif si un joueur n'est pas à cote d'une bombe
 /**
  * @features : boucle pour exploser une bombe normal
  * */
