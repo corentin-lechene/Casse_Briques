@@ -1,3 +1,5 @@
+Coord *is_bomb_on_player(Board *board);
+
 int plant_bomb(Board *board);
 void init_bomb(int x, int y, Board *board);
 
@@ -239,6 +241,14 @@ void explosion(Bomb *bomb, Board *board){
     for (int i = 0; i < board->nb_player; ++i) {
         if(bomb->player_id == board->players[i]->id) {
             board->players[i]->nb_bomb += 1;
+            break;
+        }
+    }
+    
+    //is bomb on player
+    for (int i = 0; i < map->nb_bomb; ++i) {
+        if(map->bombs[i]->x == board->players[player_turn]->x && map->bombs[i]->y == board->players[player_turn]->y) {
+            board->players[player_turn]->heart -= 1;
             break;
         }
     }
