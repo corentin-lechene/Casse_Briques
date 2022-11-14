@@ -150,25 +150,52 @@ void move_bot(Board *board) {
 
 void run_game(Board *board) {
     players_are_dead(board);
-    
+    //Il y a une victoire ?
     if(board->nb_player == 1) {
         display_next_menu(board, menu_winner_summary, &menu_winner_summary_case);
         return;
     }
 
+    //Plus de joueur réel
+    int only_bot = 1;
     for (int i = 0; i < board->nb_player; ++i) {
         if(board->players[i]->is_bot == 0) {
-            
+            only_bot = 0;
         }
     }
     
+    //si plus de joueur réel
+    if(only_bot) {
+        if(kbhit()) {
+            //Finir le jeu
+            int t = 0;
+            while (board->nb_player > 1) {
+                players_are_dead(board);
+                move_bot(board);
+                t++;
+                if(t == 20000) {
+                    break;
+                }
+            }
+            display_next_menu(board, menu_winner_summary, &menu_winner_summary_case);
+            return;
+        } else {
+            //Regarde le jeu
+            move_bot(board);
+            display_board(board);
+            return;
+        }
+    }
+    
+    //Bouger les bots
     if(board->players[board->player_turn]->is_bot) {
         move_bot(board);
         display_board(board);
         return;
     }
+    
+    //Déplacement du joueur réel
     if (kbhit()) {
-
         int event = my_getch();
         const char *event_name = get_event(event);
 
@@ -199,8 +226,6 @@ void run_game(Board *board) {
             return;
         }
     }
-
-
 }
 void run_menu(Board *board) {
     int event = my_getch();

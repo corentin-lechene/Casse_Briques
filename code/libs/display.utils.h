@@ -30,8 +30,7 @@ void display_choice_back(Board *board, int index) {
 }
 
 void display_choice_continue(Board *board) {
-    printf("Appuyer sur une touche pour continuer...\n");
-    getch();
+    pause();
 }
 
 
