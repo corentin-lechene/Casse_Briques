@@ -4,6 +4,10 @@ void menu_options_case(Board *board);
 void menu_languages_case(Board *board);
 void menu_set_languages_case(Board *board);
 void menu_game_mode_case(Board *board);
+void menu_online_case(Board *board);
+void menu_host_case(Board *board);
+void menu_client_case(Board *board);
+void menu_wait_players_case(Board *board);
 void menu_solo_case(Board *board);
 void menu_patch_notes_case(Board *board);
 void menu_credits_case(Board *board);
@@ -85,6 +89,8 @@ void menu_game_mode_case(Board *board) {
 }
 
 void menu_solo_case(Board *board) {
+    board->game_mode = GAME_MODE_LOCAL;
+
     board->nb_player = 1;
     if(create_players(board)) {
         board->current_menu = menu_maps;
@@ -193,6 +199,8 @@ void menu_resume_case(Board *board) {
 }
 
 void menu_players_case(Board *board) {
+    board->game_mode = GAME_MODE_LOCAL;
+
     char q[3];
     do {
         clear_console();
@@ -219,11 +227,79 @@ void menu_winner_summary_case(Board *board) {
     display_menu_header(board);
     printf("Bravo %s, vous avez gagne !\n", board->players[0]->name);
     for (int i = 1; i < board->maps[board->current_map]->player_max; ++i) {
-        printf("Dommage a %s qui fini %d eme.\n", board->players[i]->name, i + 1);
+        if(board->game_mode == GAME_MODE_LOCAL) {
+            printf("Dommage a %s qui fini %d eme.\n", board->players[i]->name, i + 1);
+        } else if(i == 2) {
+            break;
+        }
     }
     display_choice_continue(board);
-    board->nb_player = board->maps[board->current_map]->player_max;
+    
+    board->nb_player = board->game_mode == GAME_MODE_LOCAL ? board->maps[board->current_map]->player_max : 2;
     board->current_menu = menu_init_game;
+}
+
+void menu_online_case(Board *board) {
+    menus_index next_menu[] = {menu_host, menu_client, menu_game_mode};
+    choices_index choices_menu[] = {choice_create_server, choice_join_server, choice_back};
+
+    board->menus[board->current_menu]->nb_choice = 3;
+    board->menus[board->current_menu]->next_menu = next_menu[board->current_choice];
+
+    display_menu(board, choices_menu);
+}
+
+void menu_host_case(Board *board) {
+    board->game_mode = GAME_MODE_HOST;
+    board->nb_player = 2;
+    if(create_players(board)) {
+        create_server(board);
+        display_next_menu(board, menu_wait_players, &menu_wait_players_case);
+    } else {
+        errorf("Erreur");
+        display_next_menu(board, menu_game_mode, &menu_game_mode_case);
+    }
+}
+
+void menu_wait_players_case(Board *board) {
+    display_menu_header(board);
+
+    int player_joined = 0;
+
+    display_waiting_for_player(board);
+    while (!player_joined) {
+        scanf("%d", &player_joined);
+    }
+
+    display_next_menu(board, menu_maps, &menu_maps_case);
+}
+
+void menu_client_case(Board *board) {
+    board->game_mode = GAME_MODE_CLIENT;
+
+    char res[10];
+    int client_connected = 0;
+    do {
+        clear_console();
+        infof("Exemple : 26082");
+        printf("Saisir le nombre de joueur (q pour quitter) : ");
+        fflush(stdin);
+        scanf("%s", res);
+        
+        if(strcmp(res, "26082") == 0) {
+            client_connected = 1;
+        }
+        
+    } while(client_connected != 1);
+
+    display_waiting_for_player(board);
+    //en attente de recevoir le go
+    int game_started = 0;
+    while(!game_started) {
+        scanf("%d", &game_started);
+    }
+    
+    board->current_menu = menu_game;
 }
 
 

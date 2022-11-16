@@ -7,11 +7,14 @@
 #include <conio.h>
 #include <ctype.h>
 #include <math.h>
+#include <winsock2.h>
 #include <windows.h>
+#include <ws2tcpip.h>
 #include "libs/misc.utils.h"
 #include "libs/free.utils.h"
 #include "libs/functions.utils.h"
 #include "libs/display.utils.h"
+#include "libs/server.utils.h"
 #include "libs/item.utils.h"
 #include "libs/bomb.utils.h"
 #include "libs/player.utils.h"

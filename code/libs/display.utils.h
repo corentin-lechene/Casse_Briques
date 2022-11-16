@@ -157,3 +157,7 @@ void display_default_map(Map *map, Board *board) {
         printf("\n");
     }
 }
+
+void display_waiting_for_player(Board *board) {
+    infof("En attente du joueur");
+}

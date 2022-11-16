@@ -1,15 +1,3 @@
-#define IN_EXIT 0
-#define MENU_START 1
-#define MENU_MODE_GAME 2
-#define MENU_NUMBER_PLAYER 3
-#define MENU_SELECT_MAPS 5
-#define MENU_ONLINE 4
-#define IN_GAME 7
-#define IN_PREP_GAME 10
-#define IN_PLAYERS 6
-//#define IN_MAPS 6
-#define IN_CONFIG 9
-
 #define KEY_z 122
 #define KEY_s 115
 #define KEY_d 100
@@ -23,12 +11,13 @@
 #define KEY_CROSS_LEFT 75
 #define KEY_CROSS_RIGHT 77
 
-#define ITEM_MI 219
-#define ITEM_MD 176
-#define ITEM_SP 32
+#define GAME_MODE_HOST 0
+#define GAME_MODE_CLIENT 1
+#define GAME_MODE_LOCAL 2
 
-#define MARGIN_X 4
-#define MARGIN_Y 1
+#define BUFLEN 255
+#define PORT 27015
+
 
 enum colors_index {
     color_black = 0,
@@ -62,6 +51,9 @@ typedef enum {
     menu_players,
     menu_maps,
     menu_online,
+    menu_host,
+    menu_client,
+    menu_wait_players,
     menu_reset_game,
     menu_restart_game,
     menu_init_game,
@@ -84,6 +76,9 @@ const char *MENUS_NAME[] = {
         "menu_players",
         "menu_maps",
         "menu_online",
+        "menu_host",
+        "menu_client",
+        "menu_wait_players",
         "menu_reset_game",
         "menu_restart_game",
         "menu_init_game",
@@ -345,6 +340,7 @@ typedef struct {
     unsigned short current_map;
     unsigned short player_turn;
     short *selected_maps;
+    short game_mode;
 } Board;
 
 const char *CONFIG_DIR = "../app.config";

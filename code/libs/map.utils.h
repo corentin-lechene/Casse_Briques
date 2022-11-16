@@ -107,11 +107,15 @@ void init_map(Board *board) {
         for (int j = 0; j < board->maps[board->current_map]->rows; ++j) {
             for (int k = 0; k < board->maps[board->current_map]->columns; ++k) {
                 if(board->maps[board->current_map]->body[j][k] == 'p') {
-                    if(i > board->nb_player) {
-                        break;
+                    if(board->game_mode == GAME_MODE_HOST && i == 2) {
+                        board->maps[board->current_map]->body[j][k] = ' ';
+                    } else {
+                        if(i > board->nb_player) {
+                            break;
+                        }
+                        board->maps[board->current_map]->body[j][k] = board->players[i]->id;
+                        i += 1;
                     }
-                    board->maps[board->current_map]->body[j][k] = board->players[i]->id;
-                    i += 1;
                 }
             }
         }

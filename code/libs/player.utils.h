@@ -68,6 +68,9 @@ Player *_create_player(Board *board, int id, short is_bot) {
     return player;
 }
 void add_bot_player(Board *board) {
+    if(board->game_mode == GAME_MODE_HOST) {
+        return;
+    }
     short map_player_max = board->maps[board->current_map]->player_max;
     short player_max = board->nb_player;
 

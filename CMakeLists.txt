@@ -4,3 +4,5 @@ project(Casse_Briques C)
 set(CMAKE_C_STANDARD 99)
 
 add_executable(Casse_Briques ./code/main.c)
+
+link_libraries(wsock32 libws2_32 Ws2_32)

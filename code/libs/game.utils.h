@@ -303,6 +303,9 @@ void display_menu_static(Board *board) {
         case menu_reset_game:
             menu_reset_game_case(board);
             break;
+        case menu_online:
+            menu_online_case(board);
+            break;
         case menu_winner_summary:
             break;
         case menu_resume:
@@ -331,6 +334,15 @@ void display_menu_custom(Board *board) {
             break;
         case menu_maps:
             menu_maps_case(board);
+            break;
+        case menu_host:
+            menu_host_case(board);
+            break;
+        case menu_client:
+            menu_client_case(board);
+            break;
+        case menu_wait_players:
+            menu_wait_players_case(board);
             break;
         default:
             break;
