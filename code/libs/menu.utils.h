@@ -253,53 +253,61 @@ void menu_host_case(Board *board) {
     board->game_mode = GAME_MODE_HOST;
     board->nb_player = 2;
     if(create_players(board)) {
-        create_server(board);
-        display_next_menu(board, menu_wait_players, &menu_wait_players_case);
+        clear_console();
+        display_menu_header(board);
+        infof("Creation du serveur en cours...");
+        if(create_server(board)) {
+            infof("Serveur cree");
+            display_next_menu(board, menu_wait_players, &menu_wait_players_case);
+        } else {
+            errorf("Impossible de creer le serveur");
+        }
     } else {
-        errorf("Erreur");
+        errorf("Impossible de creer les joueurs");
         display_next_menu(board, menu_game_mode, &menu_game_mode_case);
     }
 }
 
 void menu_wait_players_case(Board *board) {
+    clear_console();
     display_menu_header(board);
-
-    int player_joined = 0;
-
     display_waiting_for_player(board);
-    while (!player_joined) {
-        scanf("%d", &player_joined);
-    }
 
-    display_next_menu(board, menu_maps, &menu_maps_case);
+    if(board->game_mode == GAME_MODE_HOST) {
+        if(is_player_join(board)) {
+            display_next_menu(board, menu_maps, &menu_maps_case);
+        }
+    } else {
+        infof("Le joueur est entrain de choisir les cartes");
+        printf("Veuillez patienter...\n");
+        if(is_player_start_game(board)) {
+            board->current_menu = menu_game;
+        }
+    }
 }
 
 void menu_client_case(Board *board) {
     board->game_mode = GAME_MODE_CLIENT;
 
-    char res[10];
+    char res[25];
     int client_connected = 0;
     do {
         clear_console();
-        infof("Exemple : 26082");
-        printf("Saisir le nombre de joueur (q pour quitter) : ");
+        display_menu_header(board);
+        infof("Exemple d'ip : 192.168.1.18");
+        infof("Exemple de port : 27015");
+        printf("Saisir le port : ");
         fflush(stdin);
         scanf("%s", res);
         
-        if(strcmp(res, "26082") == 0) {
+        if(join_server(res, board) != SOCKET_ERROR) {
             client_connected = 1;
+            infof("\n\nConnexion réussite...");
         }
         
     } while(client_connected != 1);
 
-    display_waiting_for_player(board);
-    //en attente de recevoir le go
-    int game_started = 0;
-    while(!game_started) {
-        scanf("%d", &game_started);
-    }
-    
-    board->current_menu = menu_game;
+    display_next_menu(board, menu_wait_players, &menu_wait_players_case);
 }
 
 

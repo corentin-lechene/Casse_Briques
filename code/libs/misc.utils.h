@@ -17,6 +17,19 @@
 
 #define BUFLEN 255
 #define PORT 27015
+#define RESPONSE_SUCCESS "response:success"
+#define RESPONSE_FAILURE "response:failure"
+#define RESPONSE_PLAY "response:play"
+#define RESPONSE_WIN "response:win"
+#define RESPONSE_DEAD "response:dead"
+#define RESPONSE_EXIT "response:exit"
+
+#define RESPONSE_SUCCESS_LEN strlen(RESPONSE_SUCCESS)
+#define RESPONSE_FAILURE_LEN strlen(RESPONSE_FAILURE)
+#define RESPONSE_PLAY_LEN strlen(RESPONSE_PLAY)
+#define RESPONSE_WIN_LEN strlen(RESPONSE_WIN)
+#define RESPONSE_DEAD_LEN strlen(RESPONSE_DEAD)
+#define RESPONSE_EXIT_LEN strlen(RESPONSE_EXIT)
 
 
 enum colors_index {
@@ -319,6 +332,30 @@ typedef struct {
 } Player;
 
 typedef struct {
+    int res;
+    int res_len;
+    int res_send;
+    int res_send_len;
+    char recv_buf[BUFLEN];
+    char send_buf[BUFLEN];
+    SOCKET client_socket;
+    SOCKET server_socket;
+    SOCKADDR_IN client_socket_addr;
+    char ip[16];
+    char port[5];
+} Server;
+
+
+typedef struct {
+    char send_buf[BUFLEN];
+    char recv_buf[BUFLEN];
+    SOCKET client_socket;
+    char ip[16];
+    char port[5];
+} Client;
+
+
+typedef struct {
     Map **default_maps;
     Player **players;
     Config *config;
@@ -328,6 +365,9 @@ typedef struct {
 
     Map **maps;
     Player *winner;
+    
+    Server *server;
+    Client *client;
 
     unsigned short nb_map;
     unsigned short nb_selected_map;

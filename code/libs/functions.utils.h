@@ -23,7 +23,7 @@ int min_distance(int top, int right, int bottom, int left);
 
 void clear_console();
 void exit_error(char *desc);
-void infof(char *err);
+void infof(char *info);
 void errorf(char *err);
 void warningf(char *warn);
 
@@ -308,9 +308,9 @@ void exit_error(char *desc) {
     pause();
     exit(0);
 }
-void infof(char *err) {
+void infof(char *info) {
     text_color(color_light_blue);
-    printf("[INFO] -> %s\n", err);
+    printf("[INFO] -> %s\n", info);
     text_color_default();
 }
 void errorf(char *err) {

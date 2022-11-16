@@ -1,27 +1,69 @@
 
-void create_server(Board *board);
+int create_server(Board *board);
+int join_server(char *port, Board *board);
+
+int is_player_join(Board *board);
+int is_player_start_game(Board *board); //todo
+
+void send_player_leave(Board *board); //todo
+int is_player_sent_leave(Board *board); //todo
 
 
 /* ----------------------------------- */
 
 
-void create_server(Board *board) {
-    SOCKET ClientSocket = INVALID_SOCKET;
+int create_server(Board *board) {
+    board->server = malloc(sizeof(Server));
+    Server *server = board->server;
+    
+    server->client_socket = INVALID_SOCKET;
+    server->server_socket = INVALID_SOCKET;
 
     WSADATA WSAData;
-    SOCKET sock;
-    SOCKADDR_IN sin;
-    SOCKADDR_IN csin;
+    SOCKADDR_IN server_socket_addr;
     WSAStartup(MAKEWORD(2,0), &WSAData);
-    sock = socket(AF_INET, SOCK_STREAM, 0);
-    sin.sin_addr.s_addr = INADDR_ANY;
-    sin.sin_family = AF_INET;
-    sin.sin_port = htons(PORT);
+    
+    server->server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    server_socket_addr.sin_addr.s_addr = INADDR_ANY;
+    server_socket_addr.sin_family = AF_INET;
+    server_socket_addr.sin_port = htons(PORT);
 
-    bind(sock, (SOCKADDR *)&sin, sizeof(sin));
-    listen(sock, 0);
+    bind(server->server_socket, (SOCKADDR *)&server_socket_addr, sizeof(server_socket_addr));
+    listen(server->server_socket, 0);
+    
+    return 1;
+}
 
-    // Accept a client socket
-    int sinsize = sizeof(csin);
-    ClientSocket = accept(sock, (SOCKADDR *)&csin, &sinsize);
+int join_server(char *port, Board *board) {
+    board->client = malloc(sizeof(Client));
+    Client *client = board->client;
+
+    client->client_socket = INVALID_SOCKET;
+
+    WSADATA WSAData;
+    SOCKADDR_IN server_socket_addr;
+    WSAStartup(MAKEWORD(2,0), &WSAData);
+    
+    client->client_socket = socket(AF_INET, SOCK_STREAM, 0);
+    server_socket_addr.sin_addr.s_addr = inet_addr("172.20.10.7");
+    server_socket_addr.sin_family = AF_INET;
+    server_socket_addr.sin_port = htons(atol(port));
+
+    int res = connect(client->client_socket, (SOCKADDR *)&server_socket_addr, sizeof(server_socket_addr));
+    if(res == SOCKET_ERROR) {
+        closesocket(client->client_socket);
+        WSACleanup();
+        return 0;
+    }
+    return 1;
+}
+
+int is_player_join(Board *board) {
+    Server *server = board->server;
+    int size_ser_sock_addr = sizeof(server->client_socket_addr);
+    server->client_socket = accept(server->server_socket, (SOCKADDR *)&server->client_socket_addr, &size_ser_sock_addr);
+}
+
+int is_player_start_game(Board *board) {
+    
 }

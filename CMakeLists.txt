@@ -5,4 +5,4 @@ set(CMAKE_C_STANDARD 99)
 
 add_executable(Casse_Briques ./code/main.c)
 
-link_libraries(wsock32 libws2_32 Ws2_32)
+target_link_libraries(Casse_Briques wsock32 Ws2_32)
