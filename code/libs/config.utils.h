@@ -37,6 +37,7 @@ Board *generate_board() {
     board->maps = NULL;
     board->players = NULL;
 
+
     board->current_map = board->nb_map;
     board->nb_selected_map = 0;
 
@@ -180,6 +181,8 @@ Item **get_items(Config *config) {
         if(items[i] == NULL) {
             exit_error("items[i] = NULL");
         }
+        items[i]->is_used = 0;
+        items[i]->type = i;
     }
     display_loading(config->loading, loading_items);
     return items;
@@ -336,6 +339,10 @@ Map *_get_map(const char *filename) {
             }
         }
 
+        if(map->player_max <= 1) {
+            fclose(f);
+            errorf("No enough player");
+        }
         fclose(f);
         return map;
     }

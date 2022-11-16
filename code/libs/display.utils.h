@@ -9,7 +9,7 @@ void display_map(Board *board);
 
 void display_menu_header(Board *board);
 void display_player_turn(Board *board);
-void display_player_items(Board *board);
+void display_player_infos(Board *board);
 
 void _display_border(Board *board);
 int _convert_item(char item, Board *board);
@@ -27,6 +27,10 @@ void display_menu_header(Board *board) {
 void display_choice_back(Board *board, int index) {
     board->menus[board->current_menu]->nb_choice += 1;
     printf("[%c]\t%s\n", index == board->current_choice ? 'X' : ' ', file_get_value(CHOICES_NAME[choice_back], board->config->lang_dir));
+}
+
+void display_choice_continue(Board *board) {
+    pause();
 }
 
 
@@ -50,7 +54,7 @@ void display_board(Board *board){
     clear_console();
     display_menu_header(board);
     display_player_turn(board);
-    display_player_items(board);
+    display_player_infos(board);
     display_map(board);
 }
 
@@ -63,11 +67,15 @@ void display_map(Board *board) {
     for (int i = 0; i < map->rows; ++i) {
         printf("\t");
         for (int j = 0; j < map->columns; ++j) {
-            if(map->body[i][j] >= 48 && map->body[i][j] <= 57){
-                int nb = map->body[i][j] - 48;
-                text_color(board->players[nb]->color);
-                printf("%c", map->body[i][j]);
-                text_color_default();
+            if(map->body[i][j] >= 48 && map->body[i][j] <= 57) {
+                for (int k = 0; k < board->nb_player; ++k) {
+                    if (map->body[i][j] == board->players[k]->id) {
+                        text_color(board->players[k]->color);
+                        printf("%c", map->body[i][j]);
+                        text_color_default();
+                        break;
+                    }
+                }
             } else {
                 printf("%c", _convert_item(map->body[i][j], board));
             }
@@ -83,10 +91,10 @@ void display_player_turn(Board *board) {
     text_color_default();
 }
 
-void display_player_items(Board *board) {
-    printf("\tVos objets : %d\n", board->players[board->player_turn]->nb_item);
+void display_player_infos(Board *board) {
+    printf("\tVos objets : %d | Bombe restante : %d | Coeurs : %d\n", board->players[board->player_turn]->nb_item, board->players[board->player_turn]->nb_bomb, board->players[board->player_turn]->heart);
     for (int i = 0; i < board->players[board->player_turn]->nb_item; ++i) {
-        printf("\t  -> %s, %c", board->players[board->player_turn]->items[i]->name, board->players[board->player_turn]->items[i]->data->_int);
+        printf("\t  -> %s, %c\n", board->players[board->player_turn]->items[i]->name, board->players[board->player_turn]->items[i]->data->_int);
     }
     printf("\n\n");
 }
@@ -112,6 +120,7 @@ int _convert_item(char item, Board *board) {
             return board->items[i]->data->_int;
         }
     }
+    printf("[%c] <- ", item);
     errorf("Item char not found");
 }
 

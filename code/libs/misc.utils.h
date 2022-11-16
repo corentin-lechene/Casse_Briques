@@ -227,9 +227,14 @@ static char *ITEMS_NAME[] = {
         "item_invincibility",
         "item_heart",
         "item_life",
-        "items_len"
 };
 
+
+typedef struct {
+    unsigned short x;
+    unsigned short y;
+    double distance;
+} Coord;
 
 
 typedef struct {
@@ -259,7 +264,11 @@ typedef struct {
 
 typedef struct {
     char player_id;
+    unsigned int nb_turn;
+    unsigned int x;
+    unsigned int y;
     Data_item *data;
+    int range;
 } Bomb;
 
 typedef struct {
@@ -282,6 +291,7 @@ typedef struct {
     int duration;
     short rarity;
     short is_used;
+    unsigned int type;
 
     Data_item *data;
 } Item;

@@ -19,6 +19,7 @@ enum colors_index get_random_color();
 void increment_or_reset(unsigned short *val, short max);
 void decrement_or_reset(unsigned short *val, short max);
 double random_between(double min, double max);
+int min_distance(int top, int right, int bottom, int left);
 
 void clear_console();
 void exit_error(char *desc);
@@ -136,7 +137,7 @@ char *file_set_value(const char *attribute, void *value, const char *dir) {
     FILE *f = fopen(dir, "rb+");
 
     if(f != NULL) {
-        char *file_temp = calloc(0, sizeof(char) * file_get_size(f) + 1);
+        char *file_temp = calloc(0, sizeof(char) * (file_get_size(f) + 1));
         char *line = malloc(sizeof(char) * 255);
         char *file_att, *file_val;
 
@@ -229,8 +230,9 @@ short file_get_nb(const char *dir_name) {
 }
 short file_get_size(FILE *f) {
     fseek (f, 0, SEEK_END);
-    int len = ftell(f);
+    short len = ftell(f);
     fseek (f, 0, SEEK_SET);
+    return len;
 }
 
 void text_color(int color) {
@@ -256,8 +258,27 @@ enum colors_index get_random_color() {
     return colors[(int) random_between(0, 10)];
 }
 double random_between(double min, double max) {
-    srand( time (NULL));
     return min + ((int)rand() % (int)max);
+}
+int min_distance(int top, int right, int bottom, int left) {
+    int values[] = {top, right, bottom, left};
+
+    for (int i = 0; i < 4; ++i) {
+        for (int j = i + 1; j < 4; ++j) {
+            if (values[i] > values[j]) {
+                int t = values[i];
+                values[i] = values[j];
+                values[j] = t;
+            }
+        }
+    }
+
+    for (int i = 0; i < 4; ++i) {
+        if(values[i] != 0) {
+            return values[i];
+        }
+    }
+    return 0;
 }
 void increment_or_reset(unsigned short *val, short max) {
     if(*val + 1 > max) {
@@ -328,7 +349,6 @@ int my_getch()  {
             case 75:
             case 77:
             case 13:
-            case 32:
             case 27:
                 return ch2;
 
@@ -342,6 +362,7 @@ int my_getch()  {
             case 'q':
             case 'd':
             case 'p':
+            case 32:
             case 13:
             case 27:
                 return ch;
@@ -349,4 +370,23 @@ int my_getch()  {
                 return -1;
         }
     }
+}
+
+int gt_zero(int num) {
+    return num >= 0;
+}
+int lt_row(unsigned short x, Map *map) {
+    return x < map->rows;
+}
+int lt_column(unsigned short y, Map *map) {
+    return y < map->columns;
+}
+int is_in_rows(int x, Map *map) {
+    return gt_zero(x) && lt_row(x, map);
+}
+int is_in_column(int y, Map *map) {
+    return gt_zero(y) && lt_column(y, map);
+}
+int is_in_map(int x, int y, Map *map) {
+    return is_in_rows(x, map) && is_in_column(y, map);
 }
