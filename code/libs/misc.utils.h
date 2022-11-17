@@ -354,6 +354,13 @@ typedef struct {
     char port[5];
 } Client;
 
+typedef struct {
+    char flowers[500];
+    char flower_steps[3];
+    int flowers_len;
+    int flowers_steps_len;
+    int start;
+} Flower;
 
 typedef struct {
     Map **default_maps;
@@ -381,6 +388,7 @@ typedef struct {
     unsigned short player_turn;
     short *selected_maps;
     short game_mode;
+    Flower *flower;
 } Board;
 
 const char *CONFIG_DIR = "../app.config";

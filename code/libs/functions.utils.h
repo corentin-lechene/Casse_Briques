@@ -260,26 +260,7 @@ enum colors_index get_random_color() {
 double random_between(double min, double max) {
     return min + ((int)rand() % (int)max);
 }
-int min_distance(int top, int right, int bottom, int left) {
-    int values[] = {top, right, bottom, left};
 
-    for (int i = 0; i < 4; ++i) {
-        for (int j = i + 1; j < 4; ++j) {
-            if (values[i] > values[j]) {
-                int t = values[i];
-                values[i] = values[j];
-                values[j] = t;
-            }
-        }
-    }
-
-    for (int i = 0; i < 4; ++i) {
-        if(values[i] != 0) {
-            return values[i];
-        }
-    }
-    return 0;
-}
 void increment_or_reset(unsigned short *val, short max) {
     if(*val + 1 > max) {
         *val = 0;

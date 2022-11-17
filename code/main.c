@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -37,10 +38,17 @@ void run_program(Board *board) {
 
 
 int main() {
+    int wait = 1;
+
     srand( time( NULL ) );
     text_color_default();
+
+    CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) display_opening_credits, &wait, 0, NULL);
     Board *board = generate_board();
-    display_opening_credits();
+
+    while (wait) {}
+    clear_console();
+    
     display_menus(board);
     while (board->current_menu >= 1) {
         run_program(board);

@@ -211,7 +211,7 @@ Map **get_maps(Config *config) { // tableau de map
         if(path != NULL) {
             free(path);
         }
-        display_loading(config->loading, loading_menus);
+        display_loading(config->loading, loading_maps);
         closedir(d);
         return maps;
     }

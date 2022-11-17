@@ -1,6 +1,6 @@
 
 void clear_console();
-void display_opening_credits();
+DWORD WINAPI display_opening_credits();
 void display_ending_credits();
 
 void display_board(Board *board);
@@ -124,10 +124,6 @@ int _convert_item(char item, Board *board) {
     errorf("Item char not found");
 }
 
-void display_opening_credits() {
-    clear_console();
-//    printf("Casse briques...");
-}
 
 void display_ending_credits() {
     clear_console();
@@ -142,11 +138,11 @@ void display_wait() {
 
 
 void display_loading(Loading *loading, int loading_index) {
-    loading->loading_item[loading_index]->item = 1;
-    clear_console();
-    for (int i = 0; i < loading_len; ++i) {
-        printf("[%s] %s\n", loading->loading_item[i]->item ? "OK" : "..", loading->loading_item[i]->name);
-    }
+//    loading->loading_item[loading_index]->item = 1;
+//    clear_console();
+//    for (int i = 0; i < loading_len; ++i) {
+//        printf("[%s] %s\n", loading->loading_item[i]->item ? "OK" : "..", loading->loading_item[i]->name);
+//    }
 }
 
 void display_default_map(Map *map, Board *board) {
@@ -161,3 +157,76 @@ void display_default_map(Map *map, Board *board) {
 void display_waiting_for_player(Board *board) {
     infof("En attente du joueur");
 }
+
+
+//
+int update_flowers(Flower *flower) {
+    int random = random_between(0, flower->flowers_len + 1);
+    if(flower->flowers[random] == flower->flower_steps[flower->flowers_steps_len - 1]) {
+        return 0;
+    }
+    for (int i = 0; i < flower->flowers_steps_len - 1; ++i) {
+        if(flower->flowers[random] == flower->flower_steps[i]) {
+            flower->flowers[random] = flower->flower_steps[i + 1];
+            return 1;
+        }
+    }
+}
+
+DWORD WINAPI display_flower(Flower *flower) {
+    clock_t begin = clock();
+    double delta_ms = 0;
+    
+    while((int)delta_ms < 4250) {
+        clock_t end = clock();
+        delta_ms = ((double)(end - begin) / CLOCKS_PER_SEC * 1000000.0)/1000;
+
+        update_flowers(flower);
+        usleep(3333);
+    }
+    return 0;
+}
+
+
+
+DWORD WINAPI display_opening_credits(int *wait) {
+    Flower *flower = malloc(sizeof(Flower));
+    int columns = 14;
+    flower->flowers_len = 7 * columns;
+    flower->flowers_steps_len = 3;
+    flower->flower_steps[0] = '.';
+    flower->flower_steps[1] = 'o';
+    flower->flower_steps[2] = 'O';
+    for (int i = 0; i < flower->flowers_len; ++i) {
+        flower->flowers[i] = flower->flower_steps[0];
+    }
+
+    CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) display_flower, flower, 0, NULL);
+
+    clock_t begin = clock();
+    double delta_ms = 0;
+    flower->start = 1;
+    while((int)delta_ms < 5000) {
+        clock_t end = clock();
+        delta_ms = ((double)(end - begin) / CLOCKS_PER_SEC * 1000000.0)/1000;
+
+        if(update_flowers(flower)) {
+            clear_console();
+            printf("Chargement...\n\n\t\t");
+            for (int i = 1; i < flower->flowers_len; ++i) {
+                printf("%c", flower->flowers[i]);
+                if(i % columns == 0) {
+                    printf("\n\t\t");
+                }
+            }
+        } else {
+            continue;
+        }
+        usleep(1000000.0 / 250.0);
+    }
+    free(flower);
+    flower = NULL;
+    *wait = 0;
+    return 0;
+}
+
