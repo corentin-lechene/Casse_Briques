@@ -145,56 +145,7 @@ void move_bot(Board *board) {
     decrement_bomb(board);
     explose_bombs(board);
 }
-
-/* ---------------------------------------- */
-
-void run_game(Board *board) {
-    players_are_dead(board);
-    //Il y a une victoire ?
-    if(board->nb_player == 1) {
-        display_next_menu(board, menu_winner_summary, &menu_winner_summary_case);
-        return;
-    }
-
-    //Plus de joueur réel
-    int only_bot = 1;
-    for (int i = 0; i < board->nb_player; ++i) {
-        if(board->players[i]->is_bot == 0) {
-            only_bot = 0;
-        }
-    }
-    
-    //si plus de joueur réel
-    if(only_bot) {
-        if(kbhit()) {
-            //Finir le jeu
-            int t = 0;
-            while (board->nb_player > 1) {
-                players_are_dead(board);
-                move_bot(board);
-                t++;
-                if(t == 20000) {
-                    break;
-                }
-            }
-            display_next_menu(board, menu_winner_summary, &menu_winner_summary_case);
-            return;
-        } else {
-            //Regarde le jeu
-            move_bot(board);
-            display_board(board);
-            return;
-        }
-    }
-    
-    //Bouger les bots
-    if(board->players[board->player_turn]->is_bot) {
-        move_bot(board);
-        display_board(board);
-        return;
-    }
-    
-    //Déplacement du joueur réel
+void move_player_real_time(Board *board) {
     if (kbhit()) {
         int event = my_getch();
         const char *event_name = get_event(event);
@@ -218,13 +169,81 @@ void run_game(Board *board) {
         } else if (strcmp(event_name, "resume") == 0) {
             display_next_menu(board, menu_resume, &menu_resume_case);
             return;
-        }else if (strcmp(event_name, "pass") == 0) {
+        } else if (strcmp(event_name, "pass") == 0) {
             set_player_turn(board);
             decrement_bomb(board);
             explose_bombs(board);
             display_board(board);
             return;
         }
+    }
+}
+int is_victory(Board *board) {
+    players_are_dead(board);
+    if(board->nb_player == 1) {
+        display_next_menu(board, menu_winner_summary, &menu_winner_summary_case);
+        return 1;
+    }
+    return 0;
+}
+
+/* ---------------------------------------- */
+
+
+void run_game_local(Board *board) {
+    if(is_victory(board)) {
+        return;
+    }
+
+    //Plus de joueur réel
+    int only_bot = 1;
+    for (int i = 0; i < board->nb_player; ++i) {
+        if(board->players[i]->is_bot == 0) {
+            only_bot = 0;
+        }
+    }
+
+    //si plus de joueur réel
+    if(only_bot) {
+        if(kbhit()) {
+            //Finir le jeu
+            int t = 0;
+            while (board->nb_player > 1) {
+                players_are_dead(board);
+                move_bot(board);
+                t++;
+                if(t == 20000) {
+                    break;
+                }
+            }
+            display_next_menu(board, menu_winner_summary, &menu_winner_summary_case);
+            return;
+        } else {
+            //Regarde le jeu
+            move_bot(board);
+            display_board(board);
+            return;
+        }
+    }
+
+    //Bouger les bots
+    if(board->players[board->player_turn]->is_bot) {
+        move_bot(board);
+        display_board(board);
+        return;
+    }
+
+    //Déplacement du joueur réel
+    move_player_real_time(board);
+}
+
+void run_game(Board *board) {
+    if(board->game_mode == GAME_MODE_LOCAL) {
+        run_game_local(board);
+    } else if(board->game_mode == GAME_MODE_HOST) {
+        
+    } else if(board->game_mode == GAME_MODE_CLIENT) {
+        
     }
 }
 void run_menu(Board *board) {

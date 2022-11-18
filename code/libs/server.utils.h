@@ -62,6 +62,7 @@ int is_player_join(Board *board) {
     Server *server = board->server;
     int size_ser_sock_addr = sizeof(server->client_socket_addr);
     server->client_socket = accept(server->server_socket, (SOCKADDR *)&server->client_socket_addr, &size_ser_sock_addr);
+    return 1;
 }
 
 int is_player_start_game(Board *board) {
