@@ -15,6 +15,9 @@
 #define GAME_MODE_CLIENT 1
 #define GAME_MODE_LOCAL 2
 
+#define PLAYER_ID_HOST 0
+#define PLAYER_ID_CLIENT 1
+
 #define BUFLEN 255
 #define PORT 27015
 #define RESPONSE_SUCCESS "response:success"
@@ -382,10 +385,10 @@ typedef struct {
 
     unsigned short bo;
     unsigned short current_menu;
-    unsigned short previous_menu;
     unsigned short current_choice;
     unsigned short current_map;
     unsigned short player_turn;
+    unsigned short my_player_id;
     short *selected_maps;
     short game_mode;
     Flower *flower;

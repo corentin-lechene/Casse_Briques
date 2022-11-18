@@ -98,6 +98,9 @@ void init_players(Board *board) {
 }
 
 void set_player_turn(Board *board) {
+    if(board->game_mode == GAME_MODE_HOST) {
+        //todo send_play
+    }
     board->player_turn = board->player_turn + 1 >= board->nb_player ? 0 : board->player_turn + 1;
 }
 void set_player_direction(char event, Board *board) {

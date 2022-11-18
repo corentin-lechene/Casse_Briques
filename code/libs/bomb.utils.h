@@ -469,6 +469,8 @@ void remove_player(Player *player, Board *board) {
 void players_are_dead(Board *board) {
     for (int i = 0; i < board->nb_player; ++i) {
         if(board->players[i]->heart == 0) {
+            //todo send_end_game(board->players[i], board); 
+            //todo (à l'interieur : if(board->game_mode == PLAYER_ID_HOST) send_win || send_dead
             remove_player(board->players[i], board);
         }
     }

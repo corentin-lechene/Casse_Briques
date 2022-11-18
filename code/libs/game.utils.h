@@ -145,7 +145,7 @@ void move_bot(Board *board) {
     decrement_bomb(board);
     explose_bombs(board);
 }
-void move_player_real_time(Board *board) {
+void move_player_local(Board *board) {
     if (kbhit()) {
         int event = my_getch();
         const char *event_name = get_event(event);
@@ -234,14 +234,59 @@ void run_game_local(Board *board) {
     }
 
     //Déplacement du joueur réel
-    move_player_real_time(board);
+    move_player_local(board);
+}
+void run_game_host(Board *board) {
+    if(is_victory(board)) {
+        return;
+    }
+
+    if(board->my_player_id == PLAYER_ID_CLIENT) {
+        //todo get_move_client_player
+    }
+    
+    if (kbhit()) {
+        int event = my_getch();
+        const char *event_name = get_event(event);
+
+        if(event_name == NULL) {
+            //todo send_failure
+            return;
+        }
+
+        if (strcmp(event_name, "move") == 0) {
+            set_player_direction(event, board);
+            if(move_player(board)) {
+                decrement_bomb(board);
+                explose_bombs(board);
+                display_board(board);
+                return;
+            }
+        } else if (strcmp(event_name, "bomb") == 0) {
+            if(plant_bomb(board)){
+                set_player_turn(board);
+                display_board(board);
+                return;
+            }
+        } else if (strcmp(event_name, "resume") == 0) {
+            display_next_menu(board, menu_resume, &menu_resume_case);
+            return;
+        } else if (strcmp(event_name, "pass") == 0) {
+            set_player_turn(board);
+            decrement_bomb(board);
+            explose_bombs(board);
+            display_board(board);
+            return;
+        }
+        //todo send_failure
+    }
 }
 
 void run_game(Board *board) {
     if(board->game_mode == GAME_MODE_LOCAL) {
         run_game_local(board);
     } else if(board->game_mode == GAME_MODE_HOST) {
-        
+        run_game_host(board);
     } else if(board->game_mode == GAME_MODE_CLIENT) {
         
     }

@@ -5,8 +5,15 @@ int join_server(char *port, Board *board);
 int is_player_join(Board *board);
 int is_player_start_game(Board *board); //todo
 
+void send_leave(Board *board); //todo
+void send_play(Board *board); //todo
+void send_failure(Board *board); //todo
+void send_win(Board *board); //todo
+void send_dead(Board *board); //todo
 void send_player_leave(Board *board); //todo
-int is_player_sent_leave(Board *board); //todo
+void get_player_event(Board *board); //todo
+void send_start_game(Board *board); //todo
+void send_end_game(Player *player, Board *board); //todo
 
 
 /* ----------------------------------- */
