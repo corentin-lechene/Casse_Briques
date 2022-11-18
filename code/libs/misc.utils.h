@@ -350,9 +350,13 @@ typedef struct {
 
 
 typedef struct {
-    char send_buf[BUFLEN];
-    char recv_buf[BUFLEN];
+    int res;
+    int res_len;
+    int res_send;
+    int res_send_len;
     SOCKET client_socket;
+    char recv_buf[BUFLEN];
+    char send_buf[BUFLEN];
     char ip[16];
     char port[5];
 } Client;

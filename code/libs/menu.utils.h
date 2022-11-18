@@ -280,7 +280,7 @@ void menu_wait_players_case(Board *board) {
     } else {
         infof("Le joueur est entrain de choisir les cartes");
         printf("Veuillez patienter...\n");
-        if(is_player_start_game(board)) {
+        if(game_is_started(board)) {
             board->current_menu = menu_game;
         }
     }
@@ -291,21 +291,30 @@ void menu_client_case(Board *board) {
 
     char res[25];
     int client_connected = 0;
+    int count = 0;
+    char *ip = "192.168.1.36";
     do {
         clear_console();
         display_menu_header(board);
+        if(count > 0) {
+            text_color(color_red);
+            printf("Erreur-> connexion impossible, veuillez reessayer.\n");
+            text_color_default();
+        }
         infof("Exemple d'ip : 192.168.1.18");
         infof("Exemple de port : 27015");
         printf("Saisir le port : ");
         fflush(stdin);
         scanf("%s", res);
+        count++;
+        printf("\nConnexion en cours sur l'IP %s:%s...", res);
         
         if(join_server(res, board) != SOCKET_ERROR) {
             client_connected = 1;
             infof("\n\nConnexion réussite...");
         }
         
-    } while(client_connected != 1);
+    } while(client_connected == 0);
 
     display_next_menu(board, menu_wait_players, &menu_wait_players_case);
 }

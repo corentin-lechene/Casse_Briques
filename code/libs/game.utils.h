@@ -288,7 +288,7 @@ void run_game(Board *board) {
     } else if(board->game_mode == GAME_MODE_HOST) {
         run_game_host(board);
     } else if(board->game_mode == GAME_MODE_CLIENT) {
-        
+        exit_error("gg");
     }
 }
 void run_menu(Board *board) {
@@ -343,6 +343,14 @@ void init_game(Board *board) {
     init_map(board);
     board->maps[board->current_map]->bombs = malloc(sizeof (Bomb *));
     board->maps[board->current_map]->nb_bomb = 0;
+    
+    if(board->game_mode == GAME_MODE_HOST) {
+        if(!send_start_game(board)) {
+            display_next_menu(board, menu_home, &menu_home_case);
+            return;
+        }
+    }
+    
     display_board(board);
     board->current_menu = menu_game;
 }
