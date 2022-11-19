@@ -112,8 +112,7 @@ int send_play(Board *board){
 }
 
 int send_leave(Board *board){
-    char *encoded_map = set_encoded_map(board->maps[board->current_map]);
-    return send_message(str_cat(RESPONSE_EXIT,encoded_map), board);
+    return send_message(str_cat(RESPONSE_EXIT, "map:"), board);
 }
 
 int send_failure(Board *board){
@@ -147,7 +146,7 @@ char *set_attribute(int value, char *name){
 char *set_encoded_map(Map *map){
     char *info_rows = set_attribute(map->rows, "Rows:");
     char *info_columns = set_attribute(map->columns, "Columns:");
-    char *info_map = strcat(info_rows, info_columns);
+    char *info_map = str_cat(info_rows, info_columns);
 
     char *encoded_map = malloc(sizeof (char)*(map->rows*map->columns));
     int index = 0;
@@ -158,6 +157,9 @@ char *set_encoded_map(Map *map){
         }
     }
     encoded_map = str_cat(info_map, str_cat(encoded_map, ";"));
+    free(info_columns);
+    free(info_rows);
+    free(info_map);
     return encoded_map;
 }
 

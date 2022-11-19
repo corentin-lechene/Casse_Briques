@@ -302,25 +302,33 @@ void menu_client_case(Board *board) {
     
     do {
         clear_console();
+        count_ip = 0;
+        count_port = 0;
+        
         if(count > 0) {
             text_color(color_red);
-            printf("Erreur-> connexion impossible, veuillez reessayer.\n");
+            printf("Erreur-> connexion impossible, veuillez reessayer.\n\n");
             text_color_default();
         }
         
         do {
             if(count_ip > 0) {
+                clear_console();
                 text_color(color_red);
                 printf("Erreur-> l'ip est incorrecte, veuillez reessayer.\n");
                 text_color_default();
             }
             
             infof("Exemple d'ip : 192.168.1.18");
-            printf("Saisir l'ip : ");
+            printf("Saisir l'ip (q pour quitter) : ");
             fflush(stdin);
             scanf("%s", ip);
             count_ip++;
-        } while(strlen(ip) < 8 && strlen(ip) > 15);
+            if(strcmp(ip, "q") == 0) {
+                display_next_menu(board, menu_online, &menu_online_case);
+                return;
+            }
+        } while(!(strlen(ip) > 8 && strlen(ip) <= 15));
         
         do {
             clear_console();
@@ -331,9 +339,13 @@ void menu_client_case(Board *board) {
             }
 
             infof("Exemple de port : 27015");
-            printf("Saisir le port : ");
+            printf("Saisir le port (q pour quitter): ");
             fflush(stdin);
             scanf("%s", port);
+            if(strcmp(port, "q") == 0) {
+                display_next_menu(board, menu_online, &menu_online_case);
+                return;
+            }
             count_port++;
         } while(strlen(port) != 5);
 

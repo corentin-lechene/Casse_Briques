@@ -155,7 +155,7 @@ void display_default_map(Map *map, Board *board) {
 }
 
 void display_waiting_for_player(Board *board) {
-    printf("En attente du joueur");
+    printf("En attente du joueur...\n");
 }
 
 
