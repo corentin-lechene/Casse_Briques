@@ -160,7 +160,7 @@ void display_waiting_for_player(Board *board) {
 
 
 //
-int update_flowers(Flower *flower) {
+int _update_flowers(Flower *flower) {
     int random = random_between(0, flower->flowers_len + 1);
     if(flower->flowers[random] == flower->flower_steps[flower->flowers_steps_len - 1]) {
         return 0;
@@ -173,7 +173,7 @@ int update_flowers(Flower *flower) {
     }
 }
 
-DWORD WINAPI display_flower(Flower *flower) {
+DWORD WINAPI _display_flower(Flower *flower) {
     clock_t begin = clock();
     double delta_ms = 0;
     
@@ -181,7 +181,7 @@ DWORD WINAPI display_flower(Flower *flower) {
         clock_t end = clock();
         delta_ms = ((double)(end - begin) / CLOCKS_PER_SEC * 1000000.0)/1000;
 
-        update_flowers(flower);
+        _update_flowers(flower);
         usleep(3333);
     }
     return 0;
@@ -201,7 +201,7 @@ DWORD WINAPI display_opening_credits(int *wait) {
         flower->flowers[i] = flower->flower_steps[0];
     }
 
-    CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) display_flower, flower, 0, NULL);
+    CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) _display_flower, flower, 0, NULL);
 
     clock_t begin = clock();
     double delta_ms = 0;
@@ -210,7 +210,7 @@ DWORD WINAPI display_opening_credits(int *wait) {
         clock_t end = clock();
         delta_ms = ((double)(end - begin) / CLOCKS_PER_SEC * 1000000.0)/1000;
 
-        if(update_flowers(flower)) {
+        if(_update_flowers(flower)) {
             clear_console();
             printf("Chargement...\n\n\t\t");
             for (int i = 1; i < flower->flowers_len; ++i) {

@@ -63,7 +63,7 @@ int join_server(char *ip, char *port, Board *board) {
     WSAStartup(MAKEWORD(2,0), &WSAData);
     
     client->client_socket = socket(AF_INET, SOCK_STREAM, 0);
-    server_socket_addr.sin_addr.s_addr = inet_addr(ip); // 172.20.10.7
+    server_socket_addr.sin_addr.s_addr = inet_addr(ip);
     server_socket_addr.sin_family = AF_INET;
     server_socket_addr.sin_port = htons(atol(port));
 
@@ -79,9 +79,7 @@ int is_player_join(Board *board) {
 
 int send_start_game(Board *board) {
     Server *server = board->server;
-
     char *encoded_map = set_encoded_map(board->maps[board->current_map]);
-
     char *message = str_cat(RESPONSE_START, encoded_map);
     server->res = send(server->client_socket, message, strlen(message)+1, 0);
     if(server->res == SOCKET_ERROR) {
@@ -163,6 +161,30 @@ char *set_encoded_map(Map *map){
     return encoded_map;
 }
 
+
+int await_response(Board *board) {
+    if(board->game_mode == GAME_MODE_HOST) {
+        Server *server = board->server;
+        do {
+            server->res = recv(server->client_socket, server->recv_buf, sizeof(BUFLEN), 0);
+            if(server->res > 0) {
+                server->recv_buf[server->res] = '\0';
+                break;
+            }
+        } while(1);
+    } else {
+        Client *client = board->client;
+        do {
+            client->res = recv(client->client_socket, client->recv_buf, sizeof(BUFLEN), 0);
+            if(client->res > 0) {
+                client->recv_buf[client->res] = '\0';
+                break;
+            }
+        } while(1);
+        return 1;
+    }
+    return 0;
+}
 
 int game_is_started(Board *board) {
     Client *client = board->client;

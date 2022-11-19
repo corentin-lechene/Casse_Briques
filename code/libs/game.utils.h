@@ -291,7 +291,35 @@ void run_game_host(Board *board) {
 }
 
 void run_game_client(Board *board) {
-    
+    if(await_response(board)) {
+        char *response = get_response(board->client->recv_buf);
+
+        if(strcmp(response, RESPONSE_EXIT) == 0) {
+            closesocket(board->client->client_socket);
+            WSACleanup();
+            display_next_menu(board, menu_home, &menu_home_case);
+            return;
+        }
+        if(strcmp(response, RESPONSE_OK) == 0) {
+            board->player_turn = PLAYER_ID_HOST;
+            response = NULL;
+            return;
+        }
+
+        if(strcmp(response, RESPONSE_PLAY) == 0) {
+            board->player_turn = PLAYER_ID_CLIENT;
+        } else if(strcmp(response, RESPONSE_WIN) == 0) {
+            //todo affiche tu as gagne
+        } else if(strcmp(response, RESPONSE_DEAD) == 0) {
+            //todo affiche tu as perdu
+        }
+        
+        if(board->player_turn == PLAYER_ID_CLIENT) {
+//            Map *map = get_response_map(board);
+//            Affiche la map
+            send_message(get_event(my_getch()), board);
+        }
+    }
 }
 
 void run_game(Board *board) {
