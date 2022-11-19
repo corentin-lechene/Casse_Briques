@@ -5,19 +5,21 @@ int join_server(char *ip, char *port, Board *board);
 int is_player_join(Board *board);
 int is_player_start_game(Board *board); //todo
 
-int send_leave(Board *board); 
-int send_play(Board *board); 
-int send_failure(Board *board); 
-int send_win(Board *board); 
-int send_dead(Board *board); 
+int send_leave(Board *board);
+int send_play(Board *board);
+int send_failure(Board *board);
+int send_win(Board *board);
+int send_dead(Board *board);
 int send_player_leave(Board *board); //todo
-int send_start_game(Board *board); 
+int send_start_game(Board *board);
 char *get_player_event(Board *board); //todo
 
 char *set_encoded_map(Map *map);
 int send_message(char *msg, Board *board);
 char *set_attribute(int value, char *name);
 char *get_response(const char *message);
+Map *get_decoded_map(char *message);
+void set_map(char *token, Map *map);
 
 
 /* ----------------------------------- */
@@ -62,7 +64,7 @@ int join_server(char *ip, char *port, Board *board) {
     WSAStartup(MAKEWORD(2,0), &WSAData);
     
     client->client_socket = socket(AF_INET, SOCK_STREAM, 0);
-    server_socket_addr.sin_addr.s_addr = inet_addr(ip);
+    server_socket_addr.sin_addr.s_addr = inet_addr(ip); // 172.20.10.7
     server_socket_addr.sin_family = AF_INET;
     server_socket_addr.sin_port = htons(atol(port));
 
@@ -96,7 +98,6 @@ char *get_response(const char *message){
     char *response = malloc(sizeof (char)*nb_char);
     int i =0;
     int j = 0;
-    printf("[%s]", message);
     while(message[i] != '\0'){
         i++;
         if(message[i] == ':'){
@@ -111,6 +112,49 @@ char *get_response(const char *message){
         }
     }
 }
+
+
+Map *get_decoded_map(char *message) {
+    const char *separators = ";";
+    int tab[2];
+    int i = 0;
+    int cpt = 0;
+    Map *map = malloc(sizeof (Map));
+    char * strToken = strtok ( message, separators );
+    while ( strToken != NULL ) {
+        cpt ++;
+        char *tmp = str_get_right(strToken, ':');
+        //Recup de colonnes et lignes
+        if(cpt == 2 || cpt == 3){
+            tab[i] = atoi(tmp);
+            i++;
+        }
+        if(cpt == 4){
+            map->rows = tab[0];
+            map->columns = tab[1];
+            set_map(strToken,map);
+            break;
+        }
+        // On demande le token suivant.
+        strToken = strtok ( NULL, separators );
+    }
+    return map;
+}
+
+void set_map(char *token, Map *map){
+    map->body = malloc(sizeof(char *) * map->rows);
+    for (int i = 0; i < map->rows; ++i) {
+        map->body[i] = malloc(sizeof(char) * map->columns);
+    }
+    int k = 0;
+    for(int i = 0; i<map->rows; i++){
+        for(int j = 0; j<map->columns; j++){
+            map->body[i][j] = token[k];
+            k++;
+        }
+    }
+}
+
 
 
 int send_play(Board *board){
@@ -163,7 +207,6 @@ char *set_encoded_map(Map *map){
             index += 1;
         }
     }
-    encoded_map[index] = '\0';
     encoded_map = str_cat(info_map, str_cat(encoded_map, ";"));
     free(info_columns);
     free(info_rows);
@@ -194,7 +237,7 @@ int await_response(Board *board) {
                 pause();
                 return 0;
             }
-            
+
             if(client->res > 0) {
                 client->recv_buf[client->res] = '\0';
                 break;
