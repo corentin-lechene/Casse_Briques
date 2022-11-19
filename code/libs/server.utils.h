@@ -1,6 +1,6 @@
 
 int create_server(Board *board);
-int join_server(char *port, Board *board);
+int join_server(char *ip, char *port, Board *board);
 
 int is_player_join(Board *board);
 int is_player_start_game(Board *board); //todo
@@ -24,6 +24,8 @@ char *set_attribute(int value, char *name);
 
 
 int create_server(Board *board) {
+    struct hostent *localHost;
+    
     board->server = malloc(sizeof(Server));
     Server *server = board->server;
     
@@ -35,7 +37,11 @@ int create_server(Board *board) {
     WSAStartup(MAKEWORD(2,0), &WSAData);
     
     server->server_socket = socket(AF_INET, SOCK_STREAM, 0);
-    server_socket_addr.sin_addr.s_addr = INADDR_ANY;
+
+    localHost = gethostbyname("");
+    server->ip = inet_ntoa (*(struct in_addr *)*localHost->h_addr_list);
+    
+    server_socket_addr.sin_addr.s_addr = inet_addr(server->ip);
     server_socket_addr.sin_family = AF_INET;
     server_socket_addr.sin_port = htons(PORT);
 
@@ -45,7 +51,7 @@ int create_server(Board *board) {
     return 1;
 }
 
-int join_server(char *port, Board *board) {
+int join_server(char *ip, char *port, Board *board) {
     board->client = malloc(sizeof(Client));
     Client *client = board->client;
 
@@ -56,7 +62,7 @@ int join_server(char *port, Board *board) {
     WSAStartup(MAKEWORD(2,0), &WSAData);
     
     client->client_socket = socket(AF_INET, SOCK_STREAM, 0);
-    server_socket_addr.sin_addr.s_addr = inet_addr("172.20.10.7"); // 172.20.10.7
+    server_socket_addr.sin_addr.s_addr = inet_addr(ip); // 172.20.10.7
     server_socket_addr.sin_family = AF_INET;
     server_socket_addr.sin_port = htons(atol(port));
 

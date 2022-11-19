@@ -153,6 +153,7 @@ void menu_maps_case(Board *board) {
         board->current_menu = menu_game_mode;
         clear_console();
         menu_game_mode_case(board);
+//todo    send_exit(board);        
         return;
     }
 
@@ -271,14 +272,18 @@ void menu_host_case(Board *board) {
 void menu_wait_players_case(Board *board) {
     clear_console();
     display_menu_header(board);
-    display_waiting_for_player(board);
 
     if(board->game_mode == GAME_MODE_HOST) {
+        text_color(color_light_blue);
+        printf("[INFO] -> Vos informations de connexion : \n\tIP: %s, \n\tPort: %d\n", board->server->ip, PORT);
+        text_color_default();
+        display_waiting_for_player(board);
         if(is_player_join(board)) {
             display_next_menu(board, menu_maps, &menu_maps_case);
         }
     } else {
         infof("Le joueur est entrain de choisir les cartes");
+        display_waiting_for_player(board);
         printf("Veuillez patienter...\n");
         if(game_is_started(board)) {
             board->current_menu = menu_game;
@@ -289,31 +294,54 @@ void menu_wait_players_case(Board *board) {
 void menu_client_case(Board *board) {
     board->game_mode = GAME_MODE_CLIENT;
 
-    char res[25];
+    char port[10];
     int client_connected = 0;
-    int count = 0;
-    char *ip = "192.168.1.36";
+    int count = 0, count_ip = 0, count_port = 0;
+    char ip[30];
+    
+    
     do {
         clear_console();
-        display_menu_header(board);
         if(count > 0) {
             text_color(color_red);
             printf("Erreur-> connexion impossible, veuillez reessayer.\n");
             text_color_default();
         }
-        infof("Exemple d'ip : 192.168.1.18");
-        infof("Exemple de port : 27015");
-        printf("Saisir le port : ");
-        fflush(stdin);
-        scanf("%s", res);
-        count++;
-        printf("\nConnexion en cours sur %s:%s...", ip, res);
         
-        if(join_server(res, board) != SOCKET_ERROR) {
+        do {
+            if(count_ip > 0) {
+                text_color(color_red);
+                printf("Erreur-> l'ip est incorrecte, veuillez reessayer.\n");
+                text_color_default();
+            }
+            
+            infof("Exemple d'ip : 192.168.1.18");
+            printf("Saisir l'ip : ");
+            fflush(stdin);
+            scanf("%s", ip);
+            count_ip++;
+        } while(strlen(ip) < 8 && strlen(ip) > 15);
+        
+        do {
+            clear_console();
+            if(count_port > 0) {
+                text_color(color_red);
+                printf("Erreur-> le port est incorrect, veuillez reessayer.\n");
+                text_color_default();
+            }
+
+            infof("Exemple de port : 27015");
+            printf("Saisir le port : ");
+            fflush(stdin);
+            scanf("%s", port);
+            count_port++;
+        } while(strlen(port) != 5);
+
+        if(join_server(ip, port, board) != SOCKET_ERROR) {
             client_connected = 1;
             infof("\n\nConnexion réussite...");
         }
-        
+        count++;
     } while(client_connected == 0);
 
     display_next_menu(board, menu_wait_players, &menu_wait_players_case);

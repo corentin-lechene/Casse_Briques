@@ -20,12 +20,12 @@
 
 #define BUFLEN 255
 #define PORT 27015
-#define RESPONSE_START "response:start"
-#define RESPONSE_FAILURE "response:failure"
-#define RESPONSE_PLAY "response:play"
-#define RESPONSE_WIN "response:win"
-#define RESPONSE_DEAD "response:dead"
-#define RESPONSE_EXIT "response:exit"
+#define RESPONSE_START "response:start;"
+#define RESPONSE_FAILURE "response:failure;"
+#define RESPONSE_PLAY "response:play;"
+#define RESPONSE_WIN "response:win;"
+#define RESPONSE_DEAD "response:dead;"
+#define RESPONSE_EXIT "response:exit;"
 
 
 enum colors_index {
@@ -337,7 +337,7 @@ typedef struct {
     SOCKET client_socket;
     SOCKET server_socket;
     SOCKADDR_IN client_socket_addr;
-    char ip[16];
+    char *ip;
     char port[5];
 } Server;
 
@@ -350,7 +350,7 @@ typedef struct {
     SOCKET client_socket;
     char recv_buf[BUFLEN];
     char send_buf[BUFLEN];
-    char ip[16];
+    char *ip;
     char port[5];
 } Client;
 
