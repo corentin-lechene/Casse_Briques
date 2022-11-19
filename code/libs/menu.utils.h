@@ -285,9 +285,37 @@ void menu_wait_players_case(Board *board) {
         display_waiting_for_player(board);
         printf("Veuillez patienter...\n");
         if(game_is_started(board)) {
+            board->nb_player = 2;
             board->player_turn = PLAYER_ID_HOST;
             board->current_menu = menu_game;
-            //todo afficher la carte
+            board->players = malloc(sizeof(Player *) * 2);
+            board->players[0] = malloc(sizeof(Player));
+            board->players[0]->id = PLAYER_ID_HOST;
+            board->players[0]->color = color_green;
+            board->players[1] = malloc(sizeof(Player));
+            board->players[1]->id = PLAYER_ID_CLIENT;
+            board->players[1]->color = color_cyan;
+
+            display_menu_header(board);
+            clear_console();
+            Map *map = get_decoded_map(board->client->recv_buf);
+            for (int i = 0; i < map->rows; ++i) {
+                for (int j = 0; j < map->columns; ++j) {
+                    if(map->body[i][j] == '0' || map->body[i][j] == '1') {
+                        for (int k = 0; k < board->nb_player; ++k) {
+                            if (map->body[i][j] == board->players[k]->id + 48) {
+                                text_color(board->players[k]->color);
+                                printf("%c", map->body[i][j]);
+                                text_color_default();
+                                break;
+                            }
+                        }
+                    } else {
+                        printf("%c", _convert_item(map->body[i][j], board));
+                    }
+                }
+                printf("\n");
+            }
         } else {
             display_next_menu(board, menu_home, &menu_home_case);
         }

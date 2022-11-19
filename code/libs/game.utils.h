@@ -240,22 +240,25 @@ void run_game_host(Board *board) {
     if(is_victory(board)) {
         return;
     }
-
     
-    char *event_name_client = NULL;
+    int got_response = 0;
     if(board->player_turn == PLAYER_ID_CLIENT) {
         if(await_response(board)) {
-            event_name_client = board->server->recv_buf;
+           got_response = 1;
         }
     }
     
-    if (kbhit() || event_name_client != NULL ) {
+    if (kbhit() || got_response ) {
         int event;
         char *event_name;
         
-        if(event_name_client == NULL) {
+        if(got_response == 0) {
             event = my_getch();
             event_name = get_event(event);
+        } else {
+            event = atoi(board->server->recv_buf);
+            event_name = get_event(event);
+            got_response = 0;
         }
         
         if(event_name == NULL) {
@@ -298,6 +301,7 @@ void run_game_host(Board *board) {
 void run_game_client(Board *board) {
     if(await_response(board)) {
         char *response = get_response(board->client->recv_buf);
+        printf("[%s] -> response : %s\n", board->client->recv_buf, response);
 
         if(strcmp(response, "exit") == 0) {
             closesocket(board->client->client_socket);
@@ -305,48 +309,62 @@ void run_game_client(Board *board) {
             display_next_menu(board, menu_home, &menu_home_case);
             return;
         }
-        if(strcmp(response, "ok") == 0) {
-            board->player_turn = PLAYER_ID_HOST;
-            response = NULL;
-            return;
-        }
 
         if(strcmp(response, "play") == 0) {
-            board->player_turn = PLAYER_ID_CLIENT;
+            set_player_turn(board);
+            display_menu_header(board);
+            clear_console();
+            Map *map = get_decoded_map(board->client->recv_buf);
+            for (int i = 0; i < map->rows; ++i) {
+                for (int j = 0; j < map->columns; ++j) {
+                    if(map->body[i][j] == '0' || map->body[i][j] == '1') {
+                        for (int k = 0; k < board->nb_player; ++k) {
+                            if (map->body[i][j] == board->players[k]->id + 48) {
+                                text_color(board->players[k]->color);
+                                printf("%c", map->body[i][j]);
+                                text_color_default();
+                                break;
+                            }
+                        }
+                    } else {
+                        printf("%c", _convert_item(map->body[i][j], board));
+                    }
+                }
+                printf("\n");
+            }
         } else if(strcmp(response, "win") == 0) {
             printf("Felicitation, tu as gagne !\n");
         } else if(strcmp(response, "dead") == 0) {
             printf("Tu feras mieux la prochaine fois !\n");
         }
-        
-        if(board->player_turn == PLAYER_ID_CLIENT) {
-//            Map *map = get_response_map(board);
-//            Affiche la map
-//            Map *map = malloc(sizeof(Map));
-//            map->columns = 14;
-//            map->rows = 10;
-//            char body[map->rows][] = {
-//                "x xxxxxxxxxxxx",
-//                "xp mm p mm pxx",
-//                "x  mm  mmm  xx",
-//                "x  mm  mmm  xx",
-//                "x  mm  mmm xxx",
-//                "x  mm  mmm  xx",
-//                "x  mm  mmm xxx",
-//                "x  mm  mmm  xx",
-//                "xp mm p mm pxx",
-//                "x xxxxxxxxxxxx"
-//            };
 
+        printf("au tour de : [%d]\n", board->player_turn);
+        if(board->player_turn == PLAYER_ID_CLIENT) {
             display_menu_header(board);
-//            text_color(board->players[board->player_turn]->color);
-//            printf("  %s(%d), a toi de jouer.\n", board->players[board->player_turn]->name, board->player_turn);
-//            text_color_default();
-//            for (int i = 0; i < ; ++i) {
-//                
-//            }
-            send_message(get_event(my_getch()), board);
+            clear_console();
+            Map *map = get_decoded_map(board->client->recv_buf);
+            for (int i = 0; i < map->rows; ++i) {
+                for (int j = 0; j < map->columns; ++j) {
+                    if(map->body[i][j] == '0' || map->body[i][j] == '1') {
+                        for (int k = 0; k < board->nb_player; ++k) {
+                            if (map->body[i][j] == board->players[k]->id + 48) {
+                                text_color(board->players[k]->color);
+                                printf("%c", map->body[i][j]);
+                                text_color_default();
+                                break;
+                            }
+                        }
+                    } else {
+                        printf("%c", _convert_item(map->body[i][j], board));
+                    }
+                }
+                printf("\n");
+            }
+            int event = my_getch();
+            char buf[4];
+            send_message(itoa(event, buf, 10), board);
         }
+        printf("Aucune action\n");
     } else {
         closesocket(board->client->client_socket);
         WSACleanup();
@@ -407,7 +425,7 @@ void init_game(Board *board) {
     clear_console();
     display_wait();
     set_next_map(board);
-    set_player_turn(board);
+    board->player_turn = 0;
 
     copy_maps(board);
     add_bot_player(board);
