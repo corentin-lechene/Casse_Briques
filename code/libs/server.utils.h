@@ -18,6 +18,7 @@ char *get_player_event(Board *board); //todo
 char *set_encoded_map(Map *map);
 int send_message(char *msg, Board *board);
 char *set_attribute(int value, char *name);
+char *get_response(char *response);
 
 
 /* ----------------------------------- */
@@ -93,12 +94,42 @@ int send_start_game(Board *board) {
 }
 
 
+char *get_response(char *response){
+    printf("%s", response);
+    pause();
+
+    printf("%c", response[5]);
+    pause();
+    int i =0;
+    while(response[i] != '\0' ){
+    }
+}
+
+
 int send_play(Board *board){
     char *encoded_map = set_encoded_map(board->maps[board->current_map]);
     return send_message(str_cat(RESPONSE_PLAY,encoded_map), board);
 }
 
+int send_leave(Board *board){
+    char *encoded_map = set_encoded_map(board->maps[board->current_map]);
+    return send_message(str_cat(RESPONSE_EXIT,encoded_map), board);
+}
 
+int send_failure(Board *board){
+    char *encoded_map = set_encoded_map(board->maps[board->current_map]);
+    return send_message(str_cat(RESPONSE_FAILURE,encoded_map), board);
+}
+
+int send_win(Board *board){
+    char *encoded_map = set_encoded_map(board->maps[board->current_map]);
+    return send_message(str_cat(RESPONSE_WIN,encoded_map), board);
+}
+
+int send_dead(Board *board){
+    char *encoded_map = set_encoded_map(board->maps[board->current_map]);
+    return send_message(str_cat(RESPONSE_DEAD,encoded_map), board);
+}
 
 int send_message(char *msg, Board *board){
     if(board->game_mode == GAME_MODE_HOST) {
@@ -110,13 +141,13 @@ int send_message(char *msg, Board *board){
 char *set_attribute(int value, char *name){
     char *buf = malloc(sizeof (char) * 3);
     itoa(value, buf, 10);
-    return str_cat(name, buf);
+    return str_cat(name, str_cat(buf,";"));
 }
 
 char *set_encoded_map(Map *map){
     char *info_rows = set_attribute(map->rows, "Rows:");
-    char *info_columns = set_attribute(map->columns, ";Colums");
-    char *info_map = strcat(info_rows, str_cat(info_columns,";"));
+    char *info_columns = set_attribute(map->columns, "Columns:");
+    char *info_map = strcat(info_rows, info_columns);
 
     char *encoded_map = malloc(sizeof (char)*(map->rows*map->columns));
     int index = 0;
@@ -140,7 +171,7 @@ int game_is_started(Board *board) {
             continue;
         }
         client->recv_buf[client->res] = '\0';
-    } while(strcmp(client->recv_buf, "start") != 0);
-    //while(strcmp(get_response(client->recv_buf), RESPONSE_START) != 0);
+    } while(strcmp(client->recv_buf, "start") != 1);
     return 1;
 }
+
