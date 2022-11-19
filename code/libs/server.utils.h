@@ -19,6 +19,8 @@ char *set_encoded_map(Map *map);
 int send_message(char *msg, Board *board);
 char *set_attribute(int value, char *name);
 char *get_response(const char *message);
+Map *get_decoded_map(char *message);
+void set_map(char *token, Map *map);
 
 
 /* ----------------------------------- */
@@ -113,6 +115,49 @@ char *get_response(const char *message){
 }
 
 
+Map *get_decoded_map(char *message) {
+    const char *separators = ";";
+    int tab[2];
+    int i = 0;
+    int cpt = 0;
+    Map *map = malloc(sizeof (Map));
+    char * strToken = strtok ( message, separators );
+    while ( strToken != NULL ) {
+        cpt ++;
+        char *tmp = str_get_right(strToken, ':');
+        //Recup de colonnes et lignes
+        if(cpt == 2 || cpt == 3){
+            tab[i] = atoi(tmp);
+            i++;
+        }
+        if(cpt == 4){
+            map->rows = tab[0];
+            map->columns = tab[1];
+            set_map(strToken,map);
+            break;
+        }
+        // On demande le token suivant.
+        strToken = strtok ( NULL, separators );
+    }
+    return map;
+}
+
+void set_map(char *token, Map *map){
+    map->body = malloc(sizeof(char *) * map->rows);
+    for (int i = 0; i < map->rows; ++i) {
+        map->body[i] = malloc(sizeof(char) * map->columns);
+    }
+    int k = 0;
+    for(int i = 0; i<map->rows; i++){
+        for(int j = 0; j<map->columns; j++){
+            map->body[i][j] = token[k];
+            k++;
+        }
+    }
+}
+
+
+
 int send_play(Board *board){
     char *encoded_map = set_encoded_map(board->maps[board->current_map]);
     return send_message(str_cat(RESPONSE_PLAY,encoded_map), board);
@@ -169,6 +214,7 @@ char *set_encoded_map(Map *map){
     free(info_map);
     return encoded_map;
 }
+
 
 
 int game_is_started(Board *board) {
