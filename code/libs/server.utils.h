@@ -15,6 +15,10 @@ int send_start_game(Board *board); //todo
 int send_end_game(Player *player, Board *board); //todo
 char *get_player_event(Board *board); //todo
 
+char *set_encoded_map(Map *map);
+int send_message(char *msg, Board *board);
+char *set_attribute(int nb, char *info);
+
 
 /* ----------------------------------- */
 
@@ -52,7 +56,7 @@ int join_server(char *port, Board *board) {
     WSAStartup(MAKEWORD(2,0), &WSAData);
     
     client->client_socket = socket(AF_INET, SOCK_STREAM, 0);
-    server_socket_addr.sin_addr.s_addr = inet_addr("192.168.1.36"); // 172.20.10.7
+    server_socket_addr.sin_addr.s_addr = inet_addr("192.168.1.76"); // 172.20.10.7
     server_socket_addr.sin_family = AF_INET;
     server_socket_addr.sin_port = htons(atol(port));
 
@@ -67,11 +71,15 @@ int is_player_join(Board *board) {
 }
 
 int send_start_game(Board *board) {
+    Map *map = board->maps[board->current_map];
     Server *server = board->server;
-    
-//todo    char *message_encoded = get_message_encoded("", board); 
-    char *message = "start";
-    server->res = send(server->client_socket, message, strlen(message), 0);
+
+    char *encoded_map = malloc(sizeof (char)*map->columns*map->rows);
+    encoded_map = set_encoded_map(board->maps[board->current_map]);
+
+    //return send_message(str_cat(RESPONSE_SUCCESS,encoded_map), board);
+    char *message = str_cat(RESPONSE_SUCCESS,encoded_map);
+    server->res = send(server->client_socket, message, strlen(message)+1, 0);
     if(server->res == SOCKET_ERROR) {
         closesocket(server->client_socket);
         closesocket(server->server_socket);
@@ -81,12 +89,57 @@ int send_start_game(Board *board) {
     return 1;
 }
 
+
+int send_play(Board *board){
+    Map *map = board->maps[board->current_map];
+    Server *server = board->server;
+
+    char *encoded_map = malloc(sizeof (char)*map->columns*map->rows);
+    encoded_map = set_encoded_map(board->maps[board->current_map]);
+
+    return send_message(str_cat(RESPONSE_PLAY,encoded_map), board);
+
+}
+
+
+
+int send_message(char *msg, Board *board){
+    Server *server = board->server;
+    return send(server->client_socket, msg, strlen(msg)+1, 0);
+}
+
+char *set_attribute(int nb, char *info){
+    char *value = malloc(sizeof (char));
+    itoa(nb, value, 10);
+    return str_cat(info,value);
+}
+
+char *set_encoded_map(Map *map){
+    char *info_rows = set_attribute(map->rows, "Rows:");
+    char *info_columns = set_attribute(map->columns, ";Colums");
+    char *info_map = strcat(info_rows, str_cat(info_columns,";"));
+
+    char *encoded_map = malloc(sizeof (char)*(map->rows*map->columns));
+    int index = 0;
+    for(int i = 0; i<map->rows; i++){
+        for(int j = 0; j<map->columns; j++){
+            encoded_map[index] = map->body[i][j];
+            index += 1;
+        }
+    }
+    encoded_map = str_cat(info_map, str_cat(encoded_map, ";"));
+    return encoded_map;
+}
+
+
 int game_is_started(Board *board) {
     Client *client = board->client;
 
     do {
-        client->res = recv(client->client_socket, client->recv_buf, BUFLEN, 0);
-        if(client->res > 0) {
+        client->res = recv(client->client_socket, client->recv_buf, sizeof (BUFLEN), 0);
+        client->recv_buf[client->res] = '\0';
+
+        if(client->res <= 0) {
             continue;
         }
         client->recv_buf[client->res] = '\0';

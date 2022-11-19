@@ -20,7 +20,7 @@
 
 #define BUFLEN 255
 #define PORT 27015
-#define RESPONSE_SUCCESS "response:success"
+#define RESPONSE_SUCCESS "response:start;"
 #define RESPONSE_FAILURE "response:failure"
 #define RESPONSE_PLAY "response:play"
 #define RESPONSE_WIN "response:win"
