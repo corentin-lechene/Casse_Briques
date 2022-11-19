@@ -96,19 +96,7 @@ char *get_response(char *response){
     pause();
     int i =0;
     while(response[i] != '\0' ){
-
-
-
-
-
     }
-
-
-
-
-
-
-
 }
 
 
