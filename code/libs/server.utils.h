@@ -57,7 +57,7 @@ int join_server(char *port, Board *board) {
     WSAStartup(MAKEWORD(2,0), &WSAData);
     
     client->client_socket = socket(AF_INET, SOCK_STREAM, 0);
-    server_socket_addr.sin_addr.s_addr = inet_addr("192.168.1.76"); // 172.20.10.7
+    server_socket_addr.sin_addr.s_addr = inet_addr("172.20.10.7"); // 172.20.10.7
     server_socket_addr.sin_family = AF_INET;
     server_socket_addr.sin_port = htons(atol(port));
 
@@ -72,13 +72,11 @@ int is_player_join(Board *board) {
 }
 
 int send_start_game(Board *board) {
-    Map *map = board->maps[board->current_map];
     Server *server = board->server;
+
     char *encoded_map = set_encoded_map(board->maps[board->current_map]);
-    get_response(encoded_map);
-    pause();
-    //return send_message(str_cat(RESPONSE_SUCCESS,encoded_map), board);
-   char *message = str_cat(RESPONSE_START, encoded_map);
+
+    char *message = str_cat(RESPONSE_START, encoded_map);
     server->res = send(server->client_socket, message, strlen(message)+1, 0);
     if(server->res == SOCKET_ERROR) {
         closesocket(server->client_socket);
