@@ -122,7 +122,11 @@ void init_map(Board *board) {
     }
 }
 void set_next_map(Board *board) {
-    board->current_map = board->current_map + 1 >= board->nb_selected_map ? 0 : board->current_map + 1;
+    int random = random_between(0, board->nb_map - 1);
+    while(board->current_map == random) {
+        random = random_between(0, board->nb_map - 1);
+    }
+    board->current_map = random;
 }
 
 Coord *is_bomb_on_player(Board *board) {
