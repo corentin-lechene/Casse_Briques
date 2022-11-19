@@ -18,9 +18,10 @@
 #define PLAYER_ID_HOST 0
 #define PLAYER_ID_CLIENT 1
 
-#define BUFLEN 255
+#define BUFLEN 512
 #define PORT 27015
 #define RESPONSE_START "response:start;"
+#define RESPONSE_OK "response:ok;"
 #define RESPONSE_FAILURE "response:failure;"
 #define RESPONSE_PLAY "response:play;"
 #define RESPONSE_WIN "response:win;"

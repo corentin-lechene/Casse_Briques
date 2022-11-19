@@ -5,14 +5,13 @@ int join_server(char *ip, char *port, Board *board);
 int is_player_join(Board *board);
 int is_player_start_game(Board *board); //todo
 
-int send_leave(Board *board); //todo
-int send_play(Board *board); //todo
-int send_failure(Board *board); //todo
-int send_win(Board *board); //todo
-int send_dead(Board *board); //todo
+int send_leave(Board *board);
+int send_play(Board *board);
+int send_failure(Board *board);
+int send_win(Board *board);
+int send_dead(Board *board);
 int send_player_leave(Board *board); //todo
-int send_start_game(Board *board); //todo
-int send_end_game(Player *player, Board *board); //todo
+int send_start_game(Board *board);
 char *get_player_event(Board *board); //todo
 
 char *set_encoded_map(Map *map);
@@ -216,17 +215,51 @@ char *set_encoded_map(Map *map){
 }
 
 
+int await_response(Board *board) {
+    if(board->game_mode == GAME_MODE_HOST) {
+        Server *server = board->server;
+        do {
+            server->res = recv(server->client_socket, server->recv_buf, sizeof(BUFLEN), 0);
+            if(server->res > 0) {
+                server->recv_buf[server->res] = '\0';
+                break;
+            }
+        } while(1);
+    } else {
+        Client *client = board->client;
+        do {
+            client->res = recv(client->client_socket, client->recv_buf, BUFLEN, 0);
+
+            if (client->res == SOCKET_ERROR) {
+                printf("send failed: %d\n", WSAGetLastError());
+                closesocket(client->client_socket);
+                WSACleanup();
+                pause();
+                return 0;
+            }
+
+            if(client->res > 0) {
+                client->recv_buf[client->res] = '\0';
+                break;
+            }
+        } while(1);
+        return 1;
+    }
+    return 0;
+}
 
 int game_is_started(Board *board) {
-    Client *client = board->client;
-
-    do {
-        client->res = recv(client->client_socket, client->recv_buf, sizeof(BUFLEN), 0);
-        if(client->res <= 0) {
-            continue;
+    while(1) {
+        if(await_response(board)) {
+            if(strcmp(get_response(board->client->recv_buf), "exit") == 0) {
+                closesocket(board->client->client_socket);
+                WSACleanup();
+                return 0;
+            }
+            if(strcmp(get_response(board->client->recv_buf), "start") == 0) {
+                return 1;
+            }
         }
-        client->recv_buf[client->res] = '\0';
-    } while(strcmp(client->recv_buf, "start") != 1);
-    return 1;
+    }
 }
 

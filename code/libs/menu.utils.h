@@ -153,7 +153,7 @@ void menu_maps_case(Board *board) {
         board->current_menu = menu_game_mode;
         clear_console();
         menu_game_mode_case(board);
-//todo    send_exit(board);        
+        send_leave(board);        
         return;
     }
 
@@ -228,11 +228,10 @@ void menu_winner_summary_case(Board *board) {
     display_menu_header(board);
     printf("Bravo %s, vous avez gagne !\n", board->players[0]->name);
     for (int i = 1; i < board->maps[board->current_map]->player_max; ++i) {
-        if(board->game_mode == GAME_MODE_LOCAL) {
-            printf("Dommage a %s qui fini %d eme.\n", board->players[i]->name, i + 1);
-        } else if(i == 2) {
+        if(board->game_mode == GAME_MODE_HOST && i == 2) {
             break;
         }
+        printf("Dommage a %s qui fini %d eme.\n", board->players[i]->name, i + 1);
     }
     display_choice_continue(board);
     
@@ -286,7 +285,11 @@ void menu_wait_players_case(Board *board) {
         display_waiting_for_player(board);
         printf("Veuillez patienter...\n");
         if(game_is_started(board)) {
+            board->player_turn = PLAYER_ID_HOST;
             board->current_menu = menu_game;
+            //todo afficher la carte
+        } else {
+            display_next_menu(board, menu_home, &menu_home_case);
         }
     }
 }
