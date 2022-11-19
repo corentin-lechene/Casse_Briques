@@ -307,7 +307,7 @@ void menu_client_case(Board *board) {
         fflush(stdin);
         scanf("%s", res);
         count++;
-        printf("\nConnexion en cours sur l'IP %s:%s...", res);
+        printf("\nConnexion en cours sur %s:%s...", ip, res);
         
         if(join_server(res, board) != SOCKET_ERROR) {
             client_connected = 1;

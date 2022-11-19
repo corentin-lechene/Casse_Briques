@@ -27,13 +27,6 @@
 #define RESPONSE_DEAD "response:dead"
 #define RESPONSE_EXIT "response:exit"
 
-#define RESPONSE_START_LEN strlen(RESPONSE_START)
-#define RESPONSE_FAILURE_LEN strlen(RESPONSE_FAILURE)
-#define RESPONSE_PLAY_LEN strlen(RESPONSE_PLAY)
-#define RESPONSE_WIN_LEN strlen(RESPONSE_WIN)
-#define RESPONSE_DEAD_LEN strlen(RESPONSE_DEAD)
-#define RESPONSE_EXIT_LEN strlen(RESPONSE_EXIT)
-
 
 enum colors_index {
     color_black = 0,

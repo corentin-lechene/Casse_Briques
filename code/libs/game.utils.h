@@ -241,14 +241,22 @@ void run_game_host(Board *board) {
         return;
     }
 
-    if(board->my_player_id == PLAYER_ID_CLIENT) {
+    
+    char *event_name_client = NULL;
+    if(board->player_turn == PLAYER_ID_CLIENT) {
         //todo get_move_client_player
+//        event_name = get_response_event(board);
     }
     
-    if (kbhit()) {
-        int event = my_getch();
-        const char *event_name = get_event(event);
-
+    if (kbhit() || event_name_client != NULL ) {
+        int event;
+        char *event_name;
+        
+        if(event_name_client == NULL) {
+            event = my_getch();
+            event_name = get_event(event);
+        }
+        
         if(event_name == NULL) {
             //todo send_failure
             return;
@@ -282,13 +290,17 @@ void run_game_host(Board *board) {
     }
 }
 
+void run_game_client(Board *board) {
+    
+}
+
 void run_game(Board *board) {
     if(board->game_mode == GAME_MODE_LOCAL) {
         run_game_local(board);
     } else if(board->game_mode == GAME_MODE_HOST) {
         run_game_host(board);
     } else if(board->game_mode == GAME_MODE_CLIENT) {
-        exit_error("gg");
+        run_game_client(board);
     }
 }
 void run_menu(Board *board) {
