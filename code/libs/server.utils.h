@@ -18,7 +18,7 @@ char *get_player_event(Board *board); //todo
 char *set_encoded_map(Map *map);
 int send_message(char *msg, Board *board);
 char *set_attribute(int value, char *name);
-char *get_response(char *response);
+char *get_response(const char *message);
 
 
 /* ----------------------------------- */
@@ -79,9 +79,7 @@ int is_player_join(Board *board) {
 
 int send_start_game(Board *board) {
     Server *server = board->server;
-
     char *encoded_map = set_encoded_map(board->maps[board->current_map]);
-
     char *message = str_cat(RESPONSE_START, encoded_map);
     server->res = send(server->client_socket, message, strlen(message)+1, 0);
     if(server->res == SOCKET_ERROR) {
@@ -94,14 +92,23 @@ int send_start_game(Board *board) {
 }
 
 
-char *get_response(char *response){
-    printf("%s", response);
-    pause();
-
-    printf("%c", response[5]);
-    pause();
+char *get_response(const char *message){
+    int nb_char = 1;
+    char *response = malloc(sizeof (char)*nb_char);
     int i =0;
-    while(response[i] != '\0' ){
+    int j = 0;
+    while(message[i] != '\0'){
+        i++;
+        if(message[i] == ':'){
+            do {
+                response[j] = message[i];
+                if(message[i+1] == ';') return response;
+                i++;
+                j++;
+                nb_char++;
+                response = realloc(response, sizeof (char)*nb_char);
+            }while(message[i] != ';');
+        }
     }
 }
 
