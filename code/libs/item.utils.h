@@ -110,7 +110,6 @@ void get_item(Board *board, int item){
 int init_item(Item *item, Board *board){
     Player *player = board->players[board->player_turn];
     Map *map = board->maps[board->current_map];
-    //TODO : change char
     switch (item->data->_char) {
         case item_bomb_up :
             player->nb_bomb += 1;

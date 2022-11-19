@@ -244,8 +244,9 @@ void run_game_host(Board *board) {
     
     char *event_name_client = NULL;
     if(board->player_turn == PLAYER_ID_CLIENT) {
-        //todo get_move_client_player
-//        event_name = get_response_event(board);
+        if(await_response(board)) {
+            event_name_client = board->server->recv_buf;
+        }
     }
     
     if (kbhit() || event_name_client != NULL ) {
@@ -258,7 +259,11 @@ void run_game_host(Board *board) {
         }
         
         if(event_name == NULL) {
-            //todo send_failure
+            send_failure(board);
+            return;
+        } else if(strcmp(event_name, "exit") == 0) {
+            send_leave(board);
+            board->current_menu = menu_init_game;
             return;
         }
 
@@ -286,7 +291,7 @@ void run_game_host(Board *board) {
             display_board(board);
             return;
         }
-        //todo send_failure
+        send_failure(board);
     }
 }
 
@@ -309,9 +314,9 @@ void run_game_client(Board *board) {
         if(strcmp(response, "play") == 0) {
             board->player_turn = PLAYER_ID_CLIENT;
         } else if(strcmp(response, "win") == 0) {
-            //todo affiche tu as gagne
+            printf("Felicitation, tu as gagne !\n");
         } else if(strcmp(response, "dead") == 0) {
-            //todo affiche tu as perdu
+            printf("Tu feras mieux la prochaine fois !\n");
         }
         
         if(board->player_turn == PLAYER_ID_CLIENT) {
@@ -342,6 +347,10 @@ void run_game_client(Board *board) {
 //            }
             send_message(get_event(my_getch()), board);
         }
+    } else {
+        closesocket(board->client->client_socket);
+        WSACleanup();
+        display_next_menu(board, menu_home, &menu_home_case);
     }
 }
 
@@ -504,6 +513,8 @@ char *get_event(int event) {
 
         case KEY_ESCAPE:
             return "resume";
+        case 'p':
+            return "exit";
 
         default:
             return NULL;

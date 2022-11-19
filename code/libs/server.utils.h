@@ -5,14 +5,13 @@ int join_server(char *ip, char *port, Board *board);
 int is_player_join(Board *board);
 int is_player_start_game(Board *board); //todo
 
-int send_leave(Board *board); //todo
-int send_play(Board *board); //todo
-int send_failure(Board *board); //todo
-int send_win(Board *board); //todo
-int send_dead(Board *board); //todo
+int send_leave(Board *board); 
+int send_play(Board *board); 
+int send_failure(Board *board); 
+int send_win(Board *board); 
+int send_dead(Board *board); 
 int send_player_leave(Board *board); //todo
-int send_start_game(Board *board); //todo
-int send_end_game(Player *player, Board *board); //todo
+int send_start_game(Board *board); 
 char *get_player_event(Board *board); //todo
 
 char *set_encoded_map(Map *map);
@@ -97,6 +96,7 @@ char *get_response(const char *message){
     char *response = malloc(sizeof (char)*nb_char);
     int i =0;
     int j = 0;
+    printf("[%s]", message);
     while(message[i] != '\0'){
         i++;
         if(message[i] == ':'){
@@ -163,6 +163,7 @@ char *set_encoded_map(Map *map){
             index += 1;
         }
     }
+    encoded_map[index] = '\0';
     encoded_map = str_cat(info_map, str_cat(encoded_map, ";"));
     free(info_columns);
     free(info_rows);
@@ -184,7 +185,16 @@ int await_response(Board *board) {
     } else {
         Client *client = board->client;
         do {
-            client->res = recv(client->client_socket, client->recv_buf, sizeof(BUFLEN), 0);
+            client->res = recv(client->client_socket, client->recv_buf, BUFLEN, 0);
+
+            if (client->res == SOCKET_ERROR) {
+                printf("send failed: %d\n", WSAGetLastError());
+                closesocket(client->client_socket);
+                WSACleanup();
+                pause();
+                return 0;
+            }
+            
             if(client->res > 0) {
                 client->recv_buf[client->res] = '\0';
                 break;
@@ -203,7 +213,9 @@ int game_is_started(Board *board) {
                 WSACleanup();
                 return 0;
             }
-            return strcmp(board->client->recv_buf, "start") == 0;
+            if(strcmp(get_response(board->client->recv_buf), "start") == 0) {
+                return 1;
+            }
         }
     }
 }
