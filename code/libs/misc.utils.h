@@ -20,14 +20,14 @@
 
 #define BUFLEN 255
 #define PORT 27015
-#define RESPONSE_SUCCESS "response:start;"
+#define RESPONSE_START "response:start"
 #define RESPONSE_FAILURE "response:failure"
 #define RESPONSE_PLAY "response:play"
 #define RESPONSE_WIN "response:win"
 #define RESPONSE_DEAD "response:dead"
 #define RESPONSE_EXIT "response:exit"
 
-#define RESPONSE_SUCCESS_LEN strlen(RESPONSE_SUCCESS)
+#define RESPONSE_START_LEN strlen(RESPONSE_START)
 #define RESPONSE_FAILURE_LEN strlen(RESPONSE_FAILURE)
 #define RESPONSE_PLAY_LEN strlen(RESPONSE_PLAY)
 #define RESPONSE_WIN_LEN strlen(RESPONSE_WIN)

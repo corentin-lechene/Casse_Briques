@@ -17,7 +17,7 @@ char *get_player_event(Board *board); //todo
 
 char *set_encoded_map(Map *map);
 int send_message(char *msg, Board *board);
-char *set_attribute(int nb, char *info);
+char *set_attribute(int value, char *name);
 
 
 /* ----------------------------------- */
@@ -78,7 +78,7 @@ int send_start_game(Board *board) {
     encoded_map = set_encoded_map(board->maps[board->current_map]);
 
     //return send_message(str_cat(RESPONSE_SUCCESS,encoded_map), board);
-    char *message = str_cat(RESPONSE_SUCCESS,encoded_map);
+    char *message = str_cat(RESPONSE_START, encoded_map);
     server->res = send(server->client_socket, message, strlen(message)+1, 0);
     if(server->res == SOCKET_ERROR) {
         closesocket(server->client_socket);
@@ -91,27 +91,23 @@ int send_start_game(Board *board) {
 
 
 int send_play(Board *board){
-    Map *map = board->maps[board->current_map];
-    Server *server = board->server;
-
-    char *encoded_map = malloc(sizeof (char)*map->columns*map->rows);
-    encoded_map = set_encoded_map(board->maps[board->current_map]);
-
+    char *encoded_map = set_encoded_map(board->maps[board->current_map]);
     return send_message(str_cat(RESPONSE_PLAY,encoded_map), board);
-
 }
 
 
 
 int send_message(char *msg, Board *board){
-    Server *server = board->server;
-    return send(server->client_socket, msg, strlen(msg)+1, 0);
+    if(board->game_mode == GAME_MODE_HOST) {
+        return send(board->server->client_socket, msg, strlen(msg) + 1, 0);
+    }
+    return send(board->client->client_socket, msg, strlen(msg) + 1, 0);
 }
 
-char *set_attribute(int nb, char *info){
-    char *value = malloc(sizeof (char));
-    itoa(nb, value, 10);
-    return str_cat(info,value);
+char *set_attribute(int value, char *name){
+    char *buf = malloc(sizeof (char) * 3);
+    itoa(value, buf, 10);
+    return str_cat(name, buf);
 }
 
 char *set_encoded_map(Map *map){
@@ -136,9 +132,7 @@ int game_is_started(Board *board) {
     Client *client = board->client;
 
     do {
-        client->res = recv(client->client_socket, client->recv_buf, sizeof (BUFLEN), 0);
-        client->recv_buf[client->res] = '\0';
-
+        client->res = recv(client->client_socket, client->recv_buf, sizeof(BUFLEN), 0);
         if(client->res <= 0) {
             continue;
         }
