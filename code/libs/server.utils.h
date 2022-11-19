@@ -187,15 +187,15 @@ int await_response(Board *board) {
 }
 
 int game_is_started(Board *board) {
-    Client *client = board->client;
-
-    do {
-        client->res = recv(client->client_socket, client->recv_buf, sizeof(BUFLEN), 0);
-        if(client->res <= 0) {
-            continue;
+    while(1) {
+        if(await_response(board)) {
+            if(strcmp(get_response(board->client->recv_buf), "exit") == 0) {
+                closesocket(board->client->client_socket);
+                WSACleanup();
+                return 0;
+            }
+            return strcmp(board->client->recv_buf, "start") == 0;
         }
-        client->recv_buf[client->res] = '\0';
-    } while(strcmp(client->recv_buf, "start") != 1);
-    return 1;
+    }
 }
 

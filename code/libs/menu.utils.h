@@ -286,7 +286,10 @@ void menu_wait_players_case(Board *board) {
         display_waiting_for_player(board);
         printf("Veuillez patienter...\n");
         if(game_is_started(board)) {
+            board->player_turn = PLAYER_ID_HOST;
             board->current_menu = menu_game;
+        } else {
+            display_next_menu(board, menu_home, &menu_home_case);
         }
     }
 }
