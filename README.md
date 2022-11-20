@@ -16,20 +16,54 @@ language = FR //par défaut (EN disponible)
 
 ### Lexique
 
-- Joueur : 0-9 (48-57)
-- Bombe : Ó (162)
-- mur destructible : ░ (176)
-- mur indestructible : ▓ (177)
-- trou : space (0)
-- Bomb push [ (157)
-- Bomb Up : + (43)
-- Bomb destroy : 81 (Q)
-- Bomb Down : - (45)
-- Flamme Jaune : ↑ (24)
-- Flamme Bleue : ↓ (25)
-- Flamme Rouge : ♣ (5)
-- Passe-Bombes : Ø (157)
-- Bomb Kick : ☼ (15)
-- Invincibilité : * (42)
-- Cœur : ■ (254)
-- Vie : ♥ (3)
+| Items              | Caractère   |
+|--------------------|-------------|
+| Joueur             | 0-9 (48-57) |
+| Mur destructible   | ░ (176)     |
+| Mur indestructible | ▓ 177       |
+| Trou               | space (0)   |
+| Bombe              | Ó (162)     |
+| Bomb Up            | + (43)      |
+| Bomb Down          | - (45)      |
+| Passe-Bombes       | Ø (157)     |
+| Bomb Kick          | ☼ (15)      |
+| Bomb Destroy       | Q ()        |
+| Flamme Jaune       | ↑ (24)      |
+| Flamme Bleue       | ↓ (25)      |
+| Flamme Rouge       | ♣ (5)       |
+| Bomb Destroy       | Q (81)      |
+| Flamme Jaune       | ↑ (24)      |
+| Invincibilité      | * (42)      |
+| Cœur               | ■ (254)     |
+| Vie                | ♥ (3)       |
+
+
+
+### Rôles de chacun
+    ## Corentin LECHENE 
+
+    - Chef de projet : 
+        S'assure du bon déroulement du projet et de la livraison du code
+    - Architecte du projet 
+    - Optimisation du menu 
+    - Concepteur et dévéloppeur des bots 
+    - Réseaux
+    - A beaucoup aidé son équipe
+    - Gestion des cartes
+
+```
+
+    ## Mélissa LAURENT
+    
+    - Développement du menu
+    - Développement du module "Joueur"
+    - Développement du module "Bombes"
+    - Développement du module "Items"
+    - Réseaux
+
+```
+
+    ## Erdal KARAER
+
+    - Gestion des cartes
+    - Participation au développement du module "Bombes"
