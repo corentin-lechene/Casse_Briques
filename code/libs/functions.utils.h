@@ -321,7 +321,6 @@ void die() {
 }
 
 int my_getch()  {
-    printf("my_getch()\n");
     int ch = _getch ();
 
     if (ch == 0 || ch == 224) {
