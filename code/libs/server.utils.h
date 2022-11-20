@@ -77,10 +77,9 @@ int join_server(char *ip, char *port, Board *board) {
     WSAStartup(MAKEWORD(2, 0), &WSAData);
 
     client->client_socket = socket(AF_INET, SOCK_STREAM, 0);
-    server_socket_addr.sin_addr.s_addr = inet_addr("192.168.201.1"); // 172.20.10.7
-//    server_socket_addr.sin_addr.s_addr = inet_addr(ip); // 172.20.10.7
+    server_socket_addr.sin_addr.s_addr = inet_addr(ip); // 172.20.10.7
     server_socket_addr.sin_family = AF_INET;
-    server_socket_addr.sin_port = htons(atol("27015"));
+    server_socket_addr.sin_port = htons(atol(port));
 
     return connect(client->client_socket, (SOCKADDR *) &server_socket_addr, sizeof(server_socket_addr));
 }

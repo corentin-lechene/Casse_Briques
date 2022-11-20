@@ -212,8 +212,10 @@ void menu_players_case(Board *board) {
         clear_console();
         display_menu_header(board);
         text_color(color_light_blue);
-        printf("%s 9", board->lang[lang_max_player]->str);
-        printf("%s (q: %s", board->lang[lang_enter_number_of_player]->str, board->lang[lang_leave]->str);
+        printf("%s 9 ", board->lang[lang_max_player]->str);
+        printf("%s (q: %s)\n", board->lang[lang_enter_number_of_player]->str, board->lang[lang_leave]->str);
+        text_color_default();
+        printf("%s :", board->lang[lang_your_choice]->str);
         fflush(stdin);
         scanf("%s", q);
     } while(strcmp(q, "q") != 0 && !(atoi(q) > 1 && atoi(q) < 10));
@@ -288,14 +290,13 @@ void menu_wait_players_case(Board *board) {
         text_color(color_light_blue);
         printf("[INFO]-> %s : \n", board->lang[lang_your_info_connexion]->str);
         printf("\t%s: %s\n", board->lang[lang_ip]->str, board->server->ip);
-        printf("\t%s: %s\n", board->lang[lang_port]->str, PORT);
+        printf("\t%s: %d\n", board->lang[lang_port]->str, PORT);
         text_color_default();
         display_waiting_for_player(board);
         if(is_player_join(board)) {
             display_next_menu(board, menu_maps, &menu_maps_case);
         }
     } else {
-        
         infof(board->lang[lang_player_set_maps]->str);
         display_waiting_for_player(board);
         printf("%s...\n", board->lang[lang_loading]->str);
@@ -366,7 +367,7 @@ void menu_client_case(Board *board) {
             }
             
             infof("Example %s : 192.168.1.18");
-            printf("%s %s (q: %S) : ", board->lang[lang_enter]->str, board->lang[lang_ip]->str, board->lang[lang_leave]->str);
+            printf("%s %s (q: %s) : ", board->lang[lang_enter]->str, board->lang[lang_ip]->str, board->lang[lang_leave]->str);
             fflush(stdin);
             scanf("%s", ip);
             count_ip++;

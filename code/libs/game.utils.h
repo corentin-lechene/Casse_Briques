@@ -310,8 +310,10 @@ void run_game_client(Board *board) {
         }
 
         Map *map = get_decoded_map(board->client->recv_buf);
-        if(strcmp(response, "play") == 0) {
-            set_player_turn(board);
+        if(strcmp(response, "play") == 0 || strcmp(response, "start") == 0) {
+            if(strcmp(response, "play") == 0) {
+                set_player_turn(board);
+            }
             clear_console();
             display_menu_header(board);
             for (int i = 0; i < map->rows; ++i) {
@@ -333,7 +335,7 @@ void run_game_client(Board *board) {
             }
         } else if(strcmp(response, "win") == 0) {
             clear_console();
-            printf("%s!\n", board->lang[lang_you_won]->str);
+            printf("%s !\n", board->lang[lang_you_won]->str);
             board->player_turn = PLAYER_ID_HOST;
             return;
         } else if(strcmp(response, "dead") == 0) {
