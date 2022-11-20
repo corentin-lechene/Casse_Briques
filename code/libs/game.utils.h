@@ -371,7 +371,6 @@ void run_game_client(Board *board) {
             char buf[4];
             send_message(itoa(event, buf, 10), board);
         }
-        printf("Aucune action\n");
     } else {
         closesocket(board->client->client_socket);
         WSACleanup();

@@ -111,7 +111,6 @@ char *get_response(const char *message) {
                 response[j] = message[i];
                 if (message[i + 1] == ';') {
                     response[j + 1] = '\0'; 
-                    printf("-> response: [%s]\n", response);
                     return response;
                 }
                 i++;
@@ -183,7 +182,6 @@ int send_dead(Board *board) {
 }
 
 int send_message(char *msg, Board *board) {
-    printf("send_message: [%s]\n", msg);
     if (board->game_mode == GAME_MODE_HOST) {
         return send(board->server->client_socket, msg, strlen(msg) + 1, 0);
     }
@@ -229,7 +227,6 @@ int await_response(Board *board) {
             server->res = recv(server->client_socket, server->recv_buf, sizeof(BUFLEN), 0);
             if (server->res > 0) {
                 server->recv_buf[server->res] = '\0';
-                printf("recv server: [%s]\n", server->recv_buf);
                 break;
             }
         } while (1);
@@ -239,7 +236,6 @@ int await_response(Board *board) {
         do {
             client->res = recv(client->client_socket, client->recv_buf, BUFLEN, 0);
             if (client->res == SOCKET_ERROR) {
-                printf("send failed: %d\n", WSAGetLastError());
                 closesocket(client->client_socket);
                 WSACleanup();
                 pause();
@@ -247,7 +243,6 @@ int await_response(Board *board) {
             }
             if (client->res > 0) {
                 client->recv_buf[client->res] = '\0';
-                printf("recv client: [%s]\n", client->recv_buf);
                 break;
             }
         } while (1);
