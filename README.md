@@ -1,40 +1,29 @@
 # Puissance C
 > **Note** <br>
-> You can find the subject [here]()
+> Le jeu Casse briques a été réaliser par Corentin, Mélissa et Erdal
 
-### Compilation
-```
-gcc ./code/main.c -o ./executable/app.exe
-```
+# Répartition des tâches
+
+
 ### Lancement
-```
-./executable/app.exe
-```
+> Ouvrir le dossier avec Clion, compiler et lancer.
+>
 
-### Configuration
-
-
-### Fonctionnalités optionnelles
-
-- fleche directionnelle (et l'ombre)
-- réassigner des touches
-- ajouter du son
-- ajouter des animations
-- langage
-- génération d'une nouvelle map (auto)
-- ajouter nouveaux objets
-- map de fin
-
+### Fichier de configuration
+``
+language = FR //par défaut (EN disponible)
+``
 
 ### Lexique
 
 - Joueur : 0-9 (48-57)
 - Bombe : Ó (162)
 - mur destructible : ░ (176)
-- mur indestructible : █▓ (219/177)
+- mur indestructible : ▓ (177)
 - trou : space (0)
-
+- Bomb push [ (157)
 - Bomb Up : + (43)
+- Bomb destroy : 81 (Q)
 - Bomb Down : - (45)
 - Flamme Jaune : ↑ (24)
 - Flamme Bleue : ↓ (25)
