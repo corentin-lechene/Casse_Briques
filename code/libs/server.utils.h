@@ -234,7 +234,6 @@ int await_response(Board *board) {
                 break;
             }
         } while (1);
-        printf("return 1 await_response\n");
         return 1;
     } else {
         Client *client = board->client;
@@ -253,7 +252,6 @@ int await_response(Board *board) {
                 break;
             }
         } while (1);
-        printf("return 1 await_response\n");
         return 1;
     }
     return 0;

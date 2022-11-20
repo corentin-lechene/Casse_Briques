@@ -157,7 +157,9 @@ void menu_maps_case(Board *board) {
         board->current_menu = menu_game_mode;
         clear_console();
         menu_game_mode_case(board);
-        send_leave(board);        
+        if(board->game_mode == GAME_MODE_HOST) {
+            send_leave(board);
+        }
         return;
     }
 
