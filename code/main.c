@@ -43,11 +43,11 @@ int main() {
     srand( time( NULL ) );
     text_color_default();
 
-//    CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) display_opening_credits, &wait, 0, NULL);
+    CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) display_opening_credits, &wait, 0, NULL);
     Board *board = generate_board();
 
-//    while (wait) {}
-//    clear_console();
+    while (wait) {}
+    clear_console();
 
     display_menus(board);
     while (board->current_menu >= 1) {
