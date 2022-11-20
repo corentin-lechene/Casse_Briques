@@ -83,6 +83,7 @@ void menu_set_languages_case(Board *board) {
 }
 
 void menu_game_mode_case(Board *board) {
+    board->nb_map = board->nb_default_map;
     menus_index next_menu[] = {menu_solo, menu_players, menu_online, menu_home};
     choices_index choices_menu[] = {choice_solo, choice_local, choice_online, choice_back};
 
@@ -169,14 +170,12 @@ void menu_maps_case(Board *board) {
             board->selected_maps[index++] = new_selected_map[i];
         }
     }
-
     if(index == 0) {
         board->current_menu = menu_game_mode;
         clear_console();
         menu_game_mode_case(board);
         return;
     }
-
     board->nb_selected_map = index;
     board->current_menu = menu_init_game;
 }

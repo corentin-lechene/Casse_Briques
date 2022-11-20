@@ -70,7 +70,8 @@ void get_maps_by_max_player(Board *board) {
 
 void copy_maps(Board *board) {
     board->maps = malloc(sizeof(Map *) * board->nb_selected_map);
-
+    board->nb_map = board->nb_selected_map;
+    
     for (int i = 0; i < board->nb_selected_map; ++i) {
         unsigned short select_maps = board->selected_maps[i];
         board->maps[i] = malloc(sizeof(Map));
@@ -128,7 +129,7 @@ void init_map(Board *board) {
     }
 }
 void set_next_map(Board *board) {
-    if(board->nb_map != 1) {
+    if(board->nb_map > 1) {
         int random = random_between(0, board->nb_map - 1);
         while(board->current_map == random) {
             random = random_between(0, board->nb_map - 1);

@@ -431,14 +431,13 @@ void init_game(Board *board) {
     display_wait();
     set_next_map(board);
     board->player_turn = 0;
-
+    
     copy_maps(board);
     add_bot_player(board);
     init_players(board);
     init_map(board);
     board->maps[board->current_map]->bombs = malloc(sizeof (Bomb *));
     board->maps[board->current_map]->nb_bomb = 0;
-    
     if(board->game_mode == GAME_MODE_HOST) {
         if(!send_start_game(board)) {
             display_next_menu(board, menu_home, &menu_home_case);

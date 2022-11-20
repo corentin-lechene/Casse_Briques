@@ -93,7 +93,7 @@ void add_bot_player(Board *board) {
 void init_players(Board *board) {
     for (int i = 0; i < board->nb_player; ++i) {
         board->players[i]->heart = 1;
-        board->players[i]->nb_bomb = board->maps[board->current_map]->bomb_default; //todo not 1
+        board->players[i]->nb_bomb = board->maps[board->current_map]->bomb_default;
         board->players[i]->x = get_pos_player(board, i, 'x');
         board->players[i]->y = get_pos_player(board, i, 'y');
         board->players[i]->bomb_range = 2;

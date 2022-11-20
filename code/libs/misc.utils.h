@@ -377,6 +377,7 @@ typedef struct {
     Server *server;
     Client *client;
 
+    unsigned short nb_default_map;
     unsigned short nb_map;
     unsigned short nb_selected_map;
     unsigned short nb_player;

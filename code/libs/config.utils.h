@@ -22,6 +22,7 @@ Board *generate_board() {
 
     board->winner = NULL;
 
+    board->nb_default_map = file_get_nb(MAP_DIR);
     board->nb_map = file_get_nb(MAP_DIR);
     board->nb_player = 0;
 
@@ -308,19 +309,7 @@ Map *_get_map(const char *filename) {
 
         fseek(f, -1, SEEK_CUR);
 
-        int i;
-//        for (i = 0; i < map->rows; ++i) {
-//            fgets(t, 255, f);
-//            printf("[%s]", t);
-//            if(feof(f)) {
-//                if(i + 1 != map->rows) {
-//                    i--;
-//                    break;
-//                }
-//            }
-//            strncpy(map->body[i], t, map->columns);
-//        }
-
+        int i;     
         for (i = 0; i < map->rows; ++i) {
             for (int j = 0; j < map->columns; ++j) {
                 int c = fgetc(f);
