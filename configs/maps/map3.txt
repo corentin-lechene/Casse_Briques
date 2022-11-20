@@ -1,0 +1,12 @@
+2
+17 10
+x xxxxxxxxxxxxxxx
+x  mm mmm  mm xx 
+x  mm  mm  mm xxx
+x  mm  mm m  mxxx
+x pmm  mm  mmpxxx
+x  mm  mm  mm xxx
+x  mm  mm  mm xxx
+x  mm  mm  mm xxx
+x  mm pmm  mm  xx
+x xxxxxxxxxxxxxxx
