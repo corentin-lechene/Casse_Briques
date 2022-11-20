@@ -304,6 +304,7 @@ void warningf(char *warn) {
     text_color(color_yellow);
     printf("Warning-> %s\n", warn);
     text_color_default();
+    pause();
 }
 
 char *set_value(char *value) {

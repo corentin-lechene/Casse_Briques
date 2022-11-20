@@ -47,8 +47,8 @@ int main() {
     Board *board = generate_board();
 
 //    while (wait) {}
-    clear_console();
-    
+//    clear_console();
+
     display_menus(board);
     while (board->current_menu >= 1) {
         run_program(board);

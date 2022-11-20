@@ -46,6 +46,7 @@ Board *generate_board() {
     board->current_choice = 0;
     board->player_turn = board->nb_player;
     board->selected_maps = NULL;
+    board->game_mode = GAME_MODE_LOCAL;
 
     return board;
 }
@@ -179,7 +180,7 @@ Item **get_items(Config *config) {
     for (int i = 0; i < items_len; ++i) {
         items[i] = _get_item(ITEMS_NAME[i], config);
         if(items[i] == NULL) {
-            exit_error("items[i] = NULL");
+            exit_error("items were not loaded correctly !");
         }
         items[i]->is_used = 0;
         items[i]->type = i;
@@ -202,7 +203,10 @@ Map **get_maps(Config *config) { // tableau de map
                 maps[i - 1] = _get_map(path);
 
                 if(maps[i - 1] == NULL) {
-                    warningf("maps[i] = NULL\n");
+                    text_color(color_yellow);
+                    printf("Warning-> map (%s) cant be used.\n", dir->d_name);
+                    text_color_default();
+                    pause();
                     continue;
                 }
                 i++;
@@ -223,7 +227,11 @@ Menu **get_menus(Config *config) {
     for (int i = 0; i < menus_len; ++i) {
         menus[i] = _get_menu(MENUS_NAME[i], config);
         if(menus[i] == NULL) {
-            exit_error("Menu[i] = NULL");
+            text_color(color_red);
+            printf("Erreur-> Attribut : %s not found in file config/langugages/%s.\n", MENUS_NAME[i], config->language);
+            text_color_default();
+            pause();
+            exit(0);
         }
     }
     menus[1]->next_menu = menu_game_mode;
@@ -260,7 +268,7 @@ Map *_get_map(const char *filename) {
 
         //get bomb_default
         fgets(t, 255, f);
-        if(sscanf(t, "%hu %d", &map->bomb_default, &temp) != 1 || map->bomb_default == 0) {
+        if(sscanf(t, "%hu %d", &map->bomb_default, &temp) != 1 || map->bomb_default <= 0) {
             fclose(f);
             errorf("Map unrecognized (first line)");
         }
@@ -282,10 +290,10 @@ Map *_get_map(const char *filename) {
             errorf("rows min > 6, columns min > 6 (second line)");
         }
 
-        //prevent space and \n
+        //prevent \n
         temp = fgetc(f);
-        while(temp == ' ' || temp == '\n') {
-            temp= fgetc(f);
+        while(temp == '\n') {
+            temp = fgetc(f);
         }
 
         if(feof(f)) {
@@ -301,20 +309,33 @@ Map *_get_map(const char *filename) {
         fseek(f, -1, SEEK_CUR);
 
         int i;
+//        for (i = 0; i < map->rows; ++i) {
+//            fgets(t, 255, f);
+//            printf("[%s]", t);
+//            if(feof(f)) {
+//                if(i + 1 != map->rows) {
+//                    i--;
+//                    break;
+//                }
+//            }
+//            strncpy(map->body[i], t, map->columns);
+//        }
+
         for (i = 0; i < map->rows; ++i) {
-            fgets(t, 255, f);
-            if(feof(f)) {
-                if(i + 1 != map->rows) {
-                    i--;
-                    break;
+            for (int j = 0; j < map->columns; ++j) {
+                int c = fgetc(f);
+                if(c == '\n' || c == '\0') {
+                    fclose(f);
+                    errorf("Map unrecognized (row size)");
                 }
+                map->body[i][j] = c;
             }
-            strncpy(map->body[i], t, map->columns);
+            fgetc(f);
         }
 
         if(i + 1 < map->rows) {
             fclose(f);
-            errorf("Map unrecognized (row size)");
+            errorf("Map unrecognized (row size) 2");
         }
 
         temp = fgetc(f);
@@ -331,7 +352,7 @@ Map *_get_map(const char *filename) {
         map->bombs = malloc(sizeof(Bomb *));
         map->nb_bomb = 0;
         map->player_max = 0;
-        for (int i = 0; i < map->rows; ++i) {
+        for (i = 0; i < map->rows; ++i) {
             for (int j = 0; j < map->columns; ++j) {
                 if(map->body[i][j] == 'p') {
                     map->player_max += 1;
