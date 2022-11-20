@@ -401,9 +401,9 @@ void explose_bombs(Board *board){
         if(board->maps[board->current_map]->bombs[i]->nb_turn <= 0){
             explosion(board->maps[board->current_map]->bombs[i], board);
             remove_bomb(board->maps[board->current_map]->bombs[i], board);
-            if(board->player_turn == board->nb_player || board->player_turn + 1 == board->nb_player) {
-                board->player_turn = 0;
-            }
+//            if(board->player_turn == board->nb_player || board->player_turn + 1 == board->nb_player) {
+//                board->player_turn = 0;
+//            }
         }
     }
 }
@@ -471,12 +471,11 @@ void players_are_dead(Board *board) {
         if(board->players[i]->heart == 0) {
             if(board->game_mode == GAME_MODE_HOST) {
                 if(board->players[i]->id == PLAYER_ID_HOST) {
-                    send_win(board);
-                } else {
                     send_dead(board);
+                } else {
+                    send_win(board);
                 }
-                return;
-            }
+            } 
             remove_player(board->players[i], board);
         }
     }

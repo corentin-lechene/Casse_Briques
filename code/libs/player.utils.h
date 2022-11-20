@@ -71,7 +71,15 @@ void add_bot_player(Board *board) {
     if(board->game_mode == GAME_MODE_HOST) {
         return;
     }
-    short map_player_max = board->maps[board->current_map]->player_max;
+    
+    short min = board->maps[0]->player_max;
+    for (int i = 0; i < board->nb_map; ++i) {
+        if(board->maps[i]->player_max < min) {
+            min = board->maps[i]->player_max;
+        }
+    }
+
+    short map_player_max = min;
     short player_max = board->nb_player;
 
     for (int i = 0; i < map_player_max - player_max ; ++i) {

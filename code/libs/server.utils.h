@@ -101,7 +101,6 @@ int send_start_game(Board *board) {
 
 
 char *get_response(const char *message) {
-    printf("get_response: [%s]\n", message);
     int nb_char = 1;
     char *response = malloc(sizeof(char) * nb_char);
     int i = 0;
@@ -128,44 +127,35 @@ char *get_response(const char *message) {
 
 Map *get_decoded_map(char *message) {
     const char *separators = ";";
-    int tab[2];
-    int i = 0;
-    int cpt = 0;
     Map *map = malloc(sizeof(Map));
-    char *strToken = strtok(message, separators);
-    while (strToken != NULL) {
-        cpt++;
-        char *tmp = str_get_right(strToken, ':');
-        //Recup de colonnes et lignes
-        if (cpt == 2 || cpt == 3) {
-            tab[i] = atoi(tmp);
-            i++;
-        }
-        if (cpt == 4) {
-            map->rows = tab[0];
-            map->columns = tab[1];
-            set_map(strToken, map);
-            break;
-        }
-        // On demande le token suivant.
-        strToken = strtok(NULL, separators);
-    }
-//    printf("get_decoded_map: rows: [%hu] columns: [%hu] map: [%s]\n", map->rows, map->columns, map->body[1]);
-    return map;
-}
+    
+    char *strToken = strtok ( message, separators );
+    while ( strToken != NULL ) {
+        char *left = str_get_left(strToken, ':');
+        char *right = str_get_right(strToken, ':');
+        
+        if(strcmp(left, "Columns") == 0) {
+            map->columns = (unsigned short) atoll(right);
+        } else if(strcmp(left, "Rows") == 0) {
+            map->rows = (unsigned short) atoll(right);
+        } else if(strcmp(left, "Map") == 0) {
+            map->body = malloc(sizeof(char *) * map->rows);
+            for (int i = 0; i < map->rows; ++i) {
+                map->body[i] = malloc(sizeof(char) * map->columns);
+            }
 
-void set_map(char *token, Map *map) {
-    map->body = malloc(sizeof(char *) * map->rows);
-    for (int i = 0; i < map->rows; ++i) {
-        map->body[i] = malloc(sizeof(char) * map->columns);
-    }
-    int k = 0;
-    for (int i = 0; i < map->rows; i++) {
-        for (int j = 0; j < map->columns; j++) {
-            map->body[i][j] = token[k];
-            k++;
+            int index = 0;
+            for (int i = 0; i < map->rows; ++i) {
+                for (int j = 0; j < map->columns; ++j) {
+                    map->body[i][j] = right[index++];
+                }
+            }
         }
+        strToken = strtok ( NULL, separators );
     }
+//    printf("get_decoded_map: rows: [%hu] columns: [%hu]\n", map->rows, map->columns);
+//    printf("map: [%s]\n", map->body[1]);
+    return map;
 }
 
 
@@ -195,7 +185,6 @@ int send_dead(Board *board) {
 
 int send_message(char *msg, Board *board) {
     printf("send_message: [%s]\n", msg);
-    sleep(1);
     if (board->game_mode == GAME_MODE_HOST) {
         return send(board->server->client_socket, msg, strlen(msg) + 1, 0);
     }
@@ -203,8 +192,9 @@ int send_message(char *msg, Board *board) {
 }
 
 char *set_attribute(int value, char *name) {
-    char *buf = malloc(sizeof(char) * 3);
+    char *buf = malloc(sizeof(char) * 4);
     itoa(value, buf, 10);
+    buf[3] = '\0';
     return str_cat(name, str_cat(buf, ";"));
 }
 
@@ -213,7 +203,7 @@ char *set_encoded_map(Map *map) {
     char *info_columns = set_attribute(map->columns, "Columns:");
     char *info_map = str_cat(info_rows, info_columns);
 
-    char *encoded_map = malloc(sizeof(char) * (map->rows * map->columns));
+    char *encoded_map = malloc(sizeof(char) * (map->rows * map->columns + 1));
     int index = 0;
     for (int i = 0; i < map->rows; i++) {
         for (int j = 0; j < map->columns; j++) {
@@ -222,7 +212,10 @@ char *set_encoded_map(Map *map) {
         }
     }
     encoded_map[index] = '\0';
-    encoded_map = str_cat(info_map, str_cat(encoded_map, ";"));
+    
+    char *res_encoded_map = str_cat("Map:", encoded_map);
+    
+    encoded_map = str_cat(info_map, str_cat(res_encoded_map, ";"));
     free(info_columns);
     free(info_rows);
     free(info_map);
@@ -242,7 +235,6 @@ int await_response(Board *board) {
             }
         } while (1);
         printf("return 1 await_response\n");
-        sleep(2);
         return 1;
     } else {
         Client *client = board->client;
@@ -262,7 +254,6 @@ int await_response(Board *board) {
             }
         } while (1);
         printf("return 1 await_response\n");
-        sleep(2);
         return 1;
     }
     return 0;

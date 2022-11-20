@@ -266,7 +266,7 @@ void run_game_host(Board *board) {
             return;
         } else if(strcmp(event_name, "exit") == 0) {
             send_leave(board);
-            board->current_menu = menu_init_game;
+            display_next_menu(board, menu_home, &menu_home_case);
             return;
         }
 
@@ -301,7 +301,6 @@ void run_game_host(Board *board) {
 void run_game_client(Board *board) {
     if(await_response(board)) {
         char *response = get_response(board->client->recv_buf);
-        printf("[%s] -> response : %s\n", board->client->recv_buf, response);
 
         if(strcmp(response, "exit") == 0) {
             closesocket(board->client->client_socket);
@@ -310,11 +309,11 @@ void run_game_client(Board *board) {
             return;
         }
 
+        Map *map = get_decoded_map(board->client->recv_buf);
         if(strcmp(response, "play") == 0) {
             set_player_turn(board);
-            display_menu_header(board);
             clear_console();
-            Map *map = get_decoded_map(board->client->recv_buf);
+            display_menu_header(board);
             for (int i = 0; i < map->rows; ++i) {
                 for (int j = 0; j < map->columns; ++j) {
                     if(map->body[i][j] == '0' || map->body[i][j] == '1') {
@@ -333,16 +332,21 @@ void run_game_client(Board *board) {
                 printf("\n");
             }
         } else if(strcmp(response, "win") == 0) {
+            clear_console();
             printf("Felicitation, tu as gagne !\n");
+            board->player_turn = PLAYER_ID_HOST;
+            return;
         } else if(strcmp(response, "dead") == 0) {
+            clear_console();
             printf("Tu feras mieux la prochaine fois !\n");
+            board->player_turn = PLAYER_ID_HOST;
+            return;
         }
 
         printf("au tour de : [%d]\n", board->player_turn);
         if(board->player_turn == PLAYER_ID_CLIENT) {
-            display_menu_header(board);
             clear_console();
-            Map *map = get_decoded_map(board->client->recv_buf);
+            display_menu_header(board);
             for (int i = 0; i < map->rows; ++i) {
                 for (int j = 0; j < map->columns; ++j) {
                     if(map->body[i][j] == '0' || map->body[i][j] == '1') {
@@ -360,6 +364,7 @@ void run_game_client(Board *board) {
                 }
                 printf("\n");
             }
+            free(map);
             int event = my_getch();
             char buf[4];
             send_message(itoa(event, buf, 10), board);

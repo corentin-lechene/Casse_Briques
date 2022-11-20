@@ -69,8 +69,6 @@ void get_maps_by_max_player(Board *board) {
 }
 
 void copy_maps(Board *board) {
-//    free(board->maps[0]->body);
-
     board->maps = malloc(sizeof(Map *) * board->nb_selected_map);
 
     for (int i = 0; i < board->nb_selected_map; ++i) {
@@ -110,7 +108,7 @@ void init_map(Board *board) {
                     if(board->game_mode == GAME_MODE_HOST && i == 2) {
                         board->maps[board->current_map]->body[j][k] = ' ';
                     } else {
-                        if(i > board->nb_player) {
+                        if(i > board->nb_player - 1) {
                             break;
                         }
                         board->maps[board->current_map]->body[j][k] = board->players[i]->id;
@@ -120,13 +118,25 @@ void init_map(Board *board) {
             }
         }
     }
+
+    for (int i = 0; i < board->maps[board->current_map]->rows; ++i) {
+        for (int j = 0; j < board->maps[board->current_map]->columns; ++j) {
+            if (board->maps[board->current_map]->body[i][j] == 'p') {
+                board->maps[board->current_map]->body[i][j] = ' ';
+            }
+        }
+    }
 }
 void set_next_map(Board *board) {
-    int random = random_between(0, board->nb_map - 1);
-    while(board->current_map == random) {
-        random = random_between(0, board->nb_map - 1);
+    if(board->nb_map != 1) {
+        int random = random_between(0, board->nb_map - 1);
+        while(board->current_map == random) {
+            random = random_between(0, board->nb_map - 1);
+        }
+        board->current_map = random;
+    } else {
+        board->current_map = 0;
     }
-    board->current_map = random;
 }
 
 Coord *is_bomb_on_player(Board *board) {

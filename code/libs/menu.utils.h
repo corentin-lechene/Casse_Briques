@@ -24,6 +24,9 @@ void menu_home_case(Board *board) {
     board->menus[board->current_menu]->nb_choice = 5;
     board->menus[board->current_menu]->next_menu = next_menu[board->current_choice];
 
+    free_map_dim_arr(&board->maps, board->nb_selected_map);
+    free_player_dim_arr(&board->players, board->nb_player);
+
     display_menu(board, choices_menu);
 }
 
@@ -75,6 +78,7 @@ void menu_languages_case(Board *board) {
 void menu_set_languages_case(Board *board) {
     file_set_value("language", board->config->language, CONFIG_DIR);
     infof("Le jeu doit redemarrer");
+    pause();
     exit(0);
 }
 
@@ -193,9 +197,6 @@ void menu_resume_case(Board *board) {
     board->menus[board->current_menu]->nb_choice = 2;
     board->menus[board->current_menu]->next_menu = next_menu[board->current_choice];
 
-    free_map_dim_arr(&board->maps, board->nb_selected_map);
-    free_player_dim_arr(&board->players, board->nb_player);
-
     display_menu(board, choices_menu);
 }
 
@@ -206,7 +207,7 @@ void menu_players_case(Board *board) {
     do {
         clear_console();
         display_menu_header(board);
-        infof("Le nombre de joueur maximun est de 9");
+        infof("Le nombre de joueur maximum est de 9");
         printf("Saisir le nombre de joueur (q pour quitter) : ");
         fflush(stdin);
         scanf("%s", q);
@@ -227,7 +228,13 @@ void menu_players_case(Board *board) {
 void menu_winner_summary_case(Board *board) {
     display_menu_header(board);
     printf("Bravo %s, vous avez gagne !\n", board->players[0]->name);
-    for (int i = 1; i < board->maps[board->current_map]->player_max; ++i) {
+    short min = board->maps[0]->player_max;
+    for (int i = 0; i < board->nb_map; ++i) {
+        if(board->maps[i]->player_max < min) {
+            min = board->maps[i]->player_max;
+        }
+    }
+    for (int i = 1; i < min; ++i) {
         if(board->game_mode == GAME_MODE_HOST && i == 2) {
             break;
         }
@@ -235,7 +242,7 @@ void menu_winner_summary_case(Board *board) {
     }
     display_choice_continue(board);
     
-    board->nb_player = board->game_mode == GAME_MODE_LOCAL ? board->maps[board->current_map]->player_max : 2;
+    board->nb_player = board->game_mode == GAME_MODE_LOCAL ? min : 2;
     board->current_menu = menu_init_game;
 }
 
@@ -296,8 +303,8 @@ void menu_wait_players_case(Board *board) {
             board->players[1]->id = PLAYER_ID_CLIENT;
             board->players[1]->color = color_cyan;
 
-            display_menu_header(board);
             clear_console();
+            display_menu_header(board);
             Map *map = get_decoded_map(board->client->recv_buf);
             for (int i = 0; i < map->rows; ++i) {
                 for (int j = 0; j < map->columns; ++j) {
