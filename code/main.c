@@ -53,6 +53,6 @@ int main() {
     while (board->current_menu >= 1) {
         run_program(board);
     }
-    display_ending_credits();
+    display_ending_credits(board);
     return 0;
 }

@@ -129,7 +129,9 @@ void init_map(Board *board) {
     }
 }
 void set_next_map(Board *board) {
-    if(board->nb_map > 1) {
+    if(board->nb_map == 2) {
+        board->current_map = board->current_map == 1 ? 0 : 1;
+    } else if(board->nb_map > 2) {
         int random = random_between(0, board->nb_map - 1);
         while(board->current_map == random) {
             random = random_between(0, board->nb_map - 1);

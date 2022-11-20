@@ -39,9 +39,9 @@ Player *_create_player(Board *board, int id, short is_bot) {
         do {
             clear_console();
             display_menu_header(board);
-            printf("Entrez le pseudo du joueur %d. (q pour quitter) : ", id  + 1);
+            printf("%s %d. (q: %s) : ", board->lang[lang_enter_pseudo]->str, id + 1, board->lang[lang_leave]->str);
             scanf("%s", name);
-            display_wait();
+            display_wait(board);
             if(strcmp(name, "q") == 0) {
                 break;
             }

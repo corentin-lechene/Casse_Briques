@@ -212,7 +212,7 @@ void run_game_local(Board *board) {
                 players_are_dead(board);
                 move_bot(board);
                 t++;
-                if(t == 20000) {
+                if(t == 100) {
                     break;
                 }
             }
@@ -333,17 +333,17 @@ void run_game_client(Board *board) {
             }
         } else if(strcmp(response, "win") == 0) {
             clear_console();
-            printf("Felicitation, tu as gagne !\n");
+            printf("%s!\n", board->lang[lang_you_won]->str);
             board->player_turn = PLAYER_ID_HOST;
             return;
         } else if(strcmp(response, "dead") == 0) {
             clear_console();
-            printf("Tu feras mieux la prochaine fois !\n");
+            printf("%s !\n", board->lang[lang_you_will_be_better]->str);
             board->player_turn = PLAYER_ID_HOST;
             return;
         }
 
-        printf("au tour de : [%d]\n", board->player_turn);
+        printf("%s : [%d]\n", board->lang[lang_your_turn]->str, board->player_turn);
         if(board->player_turn == PLAYER_ID_CLIENT) {
             clear_console();
             display_menu_header(board);
@@ -428,7 +428,7 @@ void run_menu(Board *board) {
 }
 void init_game(Board *board) {
     clear_console();
-    display_wait();
+    display_wait(board);
     set_next_map(board);
     board->player_turn = 0;
     

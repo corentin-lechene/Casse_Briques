@@ -132,14 +132,17 @@ void menu_maps_case(Board *board) {
             clear_console();
             display_menu_header(board);
             printf("Map %d/%d : \n\n", i + 1, board->nb_selected_map);
-
-            printf("Voulez vous jouer sur cette carte ? \n\t- Oui: y\n\t- Non: n\n\t- %s q\n\n", i == 0 ? "Quitter" : "Retour");
+            printf("%s ?\n", board->lang[lang_play_with_this_map]->str);
+            printf("\t - %s: y\n", board->lang[lang_yes]->str);
+            printf("\t - %s: n\n", board->lang[lang_no]->str);
+            printf("\t - %s: q\n\n", board->lang[lang_leave]->str);
+            
             display_default_map(board->default_maps[board->selected_maps[i]], board);
 
-            printf("Votre choix : ");
+            printf("%s :", board->lang[lang_your_choice]->str);
             fflush(stdin);
             scanf("%c", &q);
-            display_wait();
+            display_wait(board);
         } while(q != 'y' && q != 'n' && q != 'q');
 
         if(q == 'q' && i == 0) {
@@ -208,8 +211,9 @@ void menu_players_case(Board *board) {
     do {
         clear_console();
         display_menu_header(board);
-        infof("Le nombre de joueur maximum est de 9");
-        printf("Saisir le nombre de joueur (q pour quitter) : ");
+        text_color(color_light_blue);
+        printf("%s 9", board->lang[lang_max_player]->str);
+        printf("%s (q: %s", board->lang[lang_enter_number_of_player]->str, board->lang[lang_leave]->str);
         fflush(stdin);
         scanf("%s", q);
     } while(strcmp(q, "q") != 0 && !(atoi(q) > 1 && atoi(q) < 10));
@@ -228,7 +232,7 @@ void menu_players_case(Board *board) {
 
 void menu_winner_summary_case(Board *board) {
     display_menu_header(board);
-    printf("Bravo %s, vous avez gagne !\n", board->players[0]->name);
+    printf("%s, %s\n", board->players[0]->name, board->lang[lang_you_won]->str);
     short min = board->maps[0]->player_max;
     for (int i = 0; i < board->nb_map; ++i) {
         if(board->maps[i]->player_max < min) {
@@ -239,7 +243,7 @@ void menu_winner_summary_case(Board *board) {
         if(board->game_mode == GAME_MODE_HOST && i == 2) {
             break;
         }
-        printf("Dommage a %s qui fini %d eme.\n", board->players[i]->name, i + 1);
+        printf("%s (%d eme), %s\n", board->players[i]->name, i + 1, board->lang[lang_sad]->str);
     }
     display_choice_continue(board);
     
@@ -282,16 +286,19 @@ void menu_wait_players_case(Board *board) {
 
     if(board->game_mode == GAME_MODE_HOST) {
         text_color(color_light_blue);
-        printf("[INFO] -> Vos informations de connexion : \n\tIP: %s, \n\tPort: %d\n", board->server->ip, PORT);
+        printf("[INFO]-> %s : \n", board->lang[lang_your_info_connexion]->str);
+        printf("\t%s: %s\n", board->lang[lang_ip]->str, board->server->ip);
+        printf("\t%s: %s\n", board->lang[lang_port]->str, PORT);
         text_color_default();
         display_waiting_for_player(board);
         if(is_player_join(board)) {
             display_next_menu(board, menu_maps, &menu_maps_case);
         }
     } else {
-        infof("Le joueur est entrain de choisir les cartes");
+        
+        infof(board->lang[lang_player_set_maps]->str);
         display_waiting_for_player(board);
-        printf("Veuillez patienter...\n");
+        printf("%s...\n", board->lang[lang_loading]->str);
         if(game_is_started(board)) {
             board->nb_player = 2;
             board->player_turn = PLAYER_ID_HOST;
@@ -346,7 +353,7 @@ void menu_client_case(Board *board) {
         
         if(count > 0) {
             text_color(color_red);
-            printf("Erreur-> connexion impossible, veuillez reessayer.\n\n");
+            printf("Error-> %s.\n\n", board->lang[lang_error_connexion]->str);
             text_color_default();
         }
         
@@ -354,12 +361,12 @@ void menu_client_case(Board *board) {
             if(count_ip > 0) {
                 clear_console();
                 text_color(color_red);
-                printf("Erreur-> l'ip est incorrecte, veuillez reessayer.\n");
+                printf("Error-> %s.\n", board->lang[lang_ip_incorrect]->str);
                 text_color_default();
             }
             
-            infof("Exemple d'ip : 192.168.1.18");
-            printf("Saisir l'ip (q pour quitter) : ");
+            infof("Example %s : 192.168.1.18");
+            printf("%s %s (q: %S) : ", board->lang[lang_enter]->str, board->lang[lang_ip]->str, board->lang[lang_leave]->str);
             fflush(stdin);
             scanf("%s", ip);
             count_ip++;
@@ -373,12 +380,12 @@ void menu_client_case(Board *board) {
             clear_console();
             if(count_port > 0) {
                 text_color(color_red);
-                printf("Erreur-> le port est incorrect, veuillez reessayer.\n");
+                printf("Erreur-> %s.\n", board->lang[lang_port_incorrect]->str);
                 text_color_default();
             }
 
-            infof("Exemple de port : 27015");
-            printf("Saisir le port (q pour quitter): ");
+            infof("Exemple : 27015");
+            printf("%s %s (q : %s): ", board->lang[lang_enter]->str, board->lang[lang_port]->str, board->lang[lang_leave]->str);
             fflush(stdin);
             scanf("%s", port);
             if(strcmp(port, "q") == 0) {

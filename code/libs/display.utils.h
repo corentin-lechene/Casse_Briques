@@ -1,7 +1,7 @@
 
 void clear_console();
 DWORD WINAPI display_opening_credits();
-void display_ending_credits();
+void display_ending_credits(Board *board);
 
 void display_board(Board *board);
 void display_menu(Board *board, choices_index *choices);
@@ -87,12 +87,14 @@ void display_map(Board *board) {
 
 void display_player_turn(Board *board) {
     text_color(board->players[board->player_turn]->color);
-    printf("  %s(%d), a toi de jouer.\n", board->players[board->player_turn]->name, board->player_turn);
+    printf("  %s(%d), %s.\n", board->players[board->player_turn]->name, board->player_turn, board->lang[lang_your_turn]->str);
     text_color_default();
 }
 
 void display_player_infos(Board *board) {
-    printf("\tVos objets : %d | Bombe restante : %d | Coeurs : %d\n", board->players[board->player_turn]->nb_item, board->players[board->player_turn]->nb_bomb, board->players[board->player_turn]->heart);
+    printf("%s : %d |", board->lang[lang_your_items]->str, board->players[board->player_turn]->nb_item);
+    printf("%s : %d |", board->lang[lang_bomb_remaining]->str, board->players[board->player_turn]->nb_bomb);
+    printf("%s : %d \n", board->lang[lang_life]->str, board->players[board->player_turn]->heart);
     for (int i = 0; i < board->players[board->player_turn]->nb_item; ++i) {
         printf("\t  -> %s, %c\n", board->players[board->player_turn]->items[i]->name, board->players[board->player_turn]->items[i]->data->_int);
     }
@@ -125,15 +127,15 @@ int _convert_item(char item, Board *board) {
 }
 
 
-void display_ending_credits() {
+void display_ending_credits(Board *board) {
     clear_console();
-    printf("Merci d'avoir jouer");
+    printf("%s\n", board->lang[lang_ending_opening]->str);
 }
 
 
-void display_wait() {
+void display_wait(Board *board) {
     clear_console();
-    printf("En chargement, veuillez patienter\n");
+    printf("%s\n", board->lang[lang_loading]->str);
 }
 
 
@@ -155,7 +157,7 @@ void display_default_map(Map *map, Board *board) {
 }
 
 void display_waiting_for_player(Board *board) {
-    printf("En attente du joueur...\n");
+    printf("%s...\n", board->lang[lang_loading_players]->str);
 }
 
 

@@ -164,9 +164,9 @@ Lang **get_langs(Config *config) {
     char *value;
     for (int i = 0; i < language_len; ++i) {
         lang[i] = malloc(sizeof(Lang));
-        value = file_get_value(LANGUAGES_NAME[i], config->lang_dir);
+        value = file_get_value(LANG_NAME[i], config->lang_dir);
         if(value == NULL) {
-            warningf(str_cat(LANGUAGES_NAME[i], " est a NULL. Existe-il ?"));
+            warningf(str_cat(LANG_NAME[i], " est a NULL. Existe-il ?"));
             value = set_value("null");
         }
         lang[i]->str = value;
